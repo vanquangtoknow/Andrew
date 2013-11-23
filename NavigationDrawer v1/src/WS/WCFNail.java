@@ -27,6 +27,12 @@ public class WCFNail {
 
 	public WCFNail() {
 	}
+	/**
+	 * 
+	 * @param para
+	 * @param func
+	 * @return
+	 */
 	private SoapPrimitive getSoapPrimitive(ArrayList<String> para , String func)
 	{
 		SoapPrimitive root = null;
@@ -326,13 +332,35 @@ public class WCFNail {
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
-	
+	/**
+	 * 
+	 * @param para
+	 * @return
+	 */
 	public int getIDTicketMax(ArrayList<String> para)
 	{
 		SoapPrimitive root = getSoapPrimitive(para, "getIDTicketMax");
 		if(root == null )
 			return -1;
 		return Integer.parseInt(root.toString());
+	}
+	
+	/**
+	 * 
+	 * @param para (int id)
+	 * @return
+	 */
+	public ArrayList<Ticket> getListTicketByIDEmployee(ArrayList<String> para)
+	{
+		ArrayList<Ticket> result = new ArrayList<Ticket>();
+		SoapObject root = getSoap(para, "getListTicketByIDEmployee");
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			Ticket tmp = new Ticket();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
 	}
 	
 }
