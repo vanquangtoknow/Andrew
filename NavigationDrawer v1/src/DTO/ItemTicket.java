@@ -43,7 +43,7 @@ public class ItemTicket {
     	this.setID(Integer.parseInt(root.getProperty(0).toString()));
     	this.setID_SaleItem(Integer.parseInt(root.getProperty(1).toString()));
     	this.setID_Ticket(Integer.parseInt(root.getProperty(2).toString()));
-		this.setPrice(Integer.parseInt(root.getProperty(3).toString()));
+		this.setPrice(Float.parseFloat(root.getProperty(3).toString()));
 		this.setQuality(Integer.parseInt(root.getProperty(4).toString()));
     }
     public ItemTicket()

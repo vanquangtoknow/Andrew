@@ -14,6 +14,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import DTO.Employee;
 import DTO.ItemTicket;
 import DTO.OrderExpense;
+import DTO.Ticket;
 import android.util.Log;
 
 public class WCFNail {
@@ -25,6 +26,38 @@ public class WCFNail {
 	private String ISERVICE = "INailService/";
 
 	public WCFNail() {
+	}
+	private SoapPrimitive getSoapPrimitive(ArrayList<String> para , String func)
+	{
+		SoapPrimitive root = null;
+		try {
+			root = (SoapPrimitive) getData(func, para, true)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return null;
+		}
+		return root;
+	}
+	private SoapObject getSoap(ArrayList<String> para , String func)
+	{
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData(func, para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return null;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return null;
+		}
+		return root;
 	}
 
 	public ArrayList<Object> getData(String METHOD_NAME,
@@ -119,45 +152,8 @@ public class WCFNail {
 		return result;
 
 	}
-	public ItemTicket getItemTicketById(ArrayList<String> para)
-	{
-		ItemTicket result = new ItemTicket();
-		SoapObject root = null;
-		try {
-			root = (SoapObject) getData("getItemTicketByID", para, false)
-					.get(0);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return result;
-		}
-		if (root == null) {
-			Log.e("error", "khong doc duoc");
-			return result;
-		}
-		result.getInfoFromSoap(root);
-		return result;
-	}
-	public ArrayList<ItemTicket> getListTicketBetween(ArrayList<String> para){
-		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
-		SoapObject root = null;
-		try {
-			root = (SoapObject) getData("getListBetween", para, false)
-					.get(0);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return result;
-		}
-		if (root == null) {
-			Log.e("error", "khong doc duoc");
-			return result;
-		}
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
-			ItemTicket tmp = new ItemTicket();
-			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
-		}
-		return result;
-	}
+	
+	
 	public ArrayList<OrderExpense> getAllExpense(ArrayList<String> para) {
 		// tao soapobject de nhan ket qua tra ve
 		ArrayList<OrderExpense> result = new ArrayList<OrderExpense>();
@@ -228,4 +224,115 @@ public class WCFNail {
 		Log.e(String.valueOf(result.size()), "123");
 		return result;
 	}
+	public ArrayList<ItemTicket> getListItemTicketByIDTicket(ArrayList<String> para)
+	{
+		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getListItemTicketByIDTicket", para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return result;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return result;
+		}
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			ItemTicket tmp = new ItemTicket();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+		}
+		return result;
+	}
+	public ItemTicket getItemTicketById(ArrayList<String> para)
+	{
+		ItemTicket result = new ItemTicket();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getItemTicketByID", para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return result;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return result;
+		}
+		result.getInfoFromSoap(root);
+		return result;
+	}
+	public ArrayList<Ticket> getListTicketBetween(ArrayList<String> para){
+		ArrayList<Ticket> result = new ArrayList<Ticket>();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getListBetween", para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return result;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return result;
+		}
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			Ticket tmp = new Ticket();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
+	}
+
+	public boolean deleteAllItemTicket(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "deleteAllItemTicket");
+		if(root == null )
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+
+	public boolean deleteItemTicket(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "deleteItemTicket");
+		if(root == null )
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public boolean deleteItemTicketByIDTicket(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "deleteItemTicketByIDTicket");
+		if(root == null )
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public int insertItemTicket(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "insertItemTicket");
+		if(root == null )
+			return -1;
+		return Integer.parseInt(root.toString());
+	}
+	
+	public boolean updateItemTicket(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "updateItemTicket");
+		if(root == null )
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public int getIDTicketMax(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getIDTicketMax");
+		if(root == null )
+			return -1;
+		return Integer.parseInt(root.toString());
+	}
+	
 }
