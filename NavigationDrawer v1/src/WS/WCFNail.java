@@ -1,14 +1,18 @@
 package WS;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapPrimitive;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+import org.xmlpull.v1.XmlPullParserException;
 
 import DTO.Employee;
+import DTO.ItemTicket;
 import DTO.OrderExpense;
 import android.util.Log;
 
@@ -23,9 +27,11 @@ public class WCFNail {
 	public WCFNail() {
 	}
 
-	public ArrayList<Object> getData(String METHOD_NAME,ArrayList<String> para, boolean isPrimitive) {
+	public ArrayList<Object> getData(String METHOD_NAME,
+			ArrayList<String> para, boolean isPrimitive) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		SoapObject resultSoap = null;
+
 		String SOAP_ACTION = NAMESPACE + ISERVICE + METHOD_NAME;
 		try {
 			// tao soapObject de thuc thi ket noi
@@ -37,12 +43,15 @@ public class WCFNail {
 				}
 			}
 			Log.e("WS", "1");
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);
+
 			envelope.dotNet = true;
 			Log.e("WS", "1");
 			envelope.setOutputSoapObject(request);
 			Log.e("WS", "2");
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(URL,10000);
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(URL,
+					10000);
 			// tao ket noi
 			Log.e("WS", "3");
 			Log.e(SOAP_ACTION, URL);
@@ -110,6 +119,45 @@ public class WCFNail {
 		return result;
 
 	}
+	public ItemTicket getItemTicketById(ArrayList<String> para)
+	{
+		ItemTicket result = new ItemTicket();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getItemTicketByID", para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return result;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return result;
+		}
+		result.getInfoFromSoap(root);
+		return result;
+	}
+	public ArrayList<ItemTicket> getListTicketBetween(ArrayList<String> para){
+		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getListBetween", para, false)
+					.get(0);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			return result;
+		}
+		if (root == null) {
+			Log.e("error", "khong doc duoc");
+			return result;
+		}
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			ItemTicket tmp = new ItemTicket();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+		}
+		return result;
+	}
 	public ArrayList<OrderExpense> getAllExpense(ArrayList<String> para) {
 		// tao soapobject de nhan ket qua tra ve
 		ArrayList<OrderExpense> result = new ArrayList<OrderExpense>();
@@ -125,6 +173,8 @@ public class WCFNail {
 			Log.e("123", "123");
 			return result;
 		}
+		// xu ly du lieu vua nhan duoc
+
 		for (int i = 0; i < root.getPropertyCount(); i++) {
 			OrderExpense newExpense = new OrderExpense();
 			SoapObject newSoap = (SoapObject) root.getProperty(i);
