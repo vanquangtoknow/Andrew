@@ -1,0 +1,5 @@
+Xem danh sach ticket cua mot employee
+List<Ticket>	list = bus.getListBetween(Curr_ControlEmployee.Naa.ID_Employee1, dayBegin, dayEnd);
+Mo ta: public List<Ticket> getListBetween(int id_emloyee, DateTime dayBegin, DateTime dayEnd);
+Test dateBegin: 11/23/2013
+	dateEnd: 
