@@ -1,0 +1,84 @@
+Them sale item
+	- Lay danh sach categories
+	- Lay danh sach sale item tu categories :
+		List<SaleItem> listSale = saleBus.getListByIDCategory(id);
+	- Luu cac ItemTicket xuong csdl
+		Dung cac listIdSale 
+		for (int i = 0; i < listIdSale.Count; i++)
+            { 
+                DataRow row = tableTicket.Rows[i];
+                item.ID_SaleItem = listIdSale.ElementAt(i);
+                item.ID_Ticket = id_ticket;
+                item.Price = float.Parse(row["colPrice"].ToString());
+                item.Quality = Int32.Parse(row["colQuality"].ToString());
+                itemBUS.insertItemTicket(item);
+            }
+	- Luu lai report, dung ham InsertReport(temp)
+		for (int i = 0; i < listIdSale.Count; i++)
+            {
+                DataRow row = tableTicket.Rows[i];
+                temp.Id_saleitem = listIdSale.ElementAt(i);
+                temp.Id_Employee = id_employee;
+                temp.Id_type_method = 1;
+                temp.Id_type_money = getTypeMoney(row["colType"].ToString());
+					// Product -1, Service -2, Extra 3, Tips -4, Coupon -5, Discount by Point
+                temp.Date = date;
+                temp.Money = float.Parse(row["colPrice"].ToString());
+                if (repBUS.InsertReport(temp))
+                {
+                }
+                else
+                {
+                    MessageBox.Show("Fail");
+                    break;
+                }
+            }
+			
+Chuc nang edit, su dung insert, delete report
+				if (numQuality.Value > Quality)
+                {
+                    neu so luong vua nhap vao lơn hon so luong hien co
+                    for (int i = Quality; i < numQuality.Value; i++)
+                    {
+                        bus.InsertReport(report);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(numQuality.Value + "< " + Quality);
+					neu so luong vua nhap vao be hon so luong hien co
+                    ReportDTO[] listReport = bus.GetIListtemReportWithEmployee(report.Id_Employee);
+                    int k = 0;
+                    for (int i = 0; i < listReport.Length; i++)
+                    {
+						//neu bang 0 thi khong lam gi het
+                        if (k == Quality-numQuality.Value)
+                        {
+                            break;
+                        }
+                        else
+                        {
+							// Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
+                            if (listReport[i].Date == report.Date && listReport[i].Id_saleitem == report.Id_saleitem)
+                            {
+                                bus.deletItemReport(listReport[i].Id);
+                                k++;
+                            }
+                        }
+                    }
+                }
+- Xoa 
+		Lay ItemTicket nay ra
+					ReportBUS reportBLL = new ReportBUS();
+                    ItemTicketBUS bus = new ItemTicketBUS();
+                    ItemTicket item = bus.getItemByID(listIDItemTicket.ElementAt(index));
+                    ReportDTO[] listReport = reportBLL.GetIListtemReportWithCondition(Curr_ControlTicket.Ticket.ID_Employee, item.ID_SaleItem);
+                    for (int i = 0; i < listReport.Length; i++)
+                    {
+                        if (listReport[i].Date == Curr_ControlTicket.Ticket.Date)
+                        {
+                            reportBLL.deletItemReport(listReport[i].Id);
+                            break;
+                        }
+                    }
+                    bus.deleteItemTicket(listIDItemTicket.ElementAt(index));

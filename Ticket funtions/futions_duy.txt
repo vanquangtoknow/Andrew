@@ -1,12 +1,4 @@
-Xem danh sach ticket cua mot employee
-List<Ticket>	list = bus.getListBetween(Curr_ControlEmployee.Naa.ID_Employee1, dayBegin, dayEnd);
-Mo ta: public List<Ticket> getListBetween(int id_emloyee, DateTime dayBegin, DateTime dayEnd);
-Test 
-input	dateBegin: 11/23/2013
-		dateEnd: 11/23/2013
-		id_employee: 1, 2, 3 gi do
-output 	List<Ticket>
-Lay danh sach itemticket 
+//--------------Lay danh sach itemticket 
 List<ItemTicket> list = bus.getListByIDTicket(Curr_ControlTicket.Ticket.ID);
 public List<ItemTicket> getListByIDTicket(int id_ticket);
 ItemTicketBUS
@@ -18,3 +10,30 @@ public ItemTicket getItemByID(int id);
 public List<ItemTicket> getListByIDTicket(int id_ticket);
 public int insertItemTicket(ItemTicket item);
 public bool updateItemTicket(ItemTicket item);
+//-------------Cac ham cho TIcket
+public bool deleteAllTicket();
+public bool deleteTicket(int id);
+public bool deleteTicketEmployeeWithDate(int Id_Employee, DateTime Date_From, DateTime Date_End);
+public bool deleteTicketEmployeeWithDateAndMethod(int Id_Employee, DateTime Date_From, DateTime Date_End, int method);
+public int getIDMax();
+public List<Ticket> getListBetween(int id_emloyee, DateTime dayBegin, DateTime dayEnd);
+public List<Ticket> getListByIDEmployee(int id);
+public int insertTicket(Ticket ticket);
+public bool updateTicket(Ticket ticket);
+//-------------Cac ham can lam cho SaleItem
+public bool DeleteSaleItem(int id);
+public bool DeleteSaleItemByIDCategory(int id_category);
+public int getIDMax();
+public List<SaleItem> getList();
+public List<SaleItem> getListByIDCategory(int id_category);
+public string getName(int id);
+public string getPrice(int id);
+public string getType(int id);
+public int insertSaleItem(SaleItem saleItem);
+public bool UpdateSaleItem(SaleItem saleItem);
+//-------------Cac ham can lam cho Category
+public int getIDMax();
+public List<Category> getList();
+//-------------Cac ham can lam cho Report
+public bool deletItemReport(int id);
+public bool InsertReport(ReportDTO report);
