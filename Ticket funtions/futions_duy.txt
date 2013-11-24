@@ -9,3 +9,12 @@ output 	List<Ticket>
 Lay danh sach itemticket 
 List<ItemTicket> list = bus.getListByIDTicket(Curr_ControlTicket.Ticket.ID);
 public List<ItemTicket> getListByIDTicket(int id_ticket);
+ItemTicketBUS
+public bool deleteAllItemTicket();
+public bool deleteItemTicket(int id);
+public bool deleteItemTicketByIDTicket(int id);
+public int getIDMax();
+public ItemTicket getItemByID(int id);
+public List<ItemTicket> getListByIDTicket(int id_ticket);
+public int insertItemTicket(ItemTicket item);
+public bool updateItemTicket(ItemTicket item);
