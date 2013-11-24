@@ -67,8 +67,8 @@ Chuc nang edit, su dung insert, delete report
                         }
                     }
                 }
-- Xoa 
-		Lay ItemTicket nay ra
+- Xoa	mot sale item
+		Lay ItemTicket nay ra, trong listReport se co nhieu dong cung sale item
 					ReportBUS reportBLL = new ReportBUS();
                     ItemTicketBUS bus = new ItemTicketBUS();
                     ItemTicket item = bus.getItemByID(listIDItemTicket.ElementAt(index));
@@ -82,3 +82,18 @@ Chuc nang edit, su dung insert, delete report
                         }
                     }
                     bus.deleteItemTicket(listIDItemTicket.ElementAt(index));
+-  Xoa mot Ticket
+	Xoa ItemTicket truoc, xoa ticket, roi xoa report
+		ItemTicketBUS itemBUS = new ItemTicketBUS();
+		TicketBUS bus = new TicketBUS();
+		itemBUS.deleteItemTicketByIDTicket(Curr_ControlTicket.Ticket.ID);
+		bus.deleteTicket(Curr_ControlTicket.Ticket.ID);
+		ReportBUS reportBLL = new ReportBUS();
+		ReportDTO[] listReport = reportBLL.GetIListtemReportWithEmployee(Curr_ControlTicket.Ticket.ID_Employee);
+		for (int i = 0; i < listReport.Length; i++)
+		{
+			if (listReport[i].Date == Curr_ControlTicket.Ticket.Date && listReport[i].Id_saleitem != -1)
+			{
+				reportBLL.deletItemReport(listReport[i].Id);
+			}
+		}
