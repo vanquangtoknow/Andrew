@@ -374,6 +374,31 @@ public class fgm_ticket extends Fragment {
 				listTickets.add(new Item("Ticket 1", "vi tri: " +position));
 				listTickets.add(new Item("Ticket 2", "vi tri: " +position));
 				listTickets.add(new Item("Ticket 2", "vi tri: " +position));
+				Thread threadtickets = new Thread()
+				{
+					@Override
+					public void run() {
+						try {
+							WCFNail nailservice = new WCFNail();
+							ArrayList<Employee> listemployeenail = new ArrayList<Employee>();
+							listemployeenail.addAll(nailservice.getAllEmployee());
+							listEmployee.clear();
+							//nailservice.getItemTicketById(para)
+							for(int i=0;i<listemployeenail.size();i++)
+							{
+								Item item = new Item(listemployeenail.get(i).getstrName(),"STT " + i);
+								listEmployee.add(item);
+							}
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									adapterEmployees.notifyDataSetChanged();
+								}
+							});
+						} catch (Exception e) {
+						}
+					}
+				};
 				adapterTickets.notifyDataSetChanged();
 			}
 		});

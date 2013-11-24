@@ -230,6 +230,12 @@ public class WCFNail {
 		Log.e(String.valueOf(result.size()), "123");
 		return result;
 	}
+	/**
+	 * Lay danh sach ItemTicket theo id ticket, co 
+	 * getListByIDTicket(int id_ticket);
+	 * @param para Chi co 1 param: int id_ticket 
+	 * @return ArrayList<ItemTicket>
+	 */
 	public ArrayList<ItemTicket> getListItemTicketByIDTicket(ArrayList<String> para)
 	{
 		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
@@ -252,8 +258,14 @@ public class WCFNail {
 		}
 		return result;
 	}
+	/**
+	 * Get Lis
+	 * @param para
+	 * @return
+	 */
 	public ItemTicket getItemTicketById(ArrayList<String> para)
 	{
+		
 		ItemTicket result = new ItemTicket();
 		SoapObject root = null;
 		try {
