@@ -83,6 +83,7 @@ public class TicketEditAdapter extends BaseAdapter {
 					@Override
 					public void run() {
 						WCFNail nailservice = new WCFNail();
+						int aa = ID_SaleItem;
 						String s_description = nailservice.getNameSaleItem(new ArrayList<String>(){{
 							add(Integer.toString(ID_SaleItem));
 						}});
