@@ -56,4 +56,15 @@ public class Ticket
     	this.setID(Integer.parseInt(root.getProperty(3).toString()));
     	this.setID_Employee(Integer.parseInt(root.getProperty(4).toString()));
     }
+    
+    public String view()
+    {
+    	String result ="";
+    	result = result + "Code :" + this.getCode() + "/n";  
+    	result = result + "Customer :" + this.getCustomer() + "/n";  
+    	result = result + "Date :" + this.getDate() + "/n";  
+    	result = result + "Id" + String.valueOf(this.getID()) + "/n";  
+    	result = result + "Id Customer :" + String.valueOf(this.getID_Employee()) + "/n";  
+    	return result;
+    }
 }

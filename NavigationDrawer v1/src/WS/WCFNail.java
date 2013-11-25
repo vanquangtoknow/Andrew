@@ -93,6 +93,7 @@ public class WCFNail {
 			// tao ket noi
 			Log.e("WS", "3");
 			Log.e(SOAP_ACTION, URL);
+			Log.e("errorWS", SOAP_ACTION);
 			androidHttpTransport.call(SOAP_ACTION, envelope);
 			// lay du lieu tra ve
 			Log.e("WS", "4");
@@ -117,7 +118,7 @@ public class WCFNail {
 			Log.e("WS", "5");
 
 		} catch (Exception e) {
-			Log.e("e1", e.getMessage());
+			Log.e("WSerror", e.getMessage());
 			return null;
 		}
 		return null;
@@ -360,11 +361,12 @@ public class WCFNail {
 	/**
 	 * 
 	 * @param para (int id)
-	 * @return
+	 * @return 
 	 */
 	public ArrayList<Ticket> getListTicketByIDEmployee(ArrayList<String> para)
 	{
 		ArrayList<Ticket> result = new ArrayList<Ticket>();
+		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "getListTicketByIDEmployee");
 		for( int i= 0 ; i < root.getPropertyCount() ; i++)
 		{

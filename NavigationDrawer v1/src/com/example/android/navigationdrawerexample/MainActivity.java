@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
         //vao man hinh login
         
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new fgm_ticket();
+        Fragment fragment = new DemoObjectFragment();
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	
@@ -297,6 +297,7 @@ public class MainActivity extends Activity {
 
 		addProduct("Option", "Login");
 		addProduct("Option", "Logout");
+		addProduct("Option", "Demo");
 
 	}
 	private int addProduct(String department, String product){
@@ -383,6 +384,13 @@ public class MainActivity extends Activity {
 					loginRow.setBackgroundColor(Color.parseColor("#D42B24"));
 					loginId.setText("NOT LOGIN !!!");
 					Fragment fragment = new loginFragment();
+					fragmentManager.beginTransaction()
+							.replace(R.id.content_frame, fragment).commit();
+				}
+				else if( childPosition == 2) 
+				{
+					isLogin = false;
+					Fragment fragment = new DemoObjectFragment();
 					fragmentManager.beginTransaction()
 							.replace(R.id.content_frame, fragment).commit();
 				}
