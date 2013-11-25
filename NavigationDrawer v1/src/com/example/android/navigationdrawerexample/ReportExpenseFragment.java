@@ -42,6 +42,7 @@ public class ReportExpenseFragment extends Fragment{
         // Empty constructor required for fragment subclasses
     }
 	
+	private boolean IsStop = false;
 	private ExpenseAdapter adapter;
 	private ArrayList<OrderExpense> arrayItem;
 	
@@ -141,6 +142,10 @@ public class ReportExpenseFragment extends Fragment{
 			@Override
 			public void run() {
 				try {
+					final String newS = S.substring(0, 10) + "T00:00:00";
+					final String newE = E.substring(0, 10) + "T23:59:59";
+					if(IsStop)
+						return;
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -163,8 +168,8 @@ public class ReportExpenseFragment extends Fragment{
 					try {
 						tmp = WS.getAllExpense(new ArrayList<String>() {
 							{
-								add(S);
-								add(E);
+								add(newS);
+								add(newE);
 							}
 						});
 						arrayItem.addAll(tmp);
@@ -182,7 +187,8 @@ public class ReportExpenseFragment extends Fragment{
 						// TODO Auto-generated catch block
 						Log.e("WSE", e1.getMessage());
 					}
-					
+					if(IsStop)
+						return;
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -253,6 +259,7 @@ public class ReportExpenseFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Log.e("dayClick","1");
+				
 				getData(single.getTag().toString(), single.getTag().toString(), buttonContainer, progress1);
 			}
 		});
@@ -410,4 +417,10 @@ public class ReportExpenseFragment extends Fragment{
 			v.setEnabled(false);
 		}
 	}
+    @Override
+    public void onPause()
+    {
+    	IsStop = true;
+    	super.onPause();
+    }
 }

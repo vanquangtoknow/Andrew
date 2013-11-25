@@ -38,6 +38,7 @@ public class ReportFragment extends Fragment {
 	public ReportFragment() {
 		// Empty constructor required for fragment subclasses
 	}
+	private boolean IsStop = false;
 	private String fulltext;
 	private ListAdapter adapter;
 	private ArrayList<Item> arrayItem;
@@ -52,14 +53,12 @@ public class ReportFragment extends Fragment {
 	public TableRow buttonContainer;
 	private RelativeLayout parent;
 	private ThreadPoolExecutor manageThread;
-	private BlockingQueue<Runnable> mWorkQueue;
+	private BlockingQueue<Runnable> mWorkQueue ;
 
-	/**
-	 * set lai cac gia tri date, month, year cho calendar
-	 */
 	DatePickerDialog.OnDateSetListener startTime = new DatePickerDialog.OnDateSetListener() {
 		@Override
 		public void onDateSet(DatePicker arg0, int arg1, int arg2, int arg3) {
+			// TODO Auto-generated method stub
 			myCalendar.set(Calendar.YEAR, arg1);
 			myCalendar.set(Calendar.MONTH, arg2);
 			myCalendar.set(Calendar.DAY_OF_MONTH, arg3);
@@ -90,9 +89,6 @@ public class ReportFragment extends Fragment {
 
 	};
 
-	/**
-	 * set tag dang xmlformat(yyyy-MM-dd'T'HH:mm:ss), set text(dd/MM/yyyy) cho edittext
-	 */
 	private void updateLabel1() {
 
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
@@ -103,6 +99,7 @@ public class ReportFragment extends Fragment {
 		start.setText(sdf.format(myCalendar.getTime()));
 		start.setTag(xmlSdf.format(myCalendar.getTime()));
 	}
+
 	private void updateLabel2() {
 
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
@@ -113,6 +110,7 @@ public class ReportFragment extends Fragment {
 		end.setText(sdf.format(myCalendar.getTime()));
 		end.setTag(xmlSdf.format(myCalendar.getTime()));
 	}
+
 	private void updateLabel3() {
 
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
@@ -129,8 +127,11 @@ public class ReportFragment extends Fragment {
 
 	public void addrow(final String value, final String name) {
 		getActivity().runOnUiThread(new Runnable() {
+
 			@Override
 			public void run() {
+				Log.e("addrowfullvalue", value);
+				Log.e("addrowfullname", name);
 				// TODO Auto-generated method stub
 				Item item = new Item();
 				item.name = name;
@@ -142,11 +143,15 @@ public class ReportFragment extends Fragment {
 
 	}
 
-	public void getData(final String S, final String E, final View button,final View progressBar) {
+	public void getData(final String S, final String E, final View button,
+			final View progressBar) {
 		manageThread.execute(new Runnable() {
+			
 			@Override
 			public void run() {
 				try {
+					final String newS = S.substring(0, 10) + "T00:00:00";
+					final String newE = E.substring(0, 10) + "T23:59:59";
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -156,20 +161,23 @@ public class ReportFragment extends Fragment {
 							adapter.Clear();
 							Log.e("GetData", "1");
 							togg.setEnabled(false);
+
 							progressBar.setVisibility(View.VISIBLE);
 							button.setVisibility(View.GONE);
 							Log.e("GetData", "2");
 						}
 					});
-					int total1 = 0;
-					int total2 = 0;
+
+					float total1 = 0;
+					float total2 = 0;
 					ArrayList<String> arrayName = new ArrayList<String>() {
 						{
 							add("Cash");
-							add("Gift Card");
 							add("Credit Card");
+							add("Gift Card");
 							add("Cheque");
 							add("No Charge");
+							add("Reward Card");
 							add("----------------------------------");
 							add("Total");
 							add("----------------------------------");
@@ -191,6 +199,7 @@ public class ReportFragment extends Fragment {
 							add("0");
 							add("0");
 							add("0");
+							add("0");
 							add("--------");
 							add("0");
 							add("--------");
@@ -206,78 +215,62 @@ public class ReportFragment extends Fragment {
 						}
 					};
 					// tao class xu ly WS
+					
 					WCFNail WS = new WCFNail();
+					ArrayList<String> para = new ArrayList<String>();
+					para.add(newS);
+					para.add(newE);
+					Log.e("test", "1");
+					ArrayList<Float> result = WS.getFullReport(para);
+					Log.e("test", String.valueOf( result.size()));
+					if(IsStop)
+						return;
 					// lay du leiu tu WS
-					for (int i = 0; i < 5; i++) {
-						final int pos = i;
-						Log.e("get", "1" + String.valueOf(i));
-						// set Value-- thuc hien ket noi internet
-						String data = "-";
-						try {
-							data = WS.getData("GetMoneyWithBetweenDay",new ArrayList<String>() {
-												{
-													add(S);
-													add(E);
-													add(String.valueOf(pos + 1));
-												}
-											}, true).get(0).toString();
-							
-							Log.e("DataReport", data);
-						} catch (Exception e) {
-							Log.e("timeout", "timeout");
-
-						}
-						Log.e("null", "null");
-
-						arrayValue.set(i, data);
+					for (int i = 0; i < 6; i++) {
+						if(IsStop)
+							return;
+						Log.e("test", "2");
+						arrayValue.set(i, result.get(i).toString());
+						Log.e("test", "3");
 						// tinh toan lai Total
-						total1 += Integer.parseInt(arrayValue.get(i).toString());
+						total1 += Float.parseFloat(arrayValue.get(i).toString());
 						// them vao listView
+						Log.e("test", "4");
 						addrow(arrayValue.get(i), arrayName.get(i));
 						Log.e("get", "2" + String.valueOf(i));
 					}
+					
 					Log.e("a", "1");
-					arrayValue.set(6, String.valueOf(total1));
+					arrayValue.set(7, String.valueOf(total1));
 					Log.e("a", "2");
-					addrow(arrayValue.get(5), arrayName.get(5));
-					Log.e("a", "3");
 					addrow(arrayValue.get(6), arrayName.get(6));
+					Log.e("a", "3");
 					addrow(arrayValue.get(7), arrayName.get(7));
+					addrow(arrayValue.get(8), arrayName.get(8));
 
 					for (int i = 0; i < 7; i++) {
+						if(IsStop)
+							return;
 						final int pos = i;
 						Log.e("get", "1" + String.valueOf(i));
 						// set Value
-						String data = "-";
-						try {
-							data = WS.getData("GetMoneyTypeWithBetweenDay",
-											new ArrayList<String>() {
-												{
-													add(S);
-													add(E);
-													add(String.valueOf(pos + 1));
-												}
-											}, true).get(0).toString();
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							Log.e("timeout", "timeout");
-						}
-
-						arrayValue.set(i + 8, data);
+						
+						arrayValue.set(i + 9, result.get(i+6).toString());
 						// tinh toan lai Total
-						total2 += Integer.parseInt(arrayValue.get(i + 8)
+						total2 += Float.parseFloat(arrayValue.get(i + 9)
 								.toString());
 						// them vao listView
-						addrow(arrayValue.get(i + 8), arrayName.get(i + 8));
+						addrow(arrayValue.get(i + 9), arrayName.get(i + 9));
 						Log.e("get", "2" + String.valueOf(i));
 					}
 					Log.e("a", "1");
-					arrayValue.set(16, String.valueOf(total2));
+					arrayValue.set(17, String.valueOf(total2));
 					Log.e("a", "2");
-					addrow(arrayValue.get(15), arrayName.get(15));
-					Log.e("a", "3");
 					addrow(arrayValue.get(16), arrayName.get(16));
-
+					Log.e("a", "3");
+					addrow(arrayValue.get(17), arrayName.get(17));
+					if(IsStop)
+						return;
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -303,29 +296,36 @@ public class ReportFragment extends Fragment {
 
 				}
 			}
-
+			
 		});
-
+		
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		// lay layout cho fragment
-		View rootView = inflater.inflate(R.layout.fragment_report, container,false);
+		View rootView = inflater.inflate(R.layout.fragment_report, container,
+				false);
 		getActivity().setTitle("FULL REPORT");
 		// set threadpool
 		// RejectedExecutionHandler implementation
 		mWorkQueue = new LinkedBlockingQueue<Runnable>();
-		RejectedExecutionHandler rejectionHandler = new RejectedExecutionHandler() {
+		RejectedExecutionHandler  rejectionHandler = new RejectedExecutionHandler() {
+	
 			@Override
-			public void rejectedExecution(Runnable r,ThreadPoolExecutor executor) {
+			public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+				// TODO Auto-generated method stub
+				
 			}
 		};
 		// Get the ThreadFactory implementation to use
 		ThreadFactory threadFactory = Executors.defaultThreadFactory();
 		// creating the ThreadPoolExecutor
-		manageThread = new ThreadPoolExecutor(2, 4, 10, TimeUnit.SECONDS,mWorkQueue, threadFactory, rejectionHandler);
+		manageThread = new ThreadPoolExecutor(2, 4, 10,
+				TimeUnit.SECONDS, mWorkQueue,
+				threadFactory, rejectionHandler);
+
 		// set layout cho tung view
 		Log.e("frag", "1");
 		ListView listview = (ListView) rootView.findViewById(R.id.listView1);
@@ -333,12 +333,12 @@ public class ReportFragment extends Fragment {
 		month = (Button) rootView.findViewById(R.id.MonthChoose1);
 		year = (Button) rootView.findViewById(R.id.YearChoose1);
 		day.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Log.e("dayClick", "1");
 				single.setText("D " + fulltext);
-				Log.e("Xem Ngay", single.getTag().toString());
 				getData(single.getTag().toString(), single.getTag().toString(),
 						buttonContainer, progress1);
 			}
@@ -348,8 +348,6 @@ public class ReportFragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Log.e("Xem ngay", fulltext.substring(3));
-				// gia tri la thang/nam
 				single.setText("M " + fulltext.substring(3));
 				Log.e("monClick", "1");
 				Date dt1 = new Date();
@@ -366,13 +364,12 @@ public class ReportFragment extends Fragment {
 				Log.e("monClick", "3");
 				dt2.setDate(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 				Log.e("monClick", "4");
-				Log.e("Xem thang","date1  " + single.getTag().toString());
-				Log.e("Xem thang","date2  " + single.getTag().toString());
-				// hai date nay giong nhau nhung chi lay thang thoi
-				getData(xmlSdf.format(dt1), xmlSdf.format(dt2),buttonContainer, progress1);
+				getData(xmlSdf.format(dt1), xmlSdf.format(dt2),
+						buttonContainer, progress1);
 			}
 		});
 		year.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -400,8 +397,8 @@ public class ReportFragment extends Fragment {
 		});
 
 		togg = (Switch) rootView.findViewById(R.id.toggleButton1);
-		togg.setTextOff("O-T");
-		togg.setTextOn("T-T");
+		togg.setTextOff("");
+		togg.setTextOn("");
 
 		togg.setOnClickListener(new OnClickListener() {
 
@@ -445,6 +442,177 @@ public class ReportFragment extends Fragment {
 			public void onClick(View v) {
 				getData(start.getTag().toString(), end.getTag().toString(),
 						okButton, progress);
+				// Thread networkThread = new Thread() {
+				// @Override
+				// public void run() {
+				// try {
+				// getActivity().runOnUiThread(new Runnable() {
+				// @Override
+				// public void run() {
+				// Toast.makeText(getActivity(),
+				// "Get Data... Pls wait a moment", Toast.LENGTH_LONG).show();
+				// adapter.Clear();
+				//
+				// progress.setVisibility(View.VISIBLE);
+				// okButton.setVisibility(View.GONE);
+				// }
+				// });
+				//
+				// int total1 = 0;
+				// int total2 = 0;
+				// ArrayList<String> arrayName = new ArrayList<String>() {
+				// {
+				// add("Card");
+				// add("Gift Card");
+				// add("Credit Card");
+				// add("Cheque");
+				// add("No Charge");
+				// add("----------------------------------");
+				// add("Total");
+				// add("----------------------------------");
+				// add("Product");
+				// add("Service");
+				// add("Extra");
+				// add("Tips");
+				// add("Coupon");
+				// add("Discount");
+				// add("Discount by Point");
+				// add("----------------------------------");
+				// add("Total");
+				// }
+				// };
+				// ArrayList<String> arrayValue = new ArrayList<String>() {
+				// {
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("--------");
+				// add("0");
+				// add("--------");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("0");
+				// add("--------");
+				// add("0");
+				// }
+				// };
+				// // tao class xu ly WS
+				// WCFNail WS = new WCFNail("ReportWS.asmx");
+				// // lay du leiu tu WS
+				// for (int i = 0; i < 5; i++) {
+				//
+				// final int pos = i;
+				// Log.e("get", "1" + String.valueOf(i));
+				// // set Value-- thuc hien ket noi internet
+				//
+				// String data="-";
+				// try {
+				// data = WS.getData("GetMoneyWithBetweenDay",
+				// new ArrayList<String>() {
+				// {
+				// add(start.getTag()
+				// .toString());
+				// add(end.getTag()
+				// .toString());
+				// add(String.valueOf(pos));
+				// }
+				// }, true).get(0).toString();
+				// } catch (Exception e) {
+				// Log.e("timeout","timeout");
+				//
+				// }
+				// Log.e("null","null");
+				//
+				// arrayValue.set(
+				// i,
+				// data);
+				// // tinh toan lai Total
+				// total1 += Integer.parseInt(arrayValue.get(i)
+				// .toString());
+				// // them vao listView
+				// addrow(arrayValue.get(i), arrayName.get(i));
+				// Log.e("get", "2" + String.valueOf(i));
+				// }
+				// Log.e("a", "1");
+				// arrayValue.set(6, String.valueOf(total1));
+				// Log.e("a", "2");
+				// addrow(arrayValue.get(5), arrayName.get(5));
+				// Log.e("a", "3");
+				// addrow(arrayValue.get(6), arrayName.get(6));
+				// addrow(arrayValue.get(7), arrayName.get(7));
+				//
+				// for (int i = 0; i < 7; i++) {
+				// final int pos = i;
+				// Log.e("get", "1" + String.valueOf(i));
+				// // set Value
+				// String data="-";
+				// try {
+				// data = WS.getData(
+				// "GetMoneyTypeWithBetweenDay",
+				// new ArrayList<String>() {
+				// {
+				// add(start.getTag()
+				// .toString());
+				// add(end.getTag()
+				// .toString());
+				// add(String.valueOf(pos));
+				// }
+				// }, true).get(0).toString();
+				// } catch (Exception e) {
+				// // TODO Auto-generated catch block
+				// Log.e("timeout","timeout");
+				// }
+				//
+				// arrayValue.set(
+				// i + 8,
+				// data);
+				// // tinh toan lai Total
+				// total2 += Integer.parseInt(arrayValue
+				// .get(i + 8).toString());
+				// // them vao listView
+				// addrow(arrayValue.get(i + 8),
+				// arrayName.get(i + 8));
+				// Log.e("get", "2" + String.valueOf(i));
+				// }
+				// Log.e("a", "1");
+				// arrayValue.set(16, String.valueOf(total2));
+				// Log.e("a", "2");
+				// addrow(arrayValue.get(15), arrayName.get(15));
+				// Log.e("a", "3");
+				// addrow(arrayValue.get(16), arrayName.get(16));
+				//
+				// getActivity().runOnUiThread(new Runnable() {
+				// @Override
+				// public void run() {
+				// progress.setVisibility(View.GONE);
+				// okButton.setVisibility(View.VISIBLE);
+				// }
+				// });
+				//
+				// } catch (Exception e) {
+				// getActivity().runOnUiThread(new Runnable() {
+				// @Override
+				// public void run() {
+				// progress.setVisibility(View.GONE);
+				// okButton.setVisibility(View.VISIBLE);
+				// Toast.makeText(getActivity(),
+				// "Internet Connection Problem !! Timeout..",
+				// Toast.LENGTH_LONG).show();
+				// }
+				// });
+				// Log.e("WSE", e.getMessage());
+				//
+				// }
+				// }
+				// };
+				// networkThread.start();
+
 			}
 		});
 		start.setOnClickListener(new OnClickListener() {
@@ -485,16 +653,17 @@ public class ReportFragment extends Fragment {
 		arrayItem = new ArrayList<Item>();
 		adapter = new ListAdapter(getActivity(), arrayItem);
 		listview.setAdapter(adapter);
-		
 		// kiem tra login
-		/*if (((MainActivity) getActivity()).getLogin() == false) {
+		if (((MainActivity) getActivity()).getLogin() == false) {
 			Log.e("NOTLOGIN", "1");
 			disable(parent);
-		}*/
+		}
+		
 		Log.e("frag", "4");
 		try {
 			getActivity().runOnUiThread(new Runnable() {
 				@Override
+				
 				public void run() {
 					adapter.notifyDataSetChanged();
 					Log.e("frag", "00");
@@ -521,33 +690,34 @@ public class ReportFragment extends Fragment {
 
 	@Override
 	public void onPause() {
-
+		
 		Log.e("shutdown", "start");
-
+		
 		Runnable[] runnableArray = new Runnable[mWorkQueue.size()];
-		// Populates the array with the Runnables in the queue
-		mWorkQueue.toArray(runnableArray);
-		// Stores the array length in order to iterate over the array
-		int len = runnableArray.length;
-		/*
-		 * Iterates over the array of Runnables and interrupts each one's
-		 * Thread.
-		 */
-		synchronized (this) {
-			// Iterates over the array of tasks
-			for (int runnableIndex = 0; runnableIndex < len; runnableIndex++) {
-				// Gets the current thread
-				Thread thread = (Thread) runnableArray[runnableIndex];
-				// if the Thread exists, post an interrupt to it
-				if (null != thread) {
-					thread.interrupt();
-				}
-			}
-		}
+        // Populates the array with the Runnables in the queue
+        mWorkQueue.toArray(runnableArray);
+        // Stores the array length in order to iterate over the array
+        int len = runnableArray.length;
+        /*
+         * Iterates over the array of Runnables and interrupts each one's Thread.
+         */
+        synchronized (this) {
+            // Iterates over the array of tasks
+            for (int runnableIndex = 0; runnableIndex < len; runnableIndex++) {
+                // Gets the current thread
+                Thread thread = (Thread) runnableArray[runnableIndex];
+                // if the Thread exists, post an interrupt to it
+                if (null != thread) {
+                    thread.interrupt();
+                }
+            }
+        }
+        IsStop = true;
 		manageThread.shutdownNow();
 		Log.e("shutdown", "end");
 		super.onPause();
 
 	}
+	
 
 }
