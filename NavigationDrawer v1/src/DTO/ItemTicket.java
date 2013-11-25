@@ -5,6 +5,17 @@ import org.ksoap2.serialization.SoapObject;
 public class ItemTicket {
 	private int ID ;
 	private int ID_SaleItem ;
+	private int ID_Ticket ;
+	private int Quality ;
+	private float Price ;
+	public ItemTicket(int id, int idsaleitem,int qualiity, int idticket, float price)
+	{
+		this.ID=id;
+		this.ID_SaleItem = idsaleitem;
+		this.ID_Ticket = idticket;
+		this.Price = price;
+		this.Quality  = qualiity;
+	}
 	public int getID_SaleItem() {
 		return ID_SaleItem;
 	}
@@ -29,9 +40,7 @@ public class ItemTicket {
 	public void setPrice(float price) {
 		Price = price;
 	}
-	private int ID_Ticket ;
-	private int Quality ;
-	private float Price ;
+	
 	public int getID() {
 		return ID;
 	}

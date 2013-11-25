@@ -90,7 +90,7 @@ public class fgm_ticket extends Fragment {
 	private ListView lvCategories;
 	private ListView lvServices;
 	private ListView lvTicketAdd;
-	private final ArrayList<ItemTicketEdit> listTicketAdd = new ArrayList<ItemTicketEdit>();
+	private final ArrayList<ItemTicket> listTicketAdd = new ArrayList<ItemTicket>();
 	private final ArrayList<Item> listCategories = new ArrayList<Item>();
 	private final ArrayList<Item> listServices = new ArrayList<Item>();
 	private ListAdapter adapterCategories;
@@ -323,7 +323,6 @@ public class fgm_ticket extends Fragment {
 			}
 		});
 
-
 		okButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -368,10 +367,10 @@ public class fgm_ticket extends Fragment {
 		updateLabel2();
 		updateLabel3();
 		adapterEmployees = new ListBaseAdapter(getActivity(),listEmployee);
-		adapterEmployees.initListBaseAdapter(1);
+		adapterEmployees.initListBaseAdapter(1, 1);
 		lvEmployees.setAdapter(adapterEmployees);
 		adapterTickets = new ListBaseAdapter(getActivity(), listTickets);
-		adapterTickets.initListBaseAdapter(2);
+		adapterTickets.initListBaseAdapter(2,1);
 		lvTickets.setAdapter(adapterTickets);
 		/**
 		 * Lay toan bo danh sach nhan vien, neu ds>0 thi lay danh sach ticket cua nhan vien dau tien
@@ -425,6 +424,8 @@ public class fgm_ticket extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, final int position,long arg3)
 			{
+				adapterEmployees.setSelectedItem(position);
+				adapterEmployees.notifyDataSetChanged();
 				Thread threadtickets = new Thread()
 				{
 					@Override
@@ -432,6 +433,7 @@ public class fgm_ticket extends Fragment {
 						try {
 							WCFNail nailservice = new WCFNail();
 							listTickets.clear();
+							adapterTickets.setSelectedItem(0);
 							listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
 								{
 									add(Integer.toString(listEmployee.get(position).getID_Employee()));
@@ -464,16 +466,30 @@ public class fgm_ticket extends Fragment {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				idTicketPresent = Integer.toString(listTickets.get(arg2).getID());
+				adapterTickets.setSelectedItem(arg2);
+				adapterTickets.notifyDataSetChanged();
 				Thread threadupdateReport = new Thread()
 				{
+					
 					@Override
 					public void run() {
 						WCFNail nailservice = new WCFNail();
 						listEdits.clear();
+						// Dong dau tien cua Item ticket de view Type, Quality, Description, Price
+						listEdits.add(new ItemTicket(-1, -1, -1, -1, -1));
+						listEdits.add(new ItemTicket());
 						listEdits.addAll(nailservice.getListItemTicketByIDTicket(
 								new ArrayList<String>(){{
 									add(idTicketPresent);
 								}}));
+						if(listEdits.size()+1<13)
+						{
+							int count = 13-listEdits.size();
+							for(int i=0;i<count;i++)
+							{
+								listEdits.add(new ItemTicket(-2, -2, -2, -2, -2));
+							}
+						}
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -486,8 +502,7 @@ public class fgm_ticket extends Fragment {
 				threadupdateReport.start();
 			}
 		});
-		
-		
+
 		/*Thread threadTicketEditAll = new Thread()
 		{
 			@Override
@@ -524,10 +539,8 @@ public class fgm_ticket extends Fragment {
 		});
 		// endregion
 		// region them du lieu maus
-		
-	
-			
 			//-------them du lieu cho categories, va services
+		
 			listCategories.add(new Item("vava", "1"));
 			listCategories.add(new Item("vava", "1"));
 			listCategories.add(new Item("vava", "1"));
@@ -563,8 +576,8 @@ public class fgm_ticket extends Fragment {
 					lvCategories.setAdapter(adapterCategories);
 					adapterServices = new ListAdapter(getActivity(), listServices);
 					lvServices.setAdapter(adapterServices);
-					//adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
-					//lvTicketAdd.setAdapter(adapterTicketAdd);
+					adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
+					lvTicketAdd.setAdapter(adapterTicketAdd);
 					dlgbtnok_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtnok_ticketadd);
 					dlgbtncancel_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtncancel_ticketadd);
 					dlgbtncancel_ticketadd.setOnClickListener(new OnClickListener() {
@@ -579,14 +592,6 @@ public class fgm_ticket extends Fragment {
 							dialogadd.dismiss();
 						}
 					});
-					lvServices.setOnItemClickListener(new OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> arg0,
-								View arg1, int postion, long arg3) {
-							//Toast.makeText(getActivity(), "position", Toast.LENGTH_SHORT).show();
-							
-						}
-					});
 					lvServices.setOnItemLongClickListener(new OnItemLongClickListener() {
 						@Override
 						public boolean onItemLongClick(AdapterView<?> arg0,View arg1, int arg2, long arg3) {
@@ -596,13 +601,11 @@ public class fgm_ticket extends Fragment {
 					        builder.setMessage("Add sale this sale item")
 					               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					                   public void onClick(DialogInterface dialog, int id) {
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo ta 1 Day la mo ta 1 Day la mo ta 1", "$70"));
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$70"));
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$60"));
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo ta 1 Day la mo ta 1 Day la mo ta 1", "$70"));
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$70"));
-											listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$60"));
-											adapterTicketAdd.notifyDataSetChanged();
+					                	   listTicketAdd.clear();
+					                	   listTicketAdd.add(new ItemTicket(2, 2, 1, 1, 1));
+					                	   listTicketAdd.add(new ItemTicket(2, 2, 1, 1, 1));
+					                	   listTicketAdd.add(new ItemTicket(2, 2, 1, 1, 1));
+					                	   adapterTicketAdd.notifyDataSetChanged();
 					                   }
 					               })
 					               .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
@@ -635,97 +638,119 @@ public class fgm_ticket extends Fragment {
 			lvEdits.setOnItemLongClickListener (new OnItemLongClickListener() {
 				  public boolean onItemLongClick(AdapterView parent, View view, int position, long id)
 				  {
-					  String[] dsaction = {"Edit", "Delete"};
-					  AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-					    builder.setTitle("Please choose action: ")
-					           .setSingleChoiceItems(dsaction, 0, new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									action_Ticketfunction = which;
-								}
-							}).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-					               @Override
-					               public void onClick(DialogInterface dialog, int id) {
-					                	   	switch (action_Ticketfunction)
-					                	   	{
-					                	   	case 0:
-					                	   		// region chon chuc nang edit sau khi cho 1 sale item
-					                	   		final Dialog dialogedit = new Dialog(getActivity());
-					                	   		dialogedit.setContentView(R.layout.dialog_ticketedit);
-					                	   		dialogedit.setTitle("Ban hay nhap diem cho hoc sinh" + action_Ticketfunction);
-					        					// set the custom dialog components - text, image and button
-					        					//TextView text = (TextView) dialog.findViewById(R.id.textView1);
-					        					//text.setText("Nhap diem cho ban quang: ");
-					        					//edittext = (EditText) dialog.findViewById(R.id.editText1);
-					        					//ImageView image = (ImageView) dialog.findViewById(R.id.image);
-					        					//image.setImageResource(R.drawable.ic_launcher);
-					        					
-					        					Button dialogButtonok = (Button) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
-					        					dialogButtonok.setOnClickListener(new OnClickListener() {
-					        						@Override
-					        						public void onClick(View v) {
-					        							dialogedit.dismiss();
-					        							action_Ticketfunction = 0;
-					        							//String diem = edittext.getText().toString();
-					        							//showdata(diem);
-					        							//textview.setText("diem da nhap " +diem);
-					        							
-					        						}
-					        					});
-					        					dialogedit.show();
-					        					// endregion
-					                	   		break;
-											case 1:
-												//region  chon chuc nang delete
-												AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-												builder.setMessage("Are you sure when delete this sale item" + action_Ticketfunction)
-												       .setTitle("Alert !!!")
-												       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-														@Override
-														public void onClick(DialogInterface dialog, int which) {
-															action_Ticketfunction = 0;
-														}
-													}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-														@Override
-														public void onClick(DialogInterface dialog, int which) {
-															action_Ticketfunction = 0;
-														}
-													});
-												builder.create().show();
-												break;
-												// endregion
-	
-											}
-					                   }
-					           })
-					           .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
-					               @Override
-					               public void onClick(DialogInterface dialog, int id) {
-					                   
-					               }
-					           });
-					    builder.create().show();
-					  /*String s = listEdits.get(position).getDescription();
-						final Dialog dialog = new Dialog(getActivity());
-						dialog.setContentView(R.layout.dialog_ticketedit);
-						dialog.setTitle("Ban hay nhap diem cho hoc sinh");
-						Button dialogButton = (Button) dialog.findViewById(R.id.dlgbtn_ok);
-						// if button is clicked, close the custom dialog
-						dialogButton.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								dialog.dismiss();
-							}
-						});
-			 
-						dialog.show();
-					  */
+					  ItemTicket itemticket = listEdits.get(position);
+					  if(itemticket.getID()==-1&&itemticket.getID_SaleItem()==-1&&itemticket.getID_Ticket()==-1&&itemticket.getPrice()==-1&&itemticket.getQuality()==-1)
+					  {
+						  return false;
+					  }
+					  else
+					  {
+						  if(itemticket.getID()==-2&&itemticket.getID_SaleItem()==-2&&itemticket.getID_Ticket()==-2&&itemticket.getPrice()==-2&&itemticket.getQuality()==-2)
+						  {
+							  return false;
+						  }
+						  else
+						  {
+							  String[] dsaction = {"Edit", "Delete"};
+							  AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+							    builder.setTitle("Please choose action: ")
+							           .setSingleChoiceItems(dsaction, 0, new DialogInterface.OnClickListener() {
+										@Override
+										public void onClick(DialogInterface dialog, int which) {
+											action_Ticketfunction = which;
+										}
+									}).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+							               @Override
+							               public void onClick(DialogInterface dialog, int id) {
+							                	   	switch (action_Ticketfunction)
+							                	   	{
+							                	   	case 0:
+							                	   		// region chon chuc nang edit sau khi cho 1 sale item
+							                	   		final Dialog dialogedit = new Dialog(getActivity());
+							                	   		dialogedit.setContentView(R.layout.dialog_ticketedit);
+							                	   		dialogedit.setTitle("Ban hay nhap diem cho hoc sinh" + action_Ticketfunction);
+							        					// set the custom dialog components - text, image and button
+							        					//TextView text = (TextView) dialog.findViewById(R.id.textView1);
+							        					//text.setText("Nhap diem cho ban quang: ");
+							        					//edittext = (EditText) dialog.findViewById(R.id.editText1);
+							        					//ImageView image = (ImageView) dialog.findViewById(R.id.image);
+							        					//image.setImageResource(R.drawable.ic_launcher);
+							        					
+							        					Button dialogButtonok = (Button) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
+							        					dialogButtonok.setOnClickListener(new OnClickListener() {
+							        						@Override
+							        						public void onClick(View v) {
+							        							dialogedit.dismiss();
+							        							action_Ticketfunction = 0;
+							        						}
+							        					});
+							        					dialogedit.show();
+							        					// endregion
+							                	   		break;
+													case 1:
+														//region  chon chuc nang delete
+														AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+														builder.setMessage("Are you sure when delete this sale item" + action_Ticketfunction)
+														       .setTitle("Alert !!!")
+														       .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int which) {
+																	action_Ticketfunction = 0;
+																}
+															}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+																@Override
+																public void onClick(DialogInterface dialog, int which) {
+																	action_Ticketfunction = 0;
+																}
+															});
+														builder.create().show();
+														break;
+														// endregion
+			
+													}
+							                   }
+							           })
+							           .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
+							               @Override
+							               public void onClick(DialogInterface dialog, int id) {
+							                   
+							               }
+							           });
+							    builder.create().show();
+						  }
+					  }
 					  return true;
-				    //do your stuff here
 				  }
 				});
 
 			return rootView;
+	}
+	public void getListCategories()
+	{
+		/*Thread threadCategories = new Thread(){
+			@Override
+			public void run() {
+				WCFNail nailservice = new WCFNail();
+				listCategories.clear();
+				adapterCategories.setSelectedItem(0);
+				listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
+					{
+						add(Integer.toString(listEmployee.get(position).getID_Employee()));
+					}
+				}));
+				if(listTickets.size()>0)
+				{
+					idTicketPresent = Integer.toString(listTickets.get(0).getID());
+				}
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						adapterTickets.notifyDataSetChanged();
+					}
+				});
+			}
+		};
+		threadCategories.start();*/
 	}
 	public void disable(View v) {
 		if (v instanceof ViewGroup) {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import DTO.Item;
 import DTO.ItemTicket;
 import DTO.ItemTicketEdit;
+import WS.WCFNail;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,17 +51,58 @@ public class TicketEditAdapter extends BaseAdapter {
 	
 			convertView = infalInflater.inflate(R.layout.adapter_row_ticketedit, null);
 		}
-		Log.e("Adapter- get TicketEdit adapter", String.valueOf(position));
-		TextView type = (TextView)convertView.findViewById(R.id.tvtype);
-		//type.setText(array.get(position).getTpye());
-		type.setText("Sale ID" + array.get(position).getID_SaleItem());
-		TextView quality = (TextView)convertView.findViewById(R.id.tvquality);
-		quality.setText("So luong" + Integer.toString(array.get(position).getQuality()));
-		TextView description = (TextView)convertView.findViewById(R.id.tvdescription);
-		//description.setText();
-		description.setText("Gia ca" + array.get(position).getPrice());
-		TextView price = (TextView)convertView.findViewById(R.id.tvprice);
-		price.setText("Id ticket" + array.get(position).getID_Ticket());
+		int ID = array.get(position).getID() ;
+		final int ID_SaleItem = array.get(position).getID_SaleItem() ;
+		int ID_Ticket = array.get(position).getID_Ticket() ;
+		final int Quality = array.get(position).getQuality() ;
+		float Price =  array.get(position).getPrice()  ;
+		final TextView type = (TextView)convertView.findViewById(R.id.tvtype);
+		final TextView quality = (TextView)convertView.findViewById(R.id.tvquality);
+		final TextView description = (TextView)convertView.findViewById(R.id.tvdescription);
+		final TextView price = (TextView)convertView.findViewById(R.id.tvprice);
+		if(ID==-1&&ID_SaleItem==-1&&ID_Ticket==-1&&Quality==-1&&Price==-1)
+		{
+			type.setText("Type");
+			quality.setText("Quality");
+			description.setText("Description");
+			price.setText("Price");
+		}
+		else
+		{
+			if(ID==-2&&ID_SaleItem==-2&&ID_Ticket==-2&&Quality==-2&&Price==-2)
+			{
+				type.setText("");
+				quality.setText("");
+				description.setText("");
+				price.setText("");
+			}
+			else
+			{
+				Thread a = new Thread()
+				{
+					@Override
+					public void run() {
+						WCFNail nailservice = new WCFNail();
+						String s_description = nailservice.getNameSaleItem(new ArrayList<String>(){{
+							add(Integer.toString(ID_SaleItem));
+						}});
+						String s_type = nailservice.getTypeSaleItem(new ArrayList<String>(){{
+							add(Integer.toString(ID_SaleItem));
+						}});
+						String s_price = nailservice.getPriceSaleItem(new ArrayList<String>(){{
+							add(Integer.toString(ID_SaleItem));
+						}});
+						type.setText(s_type);
+						quality.setText(Integer.toString(Quality));
+						description.setText(s_description);
+						price.setText(s_price);
+						}
+					
+				};
+				a.start();
+				
+			}
+		}
 		return convertView;
 	}
 	public void Clear()

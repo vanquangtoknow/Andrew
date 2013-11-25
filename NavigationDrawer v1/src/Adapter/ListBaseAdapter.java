@@ -18,13 +18,21 @@ import android.widget.TextView;
 
 public class ListBaseAdapter extends BaseAdapter{
 	private Context context; 
-	//private ArrayList<Item> array;
+	
 	private ArrayList<Object> array;
-	private int type;
+	private int typeList;
+	private int typeView;
 	private int selectedItem;
-	public void initListBaseAdapter(int type)
+	/** Neu typeList = 1 => listemployees, typeList = 2 => listTickets
+	 * Neu typeView =1 thi view base_row_item, typeView =2 thi view la row_item
+	 * @param typeList loai cua list
+	 * @param typeView loai cua view
+	 * 
+	 */
+	public void initListBaseAdapter(int typeList, int typeView)
 	{
-		this.type = type;
+		this.typeList = typeList;
+		this.typeView = typeView;
 	}
     public void setSelectedItem(int position) {
         selectedItem = position;
@@ -58,20 +66,27 @@ public class ListBaseAdapter extends BaseAdapter{
 		if( convertView == null)
 		{
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = infalInflater.inflate(R.layout.row_item, null);
+			switch (typeView) {
+			case 1:
+				convertView = infalInflater.inflate(R.layout.base_row_item, null);
+				break;
+			case 2:
+				convertView = infalInflater.inflate(R.layout.row_item, null);
+			default:
+				break;
+			}
 		}
-		Log.e("Adapter-getview2", String.valueOf(position));
 		TextView name = (TextView)convertView.findViewById(R.id.personname);
-		
-		switch (type) {
+		switch (typeList) {
 		case 1:
 			Employee employee = (Employee)array.get(position);
 			name.setText(employee.getstrName());
 			break;
-
-		default:
+		case 2:
 			Ticket ticket = (Ticket) array.get(position);
 			name.setText(ticket.getCode().trim());
+			break;
+		default:
 			break;
 		}
         if (position == selectedItem)

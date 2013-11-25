@@ -26,8 +26,6 @@ public class DemoObjectFragment extends Fragment {
     	
         final View rootView = inflater.inflate(R.layout.fragment_collection_object, container, false);
         Bundle args = getArguments();
-        
-        
         Thread networkThread = new Thread() {
 			@Override
 			public void run() {
@@ -44,7 +42,6 @@ public class DemoObjectFragment extends Fragment {
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							
 					        ((TextView) rootView.findViewById(android.R.id.text1)).setText(tmp.get(0).view());
 						}
 					});
