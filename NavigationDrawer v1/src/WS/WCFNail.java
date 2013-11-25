@@ -548,6 +548,13 @@ public class WCFNail {
 		
 	}
 	
-	
+	public Boolean InsertReport(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "InsertReport");
+		if(root == null )
+			return false;
+		return Boolean.parseBoolean(root.toString());
+		
+	}
 	
 }
