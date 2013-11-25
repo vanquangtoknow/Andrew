@@ -15,6 +15,7 @@ import DTO.Category;
 import DTO.Employee;
 import DTO.ItemTicket;
 import DTO.OrderExpense;
+import DTO.ReportDTO;
 import DTO.SaleItem;
 import DTO.Ticket;
 import android.util.Log;
@@ -547,7 +548,6 @@ public class WCFNail {
 		return Boolean.parseBoolean(root.toString());
 		
 	}
-	
 	public Boolean InsertReport(ArrayList<String> para)
 	{
 		SoapPrimitive root = getSoapPrimitive(para, "InsertReport");
@@ -557,4 +557,17 @@ public class WCFNail {
 		
 	}
 	
+	public ArrayList<ReportDTO> GetIListtemReportWithEmployee(ArrayList<String> para)
+	{
+		ArrayList<ReportDTO> result = new ArrayList<ReportDTO>();
+		Log.e("gettbid", "1");
+		SoapObject root = getSoap(para, "GetIListtemReportWithEmployee");
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			ReportDTO tmp = new ReportDTO();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
+	}
 }
