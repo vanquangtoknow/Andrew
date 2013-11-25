@@ -445,7 +445,7 @@ public class WCFNail {
 	 */
 	public String getNameSaleItem(ArrayList<String> para)
 	{
-		SoapPrimitive root = getSoapPrimitive(para, "getNameSaleItem");
+		SoapObject root = getSoap(para, "getNameSaleItem");
 		if(root == null )
 			return "-1";
 		return (root.toString());
