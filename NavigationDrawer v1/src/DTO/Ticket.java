@@ -4,6 +4,15 @@ import org.ksoap2.serialization.SoapObject;
 
 public class Ticket
 {
+	public Ticket(int id, String name)
+	{
+		this.ID = id;
+		this.Customer = Customer;
+	}
+	public Ticket()
+	{
+		
+	}
     private int ID ;
     public int getID() {
 		return ID;

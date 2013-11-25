@@ -10,6 +10,7 @@ public class Employee {
 		strCity = "TuyHoa";
 		
 	}
+	
 	 private int ID_Employee;
      public int getID_Employee()
      {

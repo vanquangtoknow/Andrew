@@ -17,16 +17,18 @@ import java.util.concurrent.TimeUnit;
 
 
 import Adapter.ListAdapter;
+import Adapter.ListBaseAdapter;
 import Adapter.TicketEditAdapter;
 import DTO.Employee;
 import DTO.Item;
+import DTO.ItemTicket;
 import DTO.ItemTicketEdit;
+import DTO.Ticket;
 import WS.WCFNail;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,7 +47,6 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -54,6 +55,7 @@ public class fgm_ticket extends Fragment {
 	}
 	
 	// region Khai bao cac control
+	
 	private String fulltext;
 	private ListAdapter adapter;
 	private ArrayList<Item> arrayItem;
@@ -70,15 +72,19 @@ public class fgm_ticket extends Fragment {
 	private ThreadPoolExecutor manageThread;
 	private BlockingQueue<Runnable> mWorkQueue;
 	TabHost tabhost;
+	// Luu id hien tai cua nguoi dung
+	private final String idEmployeePresent ="";
+	// Luu id ticket hien tai
+	private String idTicketPresent="";
 	private ListView lvEmployees;
 	private ListView lvTickets;
 	private ListView lvEdits;
-	private ListAdapter adapterEmployees;
-	private ArrayList<Item> listEmployee = new ArrayList<Item>();
-	private ListAdapter adapterTickets;
-	private ArrayList<Item> listTickets = new ArrayList<Item>();
+	private ListBaseAdapter adapterEmployees;
+	public ArrayList<Employee> listEmployee = new ArrayList<Employee>();
+	private ListBaseAdapter adapterTickets;
+	public ArrayList<Ticket> listTickets = new ArrayList<Ticket>();
 	private TicketEditAdapter adapterEdits;
-	private ArrayList<ItemTicketEdit> listEdits= new ArrayList<ItemTicketEdit>();
+	private final ArrayList<ItemTicket> listEdits= new ArrayList<ItemTicket>();
 	public String rs = "";
 	
 	private ListView lvCategories;
@@ -361,48 +367,152 @@ public class fgm_ticket extends Fragment {
 		updateLabel1();
 		updateLabel2();
 		updateLabel3();
-		
-		adapterEmployees = new ListAdapter(getActivity(), listEmployee);
+		adapterEmployees = new ListBaseAdapter(getActivity(),listEmployee);
+		adapterEmployees.initListBaseAdapter(1);
 		lvEmployees.setAdapter(adapterEmployees);
-		adapterTickets = new ListAdapter(getActivity(), listTickets);
+		adapterTickets = new ListBaseAdapter(getActivity(), listTickets);
+		adapterTickets.initListBaseAdapter(2);
 		lvTickets.setAdapter(adapterTickets);
-		
+		/**
+		 * Lay toan bo danh sach nhan vien, neu ds>0 thi lay danh sach ticket cua nhan vien dau tien
+		 * Va lay ra danh sach cho Tab report edit
+		 * Luu lai idTicketPresent cua ticket dau tien nay nho trim()
+		 */
+		Thread threadGetEmployee =  new Thread(){
+			@Override
+			public void run() {
+				try {
+					WCFNail nailservice = new WCFNail();
+					listEmployee.clear();
+					listEmployee.addAll(nailservice.getAllEmployee());
+					if(listEmployee.size()>0)
+					{
+						listTickets.clear();
+						listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
+							{
+								add(Integer.toString(listEmployee.get(0).getID_Employee()));
+							}
+						}));
+						if(listTickets.size()>0)
+						{
+							idTicketPresent = Integer.toString(listTickets.get(0).getID());
+							listEdits.clear();
+							listEdits.addAll(nailservice.getListItemTicketByIDTicket(
+									new ArrayList<String>(){{
+										add(idTicketPresent);
+									}}));
+						}
+					}
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							adapterEdits.notifyDataSetChanged();
+							adapterEmployees.notifyDataSetChanged();
+							Log.e("error listedit", "Loi adapter");
+							adapterTickets.notifyDataSetChanged();
+						}
+					});
+				} catch (Exception e) {
+				}
+			}
+		};
+		threadGetEmployee.start();
+		/**
+		 * Khi click vao 1 item trong danh sach nhan vien thi hien thi danh sach ticket
+		 * Luu lai idticketpresent mac dinh lan dau tien cua danh sach ticket
+		 */
 		lvEmployees.setOnItemClickListener(new OnItemClickListener() {
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,long arg3) {
-				listTickets.clear();
-				listTickets.add(new Item("Ticket 1", "vi tri: " +position));
-				listTickets.add(new Item("Ticket 2", "vi tri: " +position));
-				listTickets.add(new Item("Ticket 2", "vi tri: " +position));
+			public void onItemClick(AdapterView<?> arg0, View arg1, final int position,long arg3)
+			{
 				Thread threadtickets = new Thread()
 				{
 					@Override
 					public void run() {
 						try {
 							WCFNail nailservice = new WCFNail();
-							ArrayList<Employee> listemployeenail = new ArrayList<Employee>();
-							listemployeenail.addAll(nailservice.getAllEmployee());
-							listEmployee.clear();
-							//nailservice.getItemTicketById(para)
-							for(int i=0;i<listemployeenail.size();i++)
+							listTickets.clear();
+							listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
+								{
+									add(Integer.toString(listEmployee.get(position).getID_Employee()));
+								}
+							}));
+							if(listTickets.size()>0)
 							{
-								Item item = new Item(listemployeenail.get(i).getstrName(),"STT " + i);
-								listEmployee.add(item);
+								idTicketPresent = Integer.toString(listTickets.get(0).getID());
 							}
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									adapterEmployees.notifyDataSetChanged();
+									adapterTickets.notifyDataSetChanged();
 								}
 							});
+							
 						} catch (Exception e) {
 						}
 					}
 				};
-				adapterTickets.notifyDataSetChanged();
+				threadtickets.start();
+			}
+		});
+		/**
+		 * Khi click vao 1 item trong danh sach ticket. Update du lieu cho tab report
+		 * Lay id ticletpresent va thuc hien lay cac item ticket
+		 */
+		lvTickets.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+				idTicketPresent = Integer.toString(listTickets.get(arg2).getID());
+				Thread threadupdateReport = new Thread()
+				{
+					@Override
+					public void run() {
+						WCFNail nailservice = new WCFNail();
+						listEdits.clear();
+						listEdits.addAll(nailservice.getListItemTicketByIDTicket(
+								new ArrayList<String>(){{
+									add(idTicketPresent);
+								}}));
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								adapterEdits.notifyDataSetChanged();
+								tabhost.setCurrentTab(2);
+							}
+						});
+					}
+				};
+				threadupdateReport.start();
 			}
 		});
 		
+		
+		/*Thread threadTicketEditAll = new Thread()
+		{
+			@Override
+			public void run() {
+				WCFNail nailservice = new WCFNail();
+				if(idTicketPresent.compareTo("")!=0)
+				{
+					listEdits.clear();
+					String s = idTicketPresent;
+					//listEdits.add(new ItemTicket("Type", "Quality", "Description", "Price"));
+					listEdits.addAll(nailservice.getListItemTicketByIDTicket(
+							new ArrayList<String>(){{
+								add(idTicketPresent);
+							}}));
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							adapterEmployees.notifyDataSetChanged();
+							adapterTickets.notifyDataSetChanged();
+						}
+					});
+				}
+			}
+		};
+		threadTicketEditAll.start();*/
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);
 		lvEdits.setAdapter(adapterEdits);
 		btnGetService.setOnClickListener(new OnClickListener() {
@@ -413,57 +523,9 @@ public class fgm_ticket extends Fragment {
 			}
 		});
 		// endregion
-		// region them du lieu mau
-		Thread networkThread = new Thread()
-		{
-			@Override
-			public void run() {
-				try {
-					WCFNail nailservice = new WCFNail();
-					ArrayList<Employee> listemployeenail = new ArrayList<Employee>();
-					listemployeenail.addAll(nailservice.getAllEmployee());
-					listEmployee.clear();
-					
-					for(int i=0;i<listemployeenail.size();i++)
-					{
-						Item item = new Item(listemployeenail.get(i).getstrName(),"STT " + i);
-						listEmployee.add(item);
-					}
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							adapterEmployees.notifyDataSetChanged();
-						}
-					});
-				} catch (Exception e) {
-				}
-			}
-		};
-		networkThread.start();
-			listTickets.add(new Item("vava", "1"));
-			listTickets.add(new Item("vava", "1"));
-			listTickets.add(new Item("vava", "1"));
-			listTickets.add(new Item("vava", "1"));
-			listTickets.add(new Item("vava", "1"));
-			listEdits.add(new ItemTicketEdit("Type", "Quality", "Description", "Price"));
-			listEdits.add(new ItemTicketEdit("P", "2", "Day la mo ta 1 Day la mo ta 1 Day la mo ta 1", "$70"));
-			listEdits.add(new ItemTicketEdit("P", "2", "Day la mo t", "$70"));
-			listEdits.add(new ItemTicketEdit("P", "2", "Day la mo t", "$60"));
-			listEdits.add(new ItemTicketEdit("T", "1", "Day la mo ta 2", "$50"));
-			listEdits.add(new ItemTicketEdit("T", "1", "Day la mo ta 3", "$10"));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
-			listEdits.add(new ItemTicketEdit("", "", "", ""));
+		// region them du lieu maus
+		
+	
 			
 			//-------them du lieu cho categories, va services
 			listCategories.add(new Item("vava", "1"));
@@ -481,16 +543,10 @@ public class fgm_ticket extends Fragment {
 			listServices.add(new Item("vava", "1"));
 			listServices.add(new Item("vava", "1"));
 			
-			listTicketAdd.add(new ItemTicketEdit("Type", "Quality", "Description", "Price"));
-			listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo ta 1 Day la mo ta 1 Day la mo ta 1", "$70"));
-			listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$70"));
-			listTicketAdd.add(new ItemTicketEdit("P", "2", "Day la mo t", "$60"));
-			
 				
 				// endregion
 		
 			btnTicketEdit_Add.setOnClickListener(new OnClickListener() {
-				
 				@Override
 				public void onClick(View v) {
 					Button dlgbtnok_ticketadd;
@@ -498,20 +554,17 @@ public class fgm_ticket extends Fragment {
 				  	final Dialog dialogadd = new Dialog(getActivity());
 				  	dialogadd.setContentView(R.layout.dialog_ticketadd);
 				  	dialogadd.setTitle("Nhap du lieu");
-					
-				    //lvTicketAdd = (ListView) viewgroup.findViewById(R.id.dlglv_ticketadd);
 				    lvServices = (ListView) dialogadd.findViewById(R.id.dlglv_services);
 				    lvCategories = (ListView) dialogadd.findViewById(R.id.dlglv_categories);
 				    lvTicketAdd = (ListView) dialogadd.findViewById(R.id.dlglv_ticketadd);
 				    String s = listCategories.get(2).name;
-				    //final TextView ee = (TextView) viewgroup.findViewById(R.id.editText111);
 				    Log.e("View list", listCategories.get(2).name);
 				    adapterCategories = new ListAdapter(getActivity(), listCategories);
 					lvCategories.setAdapter(adapterCategories);
 					adapterServices = new ListAdapter(getActivity(), listServices);
 					lvServices.setAdapter(adapterServices);
-					adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
-					lvTicketAdd.setAdapter(adapterTicketAdd);
+					//adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
+					//lvTicketAdd.setAdapter(adapterTicketAdd);
 					dlgbtnok_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtnok_ticketadd);
 					dlgbtncancel_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtncancel_ticketadd);
 					dlgbtncancel_ticketadd.setOnClickListener(new OnClickListener() {
@@ -673,11 +726,6 @@ public class fgm_ticket extends Fragment {
 				});
 
 			return rootView;
-	}
-	public void showdate(String s)
-	{
-		Toast.makeText(getActivity(),s , Toast.LENGTH_SHORT);
-		
 	}
 	public void disable(View v) {
 		if (v instanceof ViewGroup) {

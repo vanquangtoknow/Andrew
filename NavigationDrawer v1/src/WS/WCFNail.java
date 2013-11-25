@@ -82,8 +82,7 @@ public class WCFNail {
 				}
 			}
 			Log.e("WS", "1");
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
-					SoapEnvelope.VER11);
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
 
 			envelope.dotNet = true;
 			Log.e("WS", "1");
@@ -217,8 +216,7 @@ public class WCFNail {
 		ArrayList <Float> result = new ArrayList<Float>();
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData("getEmployeeReport", para, false)
-					.get(0);
+			root = (SoapObject) getData("getEmployeeReport", para, false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return result;
@@ -255,7 +253,9 @@ public class WCFNail {
 		{
 			ItemTicket tmp = new ItemTicket();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
 		}
+		
 		return result;
 	}
 	/**
