@@ -14,6 +14,7 @@ import org.xmlpull.v1.XmlPullParserException;
 import DTO.Employee;
 import DTO.ItemTicket;
 import DTO.OrderExpense;
+import DTO.SaleItem;
 import DTO.Ticket;
 import android.util.Log;
 
@@ -376,5 +377,104 @@ public class WCFNail {
 		}
 		return result;
 	}
+	/**
+	 * 
+	 * @param para int id
+	 * @return
+	 */
+	public boolean DeleteSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "DeleteSaleItem");
+		if(root == null )
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+
+	public int getIDSaleItemMax(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getIDSaleItemMax");
+		if(root == null )
+			return -1;
+		return Integer.valueOf(root.toString());
+	}
+	
+	/**
+	 * 
+	 * @param para
+	 * @return
+	 */
+	public ArrayList<SaleItem> getListSaleItem(ArrayList<String> para)
+	{
+		ArrayList<SaleItem> result = new ArrayList<SaleItem>();
+		Log.e("gettbid", "1");
+		SoapObject root = getSoap(para, "getListSaleItem");
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			SaleItem tmp = new SaleItem();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param para int idcategory
+	 * @return
+	 */
+	public ArrayList<SaleItem> getListSaleItemByIDCategory(ArrayList<String> para)
+	{
+		ArrayList<SaleItem> result = new ArrayList<SaleItem>();
+		Log.e("gettbid", "1");
+		SoapObject root = getSoap(para, "getListSaleItemByIDCategory");
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			SaleItem tmp = new SaleItem();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param para int idsaleitem
+	 * @return
+	 */
+	public String getNameSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getNameSaleItem");
+		if(root == null )
+			return "-1";
+		return (root.toString());
+	}
+	
+	/**
+	 * 
+	 * @param para int idsaleitem
+	 * @return
+	 */
+	public String getTypeSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getTypeSaleItem");
+		if(root == null )
+			return "-1";
+		return (root.toString());
+	}
+	
+	/**
+	 * 
+	 * @param para int idsaleitem
+	 * @return
+	 */
+	public String getPriceSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getPriceSaleItem");
+		if(root == null )
+			return "-1";
+		return (root.toString());
+	}
+	
 	
 }
