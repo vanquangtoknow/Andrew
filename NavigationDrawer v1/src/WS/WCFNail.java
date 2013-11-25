@@ -11,6 +11,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 import org.xmlpull.v1.XmlPullParserException;
 
+import DTO.Category;
 import DTO.Employee;
 import DTO.ItemTicket;
 import DTO.OrderExpense;
@@ -475,6 +476,76 @@ public class WCFNail {
 			return "-1";
 		return (root.toString());
 	}
+	
+	/**
+	 * 
+	 * @param para saleitem
+	 * @return
+	 */
+	public int insertSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "insertSaleItem");
+		if(root == null )
+			return -1;
+		return Integer.parseInt(root.toString());
+	}
+	
+	/**
+	 * 
+	 * @param para  saleitem
+	 * @return
+	 */
+	public Boolean UpdateSaleItem(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "UpdateSaleItem");
+		if(root == null )
+			return false;
+		return Boolean.parseBoolean(root.toString());
+		
+	}
+	/**
+	 * 
+	 * @param para  idCategory
+	 * @return
+	 */
+	public int getIDCategoryMax(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "getIDCategoryMax");
+		if(root == null )
+			return -1;
+		return Integer.parseInt(root.toString());
+		
+	}
+	
+
+	public ArrayList<Category> getListCategory(ArrayList<String> para)
+	{
+		ArrayList<Category> result = new ArrayList<Category>();
+		Log.e("gettbid", "1");
+		SoapObject root = getSoap(para, "getListCategory");
+		for( int i= 0 ; i < root.getPropertyCount() ; i++)
+		{
+			Category tmp = new Category();
+			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+			result.add(tmp);
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param para  idItemReport
+	 * @return
+	 */
+	public Boolean deleteItemReport(ArrayList<String> para)
+	{
+		SoapPrimitive root = getSoapPrimitive(para, "deleteItemReport");
+		if(root == null )
+			return false;
+		return Boolean.parseBoolean(root.toString());
+		
+	}
+	
 	
 	
 }
