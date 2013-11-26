@@ -108,8 +108,12 @@ public class fgm_ticket extends Fragment {
 	//------Su dung cho tinh total, va deducted
 	private float Deducted;
 	private float Sum;
+	private float ForTech;
+	private float ForOwner;
 	private TextView tvTotal;
 	private TextView tvDeducted;
+	private TextView tvForTech;
+	private TextView tvForOwner;
 	//------Su dung cho 
 	
 	// endregion
@@ -715,7 +719,7 @@ public class fgm_ticket extends Fragment {
 				Sum = 0;
 				for(i=0;i<array.size();i++)
 				{
-					
+					int id = array.get(i).getID_SaleItem();
 					int quality = array.get(i).getQuality();
 					if(array.get(i).getID_SaleItem()==-1)
 					{
@@ -757,6 +761,8 @@ public class fgm_ticket extends Fragment {
 							listEdits.add(temp);
 							Sum += Float.parseFloat(price)*quality;
 						}
+						//temp.setDescriptioon("s" +Integer.toString(array.get(i).getID_SaleItem()));
+						//listEdits.add(temp);
 					}
 				}
 				if(listEdits.size()+1<13)
