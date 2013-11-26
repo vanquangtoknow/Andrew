@@ -1,6 +1,7 @@
 package DTO;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.ksoap2.serialization.SoapObject;
 
@@ -93,7 +94,13 @@ public class ReportDTO {
 	}
     public ReportDTO()
     {
-    	
+    	id = -2;
+    	id_Employee = -2;
+    	id_saleitem = -2 ;
+    	id_type_method =  -2;
+    	id_type_money = -2;
+    	date = new Date().toGMTString();
+    	money = -3;
     }
 
 }
