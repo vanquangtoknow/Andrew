@@ -73,6 +73,5 @@ public class ListAdapter extends BaseAdapter {
 	{
 		array.clear();
 	}
-
 	
 }
