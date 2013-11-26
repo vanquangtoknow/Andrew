@@ -1,4 +1,4 @@
-//--------------Lay danh sach itemticket avs
+//--------------Lay danh sach itemticket avs asdasd
 List<ItemTicket> list = bus.getListByIDTicket(Curr_ControlTicket.Ticket.ID);
 public List<ItemTicket> getListByIDTicket(int id_ticket);
 ItemTicketBUS
