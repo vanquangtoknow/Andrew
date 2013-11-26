@@ -24,6 +24,7 @@ import DTO.Item;
 import DTO.ItemTicket;
 import DTO.ItemTicketAdapter;
 import DTO.ItemTicketEdit;
+import DTO.Report;
 import DTO.Ticket;
 import WS.WCFNail;
 import android.app.AlertDialog;
@@ -648,15 +649,29 @@ public class fgm_ticket extends Fragment {
 							        					tvdescription.setText(ItemTicketAdapterPresent.getDescriptioon());
 							        					TextView tvprice = (TextView) dialogedit.findViewById(R.id.dlgtv_valueprice);
 							        					tvprice.setText(Float.toString(ItemTicketAdapterPresent.getPrice()));
-							        					EditText edittext = (EditText) dialogedit.findViewById(R.id.dlged__ticketedit);
-							        					
-							        					Button dialogButtonok = (Button) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
+							        					final EditText edittext = (EditText) dialogedit.findViewById(R.id.dlged__ticketedit);
+							        					edittext.setText(Integer.toString(ItemTicketAdapterPresent.getQuality()));
+							        					Button dialogButtonok = (Button) dialogedit.findViewById(R.id.dlgbtn_ok_ticketedit);
+							        					Button dialogButtoncancell = (Button) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
 							        					dialogButtonok.setOnClickListener(new OnClickListener() {
 							        						@Override
 							        						public void onClick(View v) {
+							        							String s = edittext.getText().toString();
+							        							if(isNumeric(s)==true)
+							        							{
+							        								saveItemTicketAdapterIsEdited(Integer.parseInt(s));
+							        								action_Ticketfunction = 0;
+							        								//ItemTicketAdapterPresent = null;
+							        								dialogedit.dismiss();
+							        							}
+							        						}
+							        					});
+							        					dialogButtoncancell.setOnClickListener(new OnClickListener() {
+							        						@Override
+							        						public void onClick(View v) {
+							        							ItemTicketAdapterPresent = null;
 							        							dialogedit.dismiss();
 							        							
-							        							action_Ticketfunction = 0;
 							        						}
 							        					});
 							        					dialogedit.show();
@@ -671,6 +686,7 @@ public class fgm_ticket extends Fragment {
 																@Override
 																public void onClick(DialogInterface dialog, int which) {
 																	action_Ticketfunction = 0;
+																	deleteItemTicketAdapterIsEdited();
 																}
 															}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 																@Override
@@ -700,6 +716,50 @@ public class fgm_ticket extends Fragment {
 
 			return rootView;
 	}
+	public boolean isNumeric(String s) {  
+	    return s.matches("[-+]?\\d*\\.?\\d+");  
+	} 
+	public void saveItemTicketAdapterIsEdited(int soluongmoi)
+	{
+		WCFNail nailservice = new WCFNail();
+		if (soluongmoi > ItemTicketAdapterPresent.getQuality())
+        {
+            for (int i = ItemTicketAdapterPresent.getQuality(); i < soluongmoi; i++)
+            {
+                //bus.InsertReport(report);
+                //nailservice.
+            }
+        }
+        else
+        {
+            //ReportDTO[] listReport = bus.GetIListtemReportWithEmployee(report.Id_Employee);
+            //ArrayList<Report> listreport = nailservice.
+            /*int k = 0;
+            for (int i = 0; i < listReport.Length; i++)
+            {
+                                        //neu bang 0 thi khong lam gi het
+                if (k == soluongmoi-ItemTicketAdapterPresent.getQuality())
+                {
+                    break;
+                }
+                else
+                {
+                                                // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
+                    if (listReport[i].Date == report.Date && listReport[i].Id_saleitem == report.Id_saleitem)
+                    {
+                        bus.deletItemReport(listReport[i].Id);
+                        k++;
+                    }
+                }
+            }*/
+        }
+		// update itemticket nay
+	}
+	public void deleteItemTicketAdapterIsEdited()
+	{
+		
+	}
+	
 	public void convertListItemTicketToItemTiketAdapter(final ArrayList<ItemTicket> array)
 	{
 		listEdits.clear();
