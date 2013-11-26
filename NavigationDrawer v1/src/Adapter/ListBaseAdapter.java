@@ -84,7 +84,7 @@ public class ListBaseAdapter extends BaseAdapter{
 			break;
 		case 2:
 			Ticket ticket = (Ticket) array.get(position);
-			name.setText(ticket.getCode().trim());
+			name.setText(ticket.getCode().trim() + "idTickect: " +ticket.getID());
 			break;
 		default:
 			break;

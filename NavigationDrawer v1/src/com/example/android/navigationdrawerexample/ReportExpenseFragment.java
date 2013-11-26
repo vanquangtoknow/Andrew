@@ -253,7 +253,6 @@ public class ReportExpenseFragment extends Fragment{
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				Log.e("dayClick","1");
-				
 				getData(single.getTag().toString(), single.getTag().toString(), buttonContainer, progress1);
 			}
 		});

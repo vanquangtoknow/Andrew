@@ -2,8 +2,7 @@ package Adapter;
 
 import java.util.ArrayList;
 
-import DTO.Item;
-import DTO.ItemTicket;
+import DTO.ItemTicketAdapter;
 import DTO.ItemTicketEdit;
 import WS.WCFNail;
 import android.content.Context;
@@ -17,14 +16,15 @@ import android.widget.TextView;
 import com.example.android.navigationdrawerexample.R;
 
 public class TicketEditAdapter extends BaseAdapter {
+	
 	private Context context; 
-	private ArrayList<ItemTicket> array;
+	private ArrayList<ItemTicketAdapter> array;
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
 		return array.size();
 	}
-	public TicketEditAdapter(Context context, ArrayList<ItemTicket> array) {
+	public TicketEditAdapter(Context context, ArrayList<ItemTicketAdapter> array) {
 		this.array = array;
 		this.context = context;
 	}
@@ -48,19 +48,18 @@ public class TicketEditAdapter extends BaseAdapter {
 		if( convertView == null)
 		{
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	
 			convertView = infalInflater.inflate(R.layout.adapter_row_ticketedit, null);
 		}
-		int ID = array.get(position).getID() ;
-		final int ID_SaleItem = array.get(position).getID_SaleItem() ;
-		int ID_Ticket = array.get(position).getID_Ticket() ;
-		final int Quality = array.get(position).getQuality() ;
-		float Price =  array.get(position).getPrice()  ;
-		final TextView type = (TextView)convertView.findViewById(R.id.tvtype);
-		final TextView quality = (TextView)convertView.findViewById(R.id.tvquality);
-		final TextView description = (TextView)convertView.findViewById(R.id.tvdescription);
-		final TextView price = (TextView)convertView.findViewById(R.id.tvprice);
-		if(ID==-1&&ID_SaleItem==-1&&ID_Ticket==-1&&Quality==-1&&Price==-1)
+		int s_idticket = array.get(position).getID_ItemTicket() ;
+		String s_description  = array.get(position).getDescriptioon();
+		int s_quality = array.get(position).getQuality() ;
+		float s_price =  array.get(position).getPrice()  ;
+		String s_type = array.get(position).getType();
+		TextView type = (TextView)convertView.findViewById(R.id.tvtype);
+		TextView quality = (TextView)convertView.findViewById(R.id.tvquality);
+		TextView description = (TextView)convertView.findViewById(R.id.tvdescription);
+		TextView price = (TextView)convertView.findViewById(R.id.tvprice);
+		if(s_idticket==-1&&s_quality==-1&&s_price==-1&&s_description.equals("-1"))
 		{
 			type.setText("Type");
 			quality.setText("Quality");
@@ -69,7 +68,7 @@ public class TicketEditAdapter extends BaseAdapter {
 		}
 		else
 		{
-			if(ID==-2&&ID_SaleItem==-2&&ID_Ticket==-2&&Quality==-2&&Price==-2)
+			if(s_idticket==-2&&s_quality==-2&&s_price==-2&&s_description.equals("-2"))
 			{
 				type.setText("");
 				quality.setText("");
@@ -78,29 +77,10 @@ public class TicketEditAdapter extends BaseAdapter {
 			}
 			else
 			{
-				Thread a = new Thread()
-				{
-					@Override
-					public void run() {
-						WCFNail nailservice = new WCFNail();
-						int aa = ID_SaleItem;
-						String s_description = nailservice.getNameSaleItem(new ArrayList<String>(){{
-							add(Integer.toString(ID_SaleItem));
-						}});
-						String s_type = nailservice.getTypeSaleItem(new ArrayList<String>(){{
-							add(Integer.toString(ID_SaleItem));
-						}});
-						String s_price = nailservice.getPriceSaleItem(new ArrayList<String>(){{
-							add(Integer.toString(ID_SaleItem));
-						}});
-						type.setText(s_type);
-						quality.setText(Integer.toString(Quality));
-						description.setText(s_description);
-						price.setText(s_price);
-						}
-					
-				};
-				a.start();
+				type.setText(s_type);
+				quality.setText(Integer.toString(s_quality));
+				description.setText(s_description);
+				price.setText(Float.toString(s_price));
 				
 			}
 		}

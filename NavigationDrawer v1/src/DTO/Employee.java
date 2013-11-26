@@ -8,7 +8,6 @@ public class Employee {
 		strName = "Duy";
 		strAddr = "123";
 		strCity = "TuyHoa";
-		
 	}
 	
 	 private int ID_Employee;

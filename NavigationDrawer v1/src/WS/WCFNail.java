@@ -239,6 +239,7 @@ public class WCFNail {
 	 */
 	public ArrayList<ItemTicket> getListItemTicketByIDTicket(ArrayList<String> para)
 	{
+		String s = para.get(0);
 		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
 		SoapObject root = null;
 		try {
@@ -439,7 +440,7 @@ public class WCFNail {
 	}
 	
 	/**
-	 * 
+	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
 	 * @param para int idsaleitem
 	 * @return
 	 */
@@ -447,12 +448,12 @@ public class WCFNail {
 	{
 		SoapObject root = getSoap(para, "getNameSaleItem");
 		if(root == null )
-			return "-1";
+			return "-2";
 		return (root.toString());
 	}
 	
 	/**
-	 * 
+	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
 	 * @param para int idsaleitem
 	 * @return
 	 */
@@ -460,12 +461,12 @@ public class WCFNail {
 	{
 		SoapObject root = getSoap(para, "getNameSaleItem");
 		if(root == null )
-			return "-1";
+			return "-2";
 		return (root.toString());
 	}
 	
 	/**
-	 * 
+	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
 	 * @param para int idsaleitem
 	 * @return
 	 */
@@ -473,7 +474,7 @@ public class WCFNail {
 	{
 		SoapObject root = getSoap(para, "getNameSaleItem");
 		if(root == null )
-			return "-1";
+			return "-2";
 		return (root.toString());
 	}
 	
