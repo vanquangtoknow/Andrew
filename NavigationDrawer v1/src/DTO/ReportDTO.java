@@ -14,7 +14,7 @@ public class ReportDTO {
 	private int id_type_money;
 
 	private int id_type_method;
-
+	private SoapObject soap;
 	private float money;
 
 	public int getId() {
@@ -77,6 +77,7 @@ public class ReportDTO {
 
 	public void getInfoFromSoap(SoapObject root)
     {
+		this.soap = root;
     	this.setDate((root.getProperty(0).toString()));
     	this.setId(Integer.parseInt(root.getProperty(1).toString()));
     	this.setId_Employee(Integer.parseInt(root.getProperty(2).toString()));
@@ -85,6 +86,11 @@ public class ReportDTO {
 		this.setId_type_money(Integer.parseInt(root.getProperty(5).toString()));
 		this.setMoney(Integer.parseInt(root.getProperty(6).toString()));
     }
+	
+	public SoapObject getSoapObject()
+	{
+		return soap;
+	}
     public ReportDTO()
     {
     	
