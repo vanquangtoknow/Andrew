@@ -25,6 +25,7 @@ import DTO.ItemTicket;
 import DTO.ItemTicketAdapter;
 import DTO.ItemTicketEdit;
 import DTO.Report;
+import DTO.ReportDTO;
 import DTO.Ticket;
 import WS.WCFNail;
 import android.app.AlertDialog;
@@ -716,44 +717,99 @@ public class fgm_ticket extends Fragment {
 
 			return rootView;
 	}
+	// region cac ham xu ly
 	public boolean isNumeric(String s) {  
 	    return s.matches("[-+]?\\d*\\.?\\d+");  
-	} 
+	}
+	public int getTypeMoney(String text)
+    {
+        if(text.equals("Product"))
+        {
+        	return 1;
+        }
+        if(text.equals("Service"))
+        {
+        	return 2;
+        }
+        if(text.equals("Extra"))
+        {
+        	return 3;
+        }
+        if(text.equals("Tips"))
+        {
+        	return 4;
+        }
+        if(text.equals("Coupon"))
+        {
+        	return 5;
+        }
+        if(text.equals("Discount"))
+        {
+        	return 6;
+        }
+        if(text.equals("Discount by Point"))
+        {
+        	return 7;
+        }
+        if(text.equals("Deducted"))
+        {
+        	return 8;
+        }
+        return -1;
+
+    }
+	// endregion
+	int h =0;
 	public void saveItemTicketAdapterIsEdited(int soluongmoi)
 	{
 		WCFNail nailservice = new WCFNail();
+		ReportDTO reportDTO = new ReportDTO();
+		reportDTO.setDate(TicketPresent.getDate());
+		reportDTO.setId_Employee(TicketPresent.getID_Employee());
+		reportDTO.setId_saleitem(ItemTicketAdapterPresent.getID_ItemTicket());
+		reportDTO.setMoney(ItemTicketAdapterPresent.getPrice());
+		reportDTO.setId_type_money(getTypeMoney(ItemTicketAdapterPresent.getType()));
+		reportDTO.setId_type_money(1);
+		
 		if (soluongmoi > ItemTicketAdapterPresent.getQuality())
         {
             for (int i = ItemTicketAdapterPresent.getQuality(); i < soluongmoi; i++)
             {
-                //bus.InsertReport(report);
-                //nailservice.
+                //nailservice.InsertReport(reportDTO);
             }
         }
         else
         {
-            //ReportDTO[] listReport = bus.GetIListtemReportWithEmployee(report.Id_Employee);
-            //ArrayList<Report> listreport = nailservice.
-            /*int k = 0;
-            for (int i = 0; i < listReport.Length; i++)
+        	
+            final ArrayList<ReportDTO> listReport = nailservice.GetIListtemReportWithEmployee(new ArrayList<String>(){
+            	{
+            		add(Integer.toString(TicketPresent.getID_Employee()));
+            	}
+            });
+            int k = 0;
+            h=0;
+            for (h = 0; h < listReport.size(); h++)
             {
-                                        //neu bang 0 thi khong lam gi het
                 if (k == soluongmoi-ItemTicketAdapterPresent.getQuality())
                 {
                     break;
                 }
                 else
                 {
-                                                // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
-                    if (listReport[i].Date == report.Date && listReport[i].Id_saleitem == report.Id_saleitem)
+                    // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
+                    if (listReport.get(h).getDate() == reportDTO.getDate() && listReport.get(h).getId_saleitem() == reportDTO.getId_saleitem())
                     {
-                        bus.deletItemReport(listReport[i].Id);
+                        //bus.deletItemReport(listReport[i].Id);
+                        nailservice.deleteItemReport(new ArrayList<String>(){{
+                        	add(Integer.toString(listReport.get(h).getId()));
+                        }});
                         k++;
                     }
                 }
-            }*/
+            }
         }
 		// update itemticket nay
+		//nailservice.updateItemTicket()
 	}
 	public void deleteItemTicketAdapterIsEdited()
 	{

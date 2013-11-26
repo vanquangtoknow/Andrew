@@ -556,7 +556,6 @@ public class WCFNail {
 		return Boolean.parseBoolean(root.toString());
 		
 	}
-	
 	public ArrayList<ReportDTO> GetIListtemReportWithEmployee(ArrayList<String> para)
 	{
 		ArrayList<ReportDTO> result = new ArrayList<ReportDTO>();
