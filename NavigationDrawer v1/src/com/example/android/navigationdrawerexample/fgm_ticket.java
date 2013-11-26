@@ -809,7 +809,7 @@ public class fgm_ticket extends Fragment {
 		                listpara.add(a);
 		                Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them" +" dang them " +i+"idsaleitem" + reportDTO.getId_saleitem());
 	                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: value Report idEmployee" + reportDTO.getId_Employee() + "idSaleItem: " + reportDTO.getId_saleitem());
-		                if(nailservice.InsertReport(listpara)==true)
+		                if(nailservice.InsertReport(reportDTO)==true)
 		                {
 		                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them succesfull" + i + reportDTO.getId_saleitem());
 		                }

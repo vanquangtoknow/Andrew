@@ -107,8 +107,8 @@ public class WCFNail {
 			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 			if (para != null) {
 				for (int i = 0; i < para.size(); i++) {
-					Object t = para.get(i);
-					request.addProperty("arg" + String.valueOf(i), para.get(i));
+					SoapObject tmp =  (SoapObject) para.get(i);
+					request.addProperty("arg" + String.valueOf(i), tmp);
 				}
 			}
 			Log.e("WS", "1");
@@ -183,7 +183,7 @@ public class WCFNail {
 			// tao ket noi
 			Log.e("WS", "3");
 			Log.e(SOAP_ACTION, URL);
-			Log.e("errorWS", SOAP_ACTION);
+			Log.e("action", SOAP_ACTION);
 			androidHttpTransport.call(SOAP_ACTION, envelope);
 			// lay du lieu tra ve
 			Log.e("WS", "4");
@@ -655,8 +655,19 @@ public class WCFNail {
 
 	}
 
-	public Boolean InsertReport(ArrayList<Object> para) {
-		SoapPrimitive root = getSoapPrimitiveNew(para, "InsertReport");
+	public Boolean InsertReport(final ReportDTO report) {
+		ArrayList<String> para = new ArrayList<String>(){
+			{
+				add(report.getDate());
+				add(String.valueOf(report.getId()));
+				add(String.valueOf(report.getId_Employee()));
+				add(String.valueOf(report.getId_saleitem()));
+				add(String.valueOf(report.getId_type_method()));
+				add(String.valueOf(report.getId_type_money()));
+				add(String.valueOf(report.getMoney()));
+			}
+		};
+		SoapPrimitive root = getSoapPrimitive(para, "InsertReport");
 		if (root == null)
 			return false;
 		return Boolean.parseBoolean(root.toString());

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import DTO.Employee;
+import DTO.Report;
+import DTO.ReportDTO;
 import WS.WCFNail;
 import android.app.Activity;
 import android.app.Fragment;
@@ -50,13 +52,14 @@ public  class testFragment extends Fragment {
 						try {
 							WCFNail ws = new WCFNail();
 							Log.e("get", "1");
-							String tmp = ws
-									.getNameSaleItem(new ArrayList<String>() {
-										{
-											add("2");
-										}
-									});
-							Log.e("get", tmp);
+							final ArrayList<ReportDTO> arr = ws.GetIListtemReportWithEmployee(new ArrayList<String>() {
+								{
+									add("1");
+								}
+							});
+							Boolean tmp = ws
+									.InsertReport(arr.get(0));
+							Log.e("get", "ok");
 
 						} catch (Exception e) {
 						}
