@@ -881,14 +881,14 @@ public class fgm_ticket extends Fragment {
 					add(Integer.toString(ItemTicketAdapterPresent.getID_ItemTicket()));
 				}});
 				Log.d("saveItemTicket ", "update ItemTicket value idItemticket "+item.getID()+" idSale: "+ item.getID_SaleItem()+" idIdTicket: " + item.getID_Ticket());
-				if(nailservice.updateItemTicket(new ArrayList<Object>(){{add(item);}})==true)
-				{
-					Log.d("saveItemTicket ", "update succesfully itemticket");
-				}
-				else
-				{
-					Log.d("saveItemTicket ", "update: failed itemticket");
-				}
+//				if(nailservice.updateItemTicket(new ArrayList<Object>(){{add(item);}})==true)
+//				{
+//					Log.d("saveItemTicket ", "update succesfully itemticket");
+//				}
+//				else
+//				{
+//					Log.d("saveItemTicket ", "update: failed itemticket");
+//				}
 			}
 		};
 		threaeSaveItemAdapter.start();

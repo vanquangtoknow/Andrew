@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
         //vao man hinh login
         
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new fgm_ticket();
+        Fragment fragment = new testFragment();
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	

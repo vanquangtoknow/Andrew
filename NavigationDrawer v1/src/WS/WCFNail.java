@@ -722,6 +722,5 @@ public class WCFNail {
 		}
 		return result;
 	}
-	
-	
+
 }
