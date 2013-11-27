@@ -1,6 +1,9 @@
 package DTO;
 
+import java.io.Serializable;
+
 import org.ksoap2.serialization.SoapObject;
+
 
 public class ReportDTO {
 	private int id;
@@ -86,4 +89,5 @@ public class ReportDTO {
     {
     	
     }
+
 }

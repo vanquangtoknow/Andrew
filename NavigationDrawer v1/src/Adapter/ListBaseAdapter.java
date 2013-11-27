@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ListBaseAdapter extends BaseAdapter{
@@ -69,6 +70,8 @@ public class ListBaseAdapter extends BaseAdapter{
 			switch (typeView) {
 			case 1:
 				convertView = infalInflater.inflate(R.layout.base_row_item, null);
+				ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
+				//image.setBackgroundResource(R.drawable.tick_employee);
 				break;
 			case 2:
 				convertView = infalInflater.inflate(R.layout.row_item, null);
@@ -77,6 +80,7 @@ public class ListBaseAdapter extends BaseAdapter{
 			}
 		}
 		TextView name = (TextView)convertView.findViewById(R.id.personname);
+		
 		switch (typeList) {
 		case 1:
 			Employee employee = (Employee)array.get(position);

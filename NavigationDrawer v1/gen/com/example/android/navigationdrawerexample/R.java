@@ -9,40 +9,48 @@ package com.example.android.navigationdrawerexample;
 
 public final class R {
     public static final class array {
-        public static final int dept_array=0x7f060001;
-        public static final int function_array=0x7f060000;
+        public static final int dept_array=0x7f070001;
+        public static final int function_array=0x7f070000;
     }
     public static final class attr {
     }
     public static final class color {
-        public static final int bar=0x7f070001;
-        public static final int snow=0x7f070000;
+        public static final int bar=0x7f040002;
+        public static final int cyan=0x7f040000;
+        public static final int snow=0x7f040001;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
          */
-        public static final int activity_horizontal_margin=0x7f040000;
-        public static final int activity_vertical_margin=0x7f040001;
+        public static final int activity_horizontal_margin=0x7f050000;
+        public static final int activity_vertical_margin=0x7f050001;
     }
     public static final class drawable {
         public static final int action_search=0x7f020000;
-        public static final int drawer_shadow=0x7f020001;
-        public static final int ic_drawer=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int item=0x7f020004;
-        public static final int jupiter=0x7f020005;
-        public static final int mars=0x7f020006;
-        public static final int mercury=0x7f020007;
-        public static final int neptune=0x7f020008;
-        public static final int saturn=0x7f020009;
-        public static final int tab1=0x7f02000a;
-        public static final int tab1_over=0x7f02000b;
-        public static final int tab2=0x7f02000c;
-        public static final int tab2_over=0x7f02000d;
-        public static final int tab3=0x7f02000e;
-        public static final int tab3_over=0x7f02000f;
-        public static final int uranus=0x7f020010;
-        public static final int venus=0x7f020011;
+        public static final int btn_cancel=0x7f020001;
+        public static final int btn_ok=0x7f020002;
+        public static final int drawer_shadow=0x7f020003;
+        public static final int ic_drawer=0x7f020004;
+        public static final int ic_launcher=0x7f020005;
+        public static final int item=0x7f020006;
+        public static final int jupiter=0x7f020007;
+        public static final int mars=0x7f020008;
+        public static final int mercury=0x7f020009;
+        public static final int neptune=0x7f02000a;
+        public static final int saturn=0x7f02000b;
+        public static final int selector=0x7f02000c;
+        public static final int tab1=0x7f02000d;
+        public static final int tab1_over=0x7f02000e;
+        public static final int tab2=0x7f02000f;
+        public static final int tab2_over=0x7f020010;
+        public static final int tab3=0x7f020011;
+        public static final int tab3_over=0x7f020012;
+        public static final int tick_employee=0x7f020013;
+        public static final int ticket_btnadd=0x7f020014;
+        public static final int ticket_btndelete_ticket=0x7f020015;
+        public static final int ticket_sale=0x7f020016;
+        public static final int uranus=0x7f020017;
+        public static final int venus=0x7f020018;
     }
     public static final class id {
         public static final int DayChoose1=0x7f0a0032;
@@ -62,12 +70,9 @@ public final class R {
         public static final int TableRow04=0x7f0a002f;
         public static final int Ticket=0x7f0a0044;
         public static final int YearChoose1=0x7f0a0034;
-        public static final int action_websearch=0x7f0a005f;
-        public static final int btnGetService=0x7f0a0058;
-        public static final int btn_ticketedit_add=0x7f0a0055;
-        public static final int button1=0x7f0a0053;
-        public static final int button2=0x7f0a0054;
-        public static final int button4=0x7f0a0056;
+        public static final int action_websearch=0x7f0a005c;
+        public static final int btn_ticketedit_add=0x7f0a0053;
+        public static final int btn_ticketedit_deleteticket=0x7f0a0054;
         public static final int childItem=0x7f0a000b;
         public static final int codelogin=0x7f0a0023;
         public static final int content_frame=0x7f0a0001;
@@ -89,11 +94,11 @@ public final class R {
         public static final int drawer_layout=0x7f0a0000;
         public static final int editText1=0x7f0a0028;
         public static final int editText2=0x7f0a002b;
-        public static final int exId=0x7f0a005a;
-        public static final int exdate=0x7f0a005c;
-        public static final int exname=0x7f0a005b;
-        public static final int exprice=0x7f0a005d;
-        public static final int heading=0x7f0a0059;
+        public static final int exId=0x7f0a0057;
+        public static final int exdate=0x7f0a0059;
+        public static final int exname=0x7f0a0058;
+        public static final int exprice=0x7f0a005a;
+        public static final int heading=0x7f0a0056;
         public static final int idlogin=0x7f0a0022;
         public static final int image=0x7f0a0025;
         public static final int imageView1=0x7f0a0009;
@@ -122,7 +127,7 @@ public final class R {
         public static final int report_txt_total=0x7f0a0050;
         public static final int separator1=0x7f0a0036;
         public static final int separator2=0x7f0a000d;
-        public static final int tab_tickereport=0x7f0a0057;
+        public static final int tab_tickereport=0x7f0a0055;
         public static final int tab_ticketedit=0x7f0a004a;
         public static final int tab_ticketemploy=0x7f0a0047;
         public static final int tabhost=0x7f0a0045;
@@ -140,7 +145,7 @@ public final class R {
         public static final int tvprice=0x7f0a0008;
         public static final int tvquality=0x7f0a0006;
         public static final int tvtype=0x7f0a0005;
-        public static final int value=0x7f0a005e;
+        public static final int value=0x7f0a005b;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -168,13 +173,13 @@ public final class R {
         public static final int main=0x7f090000;
     }
     public static final class string {
-        public static final int action_websearch=0x7f050005;
-        public static final int app_name=0x7f050000;
-        public static final int app_not_available=0x7f050006;
-        public static final int department_store=0x7f050002;
-        public static final int drawer_close=0x7f050004;
-        public static final int drawer_open=0x7f050003;
-        public static final int product_hint=0x7f050001;
+        public static final int action_websearch=0x7f060005;
+        public static final int app_name=0x7f060000;
+        public static final int app_not_available=0x7f060006;
+        public static final int department_store=0x7f060002;
+        public static final int drawer_close=0x7f060004;
+        public static final int drawer_open=0x7f060003;
+        public static final int product_hint=0x7f060001;
     }
     public static final class style {
         /** 

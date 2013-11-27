@@ -45,6 +45,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -81,6 +82,7 @@ public class fgm_ticket extends Fragment {
 	private Employee EmployeePresent;
 	// Luu id ticket hien tai
 	private Ticket TicketPresent;
+	private Item ItemTicketPresent;
 	private ItemTicketAdapter ItemTicketAdapterPresent = null;
 	private ListView lvEmployees;
 	private ListView lvTickets;
@@ -103,9 +105,9 @@ public class fgm_ticket extends Fragment {
 	private ListAdapter adapterCategories;
 	private  ListAdapter adapterServices;
 	private  TicketEditAdapter adapterTicketAdd;
-	public Button btnGetService;
 	private int action_Ticketfunction = 0;
-	private Button btnTicketEdit_Add;
+	private ImageButton btnTicketEdit_Add;
+	private ImageButton btnTicketEdit_DeleteTicket;
 	
 	//------Su dung cho tinh total, va deducted
 	private float Deducted;
@@ -247,12 +249,12 @@ public class fgm_ticket extends Fragment {
 		tabspec.setIndicator("Emloyee and ticket");
 		tabhost.addTab(tabspec);
 		tabspec = tabhost.newTabSpec("Tab Report1");
-		tabspec.setContent(R.id.tab_tickereport);
-		tabspec.setIndicator("View report");
+		tabspec.setContent(R.id.tab_ticketedit);
+		tabspec.setIndicator("View and Edit");
 		tabhost.addTab(tabspec);
 		tabspec = tabhost.newTabSpec("Tab Report2");
-		tabspec.setContent(R.id.tab_ticketedit);
-		tabspec.setIndicator("Edit ");
+		tabspec.setContent(R.id.tab_tickereport);
+		tabspec.setIndicator("View Info");
 		tabhost.addTab(tabspec);
 		tabhost.setCurrentTab(0);
 		//--su dung listview employee, va listview ticket
@@ -260,8 +262,9 @@ public class fgm_ticket extends Fragment {
 		lvTickets = (ListView)rootView.findViewById(R.id.listviewticket);
 		lvEdits = (ListView) rootView.findViewById(R.id.listviewedit);
 		
-		btnTicketEdit_Add = (Button) rootView.findViewById(R.id.btn_ticketedit_add);
-		btnGetService = (Button) rootView.findViewById(R.id.btnGetService);
+		
+		btnTicketEdit_Add = (ImageButton) rootView.findViewById(R.id.btn_ticketedit_add);
+		btnTicketEdit_DeleteTicket = (ImageButton) rootView.findViewById(R.id.btn_ticketedit_deleteticket);
 		// endregion
 		// region Su kien click vao cac button day, mon, year, togg, ok, start, end single
 		// 
@@ -479,6 +482,7 @@ public class fgm_ticket extends Fragment {
 		 * Khi click vao 1 item trong danh sach ticket. Update du lieu cho tab report
 		 * Lay id ticletpresent va thuc hien lay cac item ticket
 		 */
+		
 		lvTickets.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
@@ -506,13 +510,8 @@ public class fgm_ticket extends Fragment {
 
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);
 		lvEdits.setAdapter(adapterEdits);
-		btnGetService.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				tabhost.setCurrentTab(2);
-			}
-		});
+
+	
 		// endregion
 		// region them du lieu maus
 			//-------them du lieu cho categories, va services
@@ -534,12 +533,32 @@ public class fgm_ticket extends Fragment {
 			
 				
 				// endregion
-		
+			btnTicketEdit_DeleteTicket.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					//btnTicketEdit_DeleteTicket.setImageResource(R.drawable.ticket_btndelete_ticket);
+					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+			        builder.setMessage("Delete this ticket")
+			        		.setTitle("Arlert!!!")
+			               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			                   public void onClick(DialogInterface dialog, int id) {
+			                   }
+			               })
+			               .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
+			                   public void onClick(DialogInterface dialog, int id) {
+			                       
+			                   }
+			               });
+			        // Create the AlertDialog object and return it
+			        builder.create().show();
+				}
+			});
 			btnTicketEdit_Add.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					Button dlgbtnok_ticketadd;
-				  	Button dlgbtncancel_ticketadd;
+					
+					ImageButton dlgbtnok_ticketadd;
+				  	ImageButton dlgbtncancel_ticketadd;
 				  	final Dialog dialogadd = new Dialog(getActivity());
 				  	dialogadd.setContentView(R.layout.dialog_ticketadd);
 				  	dialogadd.setTitle("Nhap du lieu");
@@ -554,8 +573,12 @@ public class fgm_ticket extends Fragment {
 					lvServices.setAdapter(adapterServices);
 					adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
 					lvTicketAdd.setAdapter(adapterTicketAdd);
-					dlgbtnok_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtnok_ticketadd);
-					dlgbtncancel_ticketadd = (Button) dialogadd.findViewById(R.id.dlgbtncancel_ticketadd);
+					
+					
+					listTicketAdd.clear();
+					listTicketAdd.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
+					dlgbtnok_ticketadd = (ImageButton) dialogadd.findViewById(R.id.dlgbtnok_ticketadd);
+					dlgbtncancel_ticketadd = (ImageButton) dialogadd.findViewById(R.id.dlgbtncancel_ticketadd);
 					dlgbtncancel_ticketadd.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
@@ -577,8 +600,8 @@ public class fgm_ticket extends Fragment {
 					        builder.setMessage("Add sale this sale item")
 					               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					                   public void onClick(DialogInterface dialog, int id) {
-					                	   listTicketAdd.clear();
-					                	   
+					                	   //listTicketAdd.clear();
+					                	   listTicketAdd.add(new ItemTicketAdapter(1,"Product","sale item 1",2, 3, false));
 					                	   adapterTicketAdd.notifyDataSetChanged();
 					                   }
 					               })
@@ -652,8 +675,8 @@ public class fgm_ticket extends Fragment {
 							        					tvprice.setText(Float.toString(ItemTicketAdapterPresent.getPrice()));
 							        					final EditText edittext = (EditText) dialogedit.findViewById(R.id.dlged__ticketedit);
 							        					edittext.setText(Integer.toString(ItemTicketAdapterPresent.getQuality()));
-							        					Button dialogButtonok = (Button) dialogedit.findViewById(R.id.dlgbtn_ok_ticketedit);
-							        					Button dialogButtoncancell = (Button) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
+							        					ImageButton dialogButtonok = (ImageButton) dialogedit.findViewById(R.id.dlgbtn_ok_ticketedit);
+							        					ImageButton dialogButtoncancell = (ImageButton) dialogedit.findViewById(R.id.dlgbtn_cancel__ticketedit);
 							        					dialogButtonok.setOnClickListener(new OnClickListener() {
 							        						@Override
 							        						public void onClick(View v) {
@@ -760,61 +783,87 @@ public class fgm_ticket extends Fragment {
     }
 	// endregion
 	int h =0;
-	public void saveItemTicketAdapterIsEdited(int soluongmoi)
+	public void saveItemTicketAdapterIsEdited(final int soluongmoi)
 	{
-		WCFNail nailservice = new WCFNail();
-		ReportDTO reportDTO = new ReportDTO();
-		reportDTO.setDate(TicketPresent.getDate());
-		reportDTO.setId_Employee(TicketPresent.getID_Employee());
-		reportDTO.setId_saleitem(ItemTicketAdapterPresent.getID_ItemTicket());
-		reportDTO.setMoney(ItemTicketAdapterPresent.getPrice());
-		reportDTO.setId_type_money(getTypeMoney(ItemTicketAdapterPresent.getType()));
-		reportDTO.setId_type_money(1);
-		
-		if (soluongmoi > ItemTicketAdapterPresent.getQuality())
-        {
-            for (int i = ItemTicketAdapterPresent.getQuality(); i < soluongmoi; i++)
-            {
-                //nailservice.InsertReport(reportDTO);
-            }
-        }
-        else
-        {
-        	
-            final ArrayList<ReportDTO> listReport = nailservice.GetIListtemReportWithEmployee(new ArrayList<String>(){
-            	{
-            		add(Integer.toString(TicketPresent.getID_Employee()));
-            	}
-            });
-            int k = 0;
-            h=0;
-            for (h = 0; h < listReport.size(); h++)
-            {
-                if (k == soluongmoi-ItemTicketAdapterPresent.getQuality())
-                {
-                    break;
-                }
-                else
-                {
-                    // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
-                    if (listReport.get(h).getDate() == reportDTO.getDate() && listReport.get(h).getId_saleitem() == reportDTO.getId_saleitem())
-                    {
-                        //bus.deletItemReport(listReport[i].Id);
-                        nailservice.deleteItemReport(new ArrayList<String>(){{
-                        	add(Integer.toString(listReport.get(h).getId()));
-                        }});
-                        k++;
-                    }
-                }
-            }
-        }
-		// update itemticket nay
-		//nailservice.updateItemTicket()
+		Thread threaeSaveItemAdapter = new Thread()
+		{
+			@Override
+			public void run() {
+				WCFNail nailservice = new WCFNail();
+				ReportDTO reportDTO = new ReportDTO();
+				reportDTO.setDate(TicketPresent.getDate());
+				reportDTO.setId_Employee(TicketPresent.getID_Employee());
+				reportDTO.setId_saleitem(ItemTicketAdapterPresent.getID_ItemTicket());
+				reportDTO.setMoney(ItemTicketAdapterPresent.getPrice());
+				reportDTO.setId_type_money(getTypeMoney(ItemTicketAdapterPresent.getType()));
+				reportDTO.setId_type_money(1);
+				Log.d("saveItemTicket", "IdEmployee: " + TicketPresent.getID_Employee() + "IdSaleItem: " +  ItemTicketAdapterPresent.getID_ItemTicket());
+				if (soluongmoi > ItemTicketAdapterPresent.getQuality())
+		        {
+					Log.d("saveItemTicket","TH soluongmoi>soluonghientai: soluong moi " +soluongmoi + "so luong hien tai: " +ItemTicketAdapterPresent.getQuality());
+		            for (int i = ItemTicketAdapterPresent.getQuality(); i < soluongmoi; i++)
+		            {
+		                //nailservice.InsertReport(reportDTO);
+		                ArrayList<Object> listpara = new ArrayList<Object>();
+		                Object a = (Object)reportDTO;
+		                listpara.add(a);
+		                Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them" +" dang them " +i+"idsaleitem" + reportDTO.getId_saleitem());
+	                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: value Report idEmployee" + reportDTO.getId_Employee() + "idSaleItem: " + reportDTO.getId_saleitem());
+		                if(nailservice.InsertReport(listpara)==true)
+		                {
+		                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them succesfull" + i + reportDTO.getId_saleitem());
+		                }
+		            }
+		        }
+		        else
+		        {
+		        	Log.d("saveItemTicket","soluong moi: " +soluongmoi + "< so luong hien tai: " +ItemTicketAdapterPresent.getQuality());
+		            final ArrayList<ReportDTO> listReport = nailservice.GetIListtemReportWithEmployee(new ArrayList<String>(){
+		            	{
+		            		add(Integer.toString(TicketPresent.getID_Employee()));
+		            	}
+		            });
+		            int k = 0;
+		            h=0;
+		            for (h = 0; h < listReport.size(); h++)
+		            {
+		                if (k == soluongmoi-ItemTicketAdapterPresent.getQuality())
+		                {
+		                    break;
+		                }
+		                else
+		                {
+		                    // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
+		                    if (listReport.get(h).getDate() == reportDTO.getDate() && listReport.get(h).getId_saleitem() == reportDTO.getId_saleitem())
+		                    {
+		                     	nailservice.deleteItemReport(new ArrayList<String>(){{
+		                    		add(Integer.toString(listReport.get(h).getId()));
+		                    	}});
+		                        k++;
+		                    }
+		                }
+		            }
+		        }
+				ArrayList<Object> dsParam = new ArrayList<Object>();
+				ItemTicketAdapterPresent.setQuality(soluongmoi);
+				final ItemTicket item = nailservice.getItemTicketById(new ArrayList<String>(){{
+					add(Integer.toString(ItemTicketAdapterPresent.getID_ItemTicket()));
+				}});
+				Log.d("saveItemTicket ", "update ItemTicket value idItemticket "+item.getID()+" idSale: "+ item.getID_SaleItem()+" idIdTicket: " + item.getID_Ticket());
+				if(nailservice.updateItemTicket(new ArrayList<Object>(){{add(item);}})==true)
+				{
+					
+					Log.d("saveItemTicket ", "update succesfully itemticket");
+				}
+			}
+		};
+		threaeSaveItemAdapter.start();
 	}
 	public void deleteItemTicketAdapterIsEdited()
 	{
 		
 	}
+	
 	
 	public void convertListItemTicketToItemTiketAdapter(final ArrayList<ItemTicket> array)
 	{
@@ -893,7 +942,7 @@ public class fgm_ticket extends Fragment {
 					@Override
 					public void run() {
 						adapterEdits.notifyDataSetChanged();
-						tabhost.setCurrentTab(2);
+						tabhost.setCurrentTab(1);
 						progessbarTicketEdit.setVisibility(View.GONE);
 						tvTotal.setText("Total: " + Sum);
 						tvDeducted.setText("Deducted: " +  Deducted);

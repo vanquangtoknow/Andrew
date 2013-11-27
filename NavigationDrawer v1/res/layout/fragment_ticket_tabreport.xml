@@ -5,17 +5,115 @@
     android:orientation="vertical"
     android:id="@+id/tab_tickereport"
      >
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/bar"
+            android:gravity="center_horizontal"
+           
+            >
+            <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Information"
+            android:textSize="40dp"
+            
+             />
+        </TableRow>
 
-    <Button
-        android:id="@+id/btnGetService"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:weightSum="3"
+            >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Technician" />
+            
+             <TextView
+		        android:id="@+id/textView3"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="2"
+		        android:textSize="20dp"
+		        android:text="Andrew Nguyen" />
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:weightSum="3"
+            >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Tecket #: " />
+             <TextView
+		        android:id="@+id/textView3"
+		        android:layout_width="0dp"
+                android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:textSize="20dp"
+		        android:text="0151" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+             >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Customer: " />
+             <TextView
+		        android:id="@+id/textView3"
+		        android:layout_width="0dp"
+                android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:textSize="20dp"
+		        android:text="van Quang" />
+        </TableRow>
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="3"
+            >
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="Money/Time " />
+             <TextView
+		        android:id="@+id/textView3"
+		        android:layout_width="0dp"
+                android:layout_weight="1"
+		        android:layout_height="wrap_content"
+		        android:textSize="20dp"
+		        android:text="0/1week" />
+        </TableRow>
+    </TableLayout>
+
+   
 
 </LinearLayout>

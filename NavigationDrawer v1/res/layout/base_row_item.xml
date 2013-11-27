@@ -6,7 +6,8 @@
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_input_get" />
+        android:background="@drawable/ticket_sale"
+         />
     <TextView
         android:id="@+id/personname"
         android:layout_width="50dp"

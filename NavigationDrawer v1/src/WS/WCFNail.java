@@ -21,27 +21,24 @@ import DTO.Ticket;
 import android.util.Log;
 
 public class WCFNail {
-
 	private static String NAMESPACE = "http://tempuri.org/";
-
 	private static final String URL = "http://posifyrt.cloudapp.net/NailService.svc";
-	
+
 	private String ISERVICE = "INailService/";
 
 	public WCFNail() {
 	}
+
 	/**
 	 * 
 	 * @param para
 	 * @param func
 	 * @return
 	 */
-	private SoapPrimitive getSoapPrimitive(ArrayList<String> para , String func)
-	{
+	private SoapPrimitive getSoapPrimitive(ArrayList<String> para, String func) {
 		SoapPrimitive root = null;
 		try {
-			root = (SoapPrimitive) getData(func, para, true)
-					.get(0);
+			root = (SoapPrimitive) getData(func, para, true).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return null;
@@ -52,12 +49,11 @@ public class WCFNail {
 		}
 		return root;
 	}
-	private SoapObject getSoap(ArrayList<String> para , String func)
-	{
+
+	private SoapObject getSoap(ArrayList<String> para, String func) {
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData(func, para, false)
-					.get(0);
+			root = (SoapObject) getData(func, para, false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return null;
@@ -68,15 +64,13 @@ public class WCFNail {
 		}
 		return root;
 	}
-	
-	private SoapPrimitive getSoapPrimitiveNew(ArrayList<Object> para , String func)
-	{
+
+	private SoapPrimitive getSoapPrimitiveNew(ArrayList<Object> para,
+			String func) {
 		SoapPrimitive root = null;
 		try {
-			root = (SoapPrimitive) getDataNew(func, para, true)
-					.get(0);
+			root = (SoapPrimitive) getDataNew(func, para, true).get(0);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			return null;
 		}
 		if (root == null) {
@@ -85,13 +79,11 @@ public class WCFNail {
 		}
 		return root;
 	}
-	
-	private SoapObject getSoapNew(ArrayList<Object> para , String func)
-	{
+
+	private SoapObject getSoapNew(ArrayList<Object> para, String func) {
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getDataNew(func, para, false)
-					.get(0);
+			root = (SoapObject) getDataNew(func, para, false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return null;
@@ -102,7 +94,7 @@ public class WCFNail {
 		}
 		return root;
 	}
-	
+
 	public ArrayList<Object> getDataNew(String METHOD_NAME,
 			ArrayList<Object> para, boolean isPrimitive) {
 		ArrayList<Object> result = new ArrayList<Object>();
@@ -114,12 +106,13 @@ public class WCFNail {
 			SoapObject request = new SoapObject(NAMESPACE, METHOD_NAME);
 			if (para != null) {
 				for (int i = 0; i < para.size(); i++) {
+					Object t = para.get(i);
 					request.addProperty("arg" + String.valueOf(i), para.get(i));
 				}
 			}
 			Log.e("WS", "1");
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);
 			envelope.dotNet = true;
 			Log.e("WS", "1");
 			envelope.setOutputSoapObject(request);
@@ -165,7 +158,7 @@ public class WCFNail {
 			ArrayList<String> para, boolean isPrimitive) {
 		ArrayList<Object> result = new ArrayList<Object>();
 		SoapObject resultSoap = null;
-		
+
 		String SOAP_ACTION = NAMESPACE + ISERVICE + METHOD_NAME;
 		try {
 			// tao soapObject de thuc thi ket noi
@@ -177,7 +170,8 @@ public class WCFNail {
 				}
 			}
 			Log.e("WS", "1");
-			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+			SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(
+					SoapEnvelope.VER11);
 
 			envelope.dotNet = true;
 			Log.e("WS", "1");
@@ -253,15 +247,14 @@ public class WCFNail {
 		return result;
 
 	}
-	
-	
+
 	public ArrayList<OrderExpense> getAllExpense(ArrayList<String> para) {
 		// tao soapobject de nhan ket qua tra ve
 		ArrayList<OrderExpense> result = new ArrayList<OrderExpense>();
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData("getListBetweenDayOrderExpense", para, false)
-					.get(0);
+			root = (SoapObject) getData("getListBetweenDayOrderExpense", para,
+					false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return result;
@@ -289,12 +282,28 @@ public class WCFNail {
 		return result;
 
 	}
-	public ArrayList<Float> getFullReport(ArrayList<String> para)
-	{
-		ArrayList <Float> result = new ArrayList<Float>();
+
+	public ArrayList<Float> getFullReport(ArrayList<String> para) {
+		ArrayList<Float> result = new ArrayList<Float>();
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData("getFullReport", para, false)
+			root = (SoapObject) getData("getFullReport", para, false).get(0);
+		} catch (Exception e) {
+			return result;
+		}
+		for (int i = 0; i < root.getPropertyCount(); i++) {
+			Float temp = Float.parseFloat(root.getProperty(i).toString());
+			result.add(temp);
+		}
+		Log.e(String.valueOf(result.size()), "123");
+		return result;
+	}
+
+	public ArrayList<Float> getEmployeeReport(ArrayList<String> para) {
+		ArrayList<Float> result = new ArrayList<Float>();
+		SoapObject root = null;
+		try {
+			root = (SoapObject) getData("getEmployeeReport", para, false)
 					.get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -307,37 +316,23 @@ public class WCFNail {
 		Log.e(String.valueOf(result.size()), "123");
 		return result;
 	}
-	public ArrayList<Float> getEmployeeReport(ArrayList<String> para)
-	{
-		ArrayList <Float> result = new ArrayList<Float>();
-		SoapObject root = null;
-		try {
-			root = (SoapObject) getData("getEmployeeReport", para, false).get(0);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			return result;
-		}
-		for (int i = 0; i < root.getPropertyCount(); i++) {
-			Float temp = Float.parseFloat(root.getProperty(i).toString());
-			result.add(temp);
-		}
-		Log.e(String.valueOf(result.size()), "123");
-		return result;
-	}
+
 	/**
-	 * Lay danh sach ItemTicket theo id ticket, co 
-	 * getListByIDTicket(int id_ticket);
-	 * @param para Chi co 1 param: int id_ticket 
+	 * Lay danh sach ItemTicket theo id ticket, co getListByIDTicket(int
+	 * id_ticket);
+	 * 
+	 * @param para
+	 *            Chi co 1 param: int id_ticket
 	 * @return ArrayList<ItemTicket>
 	 */
-	public ArrayList<ItemTicket> getListItemTicketByIDTicket(ArrayList<String> para)
-	{
+	public ArrayList<ItemTicket> getListItemTicketByIDTicket(
+			ArrayList<String> para) {
 		String s = para.get(0);
 		ArrayList<ItemTicket> result = new ArrayList<ItemTicket>();
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData("getListItemTicketByIDTicket", para, false)
-					.get(0);
+			root = (SoapObject) getData("getListItemTicketByIDTicket", para,
+					false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return result;
@@ -346,23 +341,23 @@ public class WCFNail {
 			Log.e("error", "khong doc duoc");
 			return result;
 		}
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			ItemTicket tmp = new ItemTicket();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
 		}
-		
+
 		return result;
 	}
+
 	/**
 	 * Get Lis
+	 * 
 	 * @param para
 	 * @return
 	 */
-	public ItemTicket getItemTicketById(ArrayList<String> para)
-	{
-		
+	public ItemTicket getItemTicketById(ArrayList<String> para) {
+
 		ItemTicket result = new ItemTicket();
 		SoapObject root = null;
 		try {
@@ -379,12 +374,12 @@ public class WCFNail {
 		result.getInfoFromSoap(root);
 		return result;
 	}
-	public ArrayList<Ticket> getListTicketBetween(ArrayList<String> para){
+
+	public ArrayList<Ticket> getListTicketBetween(ArrayList<String> para) {
 		ArrayList<Ticket> result = new ArrayList<Ticket>();
 		SoapObject root = null;
 		try {
-			root = (SoapObject) getData("getListBetween", para, false)
-					.get(0);
+			root = (SoapObject) getData("getListBetween", para, false).get(0);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			return result;
@@ -393,8 +388,7 @@ public class WCFNail {
 			Log.e("error", "khong doc duoc");
 			return result;
 		}
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			Ticket tmp = new Ticket();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
@@ -402,260 +396,278 @@ public class WCFNail {
 		return result;
 	}
 
-	public boolean deleteAllItemTicket(ArrayList<String> para)
-	{
+	public boolean deleteAllItemTicket(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "deleteAllItemTicket");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
 
-	public boolean deleteItemTicket(ArrayList<String> para)
-	{
+	public boolean deleteItemTicket(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "deleteItemTicket");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
-	
-	public boolean deleteItemTicketByIDTicket(ArrayList<String> para)
-	{
-		SoapPrimitive root = getSoapPrimitive(para, "deleteItemTicketByIDTicket");
-		if(root == null )
+
+	public boolean deleteItemTicketByIDTicket(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para,
+				"deleteItemTicketByIDTicket");
+		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
-	
-	public int insertItemTicket(ArrayList<String> para)
-	{
+
+	public int insertItemTicket(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "insertItemTicket");
-		if(root == null )
+		if (root == null)
 			return -1;
 		return Integer.parseInt(root.toString());
 	}
-	
-	public boolean updateItemTicket(ArrayList<String> para)
-	{
-		SoapPrimitive root = getSoapPrimitive(para, "updateItemTicket");
-		if(root == null )
+
+	/**
+	 * Them mot itemticket Duy thieu cai nay, q bo sung
+	 * 
+	 * @param para
+	 *            itemticket
+	 * @return true if done successfull ortherwise false
+	 */
+	public boolean updateItemTicket(ArrayList<Object> para) {
+		SoapPrimitive root = getSoapPrimitiveNew(para, "updateItemTicket");
+		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
+
+	/*
+	 * public boolean updateItemTicket(ArrayList<String> para) { SoapPrimitive
+	 * root = getSoapPrimitive(para, "updateItemTicket"); if(root == null )
+	 * return false; return Boolean.valueOf(root.toString()); }
+	 */
 	/**
 	 * 
 	 * @param para
 	 * @return
 	 */
-	public int getIDTicketMax(ArrayList<String> para)
-	{
+	public int getIDTicketMax(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getIDTicketMax");
-		if(root == null )
+		if (root == null)
 			return -1;
 		return Integer.parseInt(root.toString());
 	}
-	
+
 	/**
 	 * 
-	 * @param para (int id)
-	 * @return 
+	 * @param para
+	 *            (int id)
+	 * @return
 	 */
-	public ArrayList<Ticket> getListTicketByIDEmployee(ArrayList<String> para)
-	{
+	public ArrayList<Ticket> getListTicketByIDEmployee(ArrayList<String> para) {
 		ArrayList<Ticket> result = new ArrayList<Ticket>();
 		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "getListTicketByIDEmployee");
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			Ticket tmp = new Ticket();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
 		}
 		return result;
 	}
+
 	/**
 	 * 
-	 * @param para int id
+	 * @param para
+	 *            int id
 	 * @return
 	 */
-	public boolean DeleteSaleItem(ArrayList<String> para)
-	{
+	public boolean DeleteSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "DeleteSaleItem");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
 	}
-	
 
-	public int getIDSaleItemMax(ArrayList<String> para)
-	{
+	public int getIDSaleItemMax(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getIDSaleItemMax");
-		if(root == null )
+		if (root == null)
 			return -1;
 		return Integer.valueOf(root.toString());
 	}
-	
+
 	/**
 	 * 
 	 * @param para
 	 * @return
 	 */
-	public ArrayList<SaleItem> getListSaleItem(ArrayList<String> para)
-	{
+	public ArrayList<SaleItem> getListSaleItem(ArrayList<String> para) {
 		ArrayList<SaleItem> result = new ArrayList<SaleItem>();
 		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "getListSaleItem");
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			SaleItem tmp = new SaleItem();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 
-	 * @param para int idcategory
+	 * @param para
+	 *            int idcategory
 	 * @return
 	 */
-	public ArrayList<SaleItem> getListSaleItemByIDCategory(ArrayList<String> para)
-	{
+	public ArrayList<SaleItem> getListSaleItemByIDCategory(
+			ArrayList<String> para) {
 		ArrayList<SaleItem> result = new ArrayList<SaleItem>();
 		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "getListSaleItemByIDCategory");
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			SaleItem tmp = new SaleItem();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
 		}
 		return result;
 	}
-	
+
 	/**
 	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
-	 * @param para int idsaleitem
+	 * 
+	 * @param para
+	 *            int idsaleitem
 	 * @return
 	 */
-	public String getNameSaleItem(ArrayList<String> para)
-	{
+	public String getNameSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getNameSaleItem");
-		if(root == null )
+		if (root == null)
 			return "-2";
-		String s  = root.toString();
+		String s = root.toString();
 		return (root.toString());
 	}
-	
+
 	/**
 	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
-	 * @param para int idsaleitem
+	 * 
+	 * @param para
+	 *            int idsaleitem
 	 * @return
 	 */
-	public String getTypeSaleItem(ArrayList<String> para)
-	{
+	public String getTypeSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getTypeSaleItem");
-		if(root == null )
+		if (root == null)
 			return "-2";
 		return (root.toString());
 	}
-	
+
 	/**
 	 * tra ve -2, dang ra la -1 nhung -1 la cho mac dinh la deduced
-	 * @param para int idsaleitem
+	 * 
+	 * @param para
+	 *            int idsaleitem
 	 * @return
 	 */
-	public String getPriceSaleItem(ArrayList<String> para)
-	{
+	public String getPriceSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getPriceSaleItem");
-		if(root == null )
+		if (root == null)
 			return "-2";
 		return (root.toString());
 	}
-	
+
 	/**
 	 * 
-	 * @param para saleitem
+	 * @param para
+	 *            saleitem
 	 * @return
 	 */
-	public int insertSaleItem(ArrayList<String> para)
-	{
+	public int insertSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "insertSaleItem");
-		if(root == null )
+		if (root == null)
 			return -1;
 		return Integer.parseInt(root.toString());
 	}
-	
+
 	/**
 	 * 
-	 * @param para  saleitem
+	 * @param para
+	 *            saleitem
 	 * @return
 	 */
-	public Boolean UpdateSaleItem(ArrayList<String> para)
-	{
+	public Boolean UpdateSaleItem(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "UpdateSaleItem");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.parseBoolean(root.toString());
-		
+
 	}
+
 	/**
 	 * 
-	 * @param para  idCategory
+	 * @param para
+	 *            idCategory
 	 * @return
 	 */
-	public int getIDCategoryMax(ArrayList<String> para)
-	{
+	public int getIDCategoryMax(ArrayList<String> para) {
 		SoapPrimitive root = getSoapPrimitive(para, "getIDCategoryMax");
-		if(root == null )
+		if (root == null)
 			return -1;
 		return Integer.parseInt(root.toString());
-		
-	}
-	
 
-	public ArrayList<Category> getListCategory(ArrayList<String> para)
-	{
+	}
+
+	public ArrayList<Category> getListCategory(ArrayList<String> para) {
 		ArrayList<Category> result = new ArrayList<Category>();
 		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "getListCategory");
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			Category tmp = new Category();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);
 		}
 		return result;
 	}
-	
+
+	/**
+	 * Duy thieu ham nay, q bo sung
+	 * 
+	 * @param para
+	 *            truyen vao idReport muon xoa
+	 * @return true neu xoa thanh cong, ortherwise false
+	 */
+	public boolean deleteItemReport(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para, "deleteItemReport");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+
 	/**
 	 * 
-	 * @param para  idItemReport
+	 * @param para
+	 *            idItemReport
 	 * @return
 	 */
-	public Boolean deleteItemReport(ArrayList<Object> para)
-	{
+	public Boolean deleteItemReport(ArrayList<Object> para) {
 		SoapPrimitive root = getSoapPrimitiveNew(para, "deleteItemReport");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.parseBoolean(root.toString());
-		
+
 	}
-	public Boolean InsertReport(ArrayList<Object> para)
-	{
-		
+
+	public Boolean InsertReport(ArrayList<Object> para) {
 		SoapPrimitive root = getSoapPrimitiveNew(para, "InsertReport");
-		if(root == null )
+		if (root == null)
 			return false;
 		return Boolean.parseBoolean(root.toString());
-		
+
 	}
-	public ArrayList<ReportDTO> GetIListtemReportWithEmployee(ArrayList<String> para)
-	{
+
+	public ArrayList<ReportDTO> GetIListtemReportWithEmployee(
+			ArrayList<String> para) {
 		ArrayList<ReportDTO> result = new ArrayList<ReportDTO>();
 		Log.e("gettbid", "1");
 		SoapObject root = getSoap(para, "GetIListtemReportWithEmployee");
-		for( int i= 0 ; i < root.getPropertyCount() ; i++)
-		{
+		for (int i = 0; i < root.getPropertyCount(); i++) {
 			ReportDTO tmp = new ReportDTO();
 			tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
 			result.add(tmp);

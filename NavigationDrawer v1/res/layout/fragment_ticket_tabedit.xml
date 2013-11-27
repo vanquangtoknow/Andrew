@@ -90,31 +90,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-
-            <Button
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
+            <ImageButton android:id="@+id/btn_ticketedit_add"
+               android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit" />
-
-            <Button
-                android:id="@+id/button2"
-                android:layout_width="wrap_content"
+               android:background="@drawable/selector"
+               android:src="@drawable/ticket_btnadd"
+               android:focusable="true">
+               </ImageButton>
+			
+            <ImageButton android:id="@+id/btn_ticketedit_deleteticket"
+               android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Delete" />
-
-            <Button
-                android:id="@+id/btn_ticketedit_add"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add" />
-
-            <Button
-                android:id="@+id/button4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="DTicket" />
-
+               android:background="@drawable/selector"
+               android:src="@drawable/ticket_btndelete_ticket"
+               android:focusable="true"
+               >
+               </ImageButton>
         </LinearLayout>
 
     </LinearLayout>
