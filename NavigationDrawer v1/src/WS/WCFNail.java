@@ -374,7 +374,8 @@ public class WCFNail {
 		result.getInfoFromSoap(root);
 		return result;
 	}
-
+	
+	//Ticket
 	public ArrayList<Ticket> getListTicketBetween(ArrayList<String> para) {
 		ArrayList<Ticket> result = new ArrayList<Ticket>();
 		SoapObject root = null;
@@ -418,7 +419,16 @@ public class WCFNail {
 		return Boolean.valueOf(root.toString());
 	}
 
-	public int insertItemTicket(ArrayList<String> para) {
+	public int insertItemTicket(final ItemTicket itemticket) {
+		ArrayList<String> para = new ArrayList<String>(){
+			{
+				add(String.valueOf(itemticket.getID()));
+				add(String.valueOf(itemticket.getID_SaleItem()));
+				add(String.valueOf(itemticket.getID_Ticket()));
+				add(String.valueOf(itemticket.getPrice()));
+				add(String.valueOf(itemticket.getQuality()));
+			}
+		};
 		SoapPrimitive root = getSoapPrimitive(para, "insertItemTicket");
 		if (root == null)
 			return -1;
@@ -432,8 +442,17 @@ public class WCFNail {
 	 *            itemticket
 	 * @return true if done successfull ortherwise false
 	 */
-	public boolean updateItemTicket(ArrayList<Object> para) {
-		SoapPrimitive root = getSoapPrimitiveNew(para, "updateItemTicket");
+	public boolean updateItemTicket(final ItemTicket itemticket) {
+		ArrayList<String> para = new ArrayList<String>(){
+			{
+				add(String.valueOf(itemticket.getID()));
+				add(String.valueOf(itemticket.getID_SaleItem()));
+				add(String.valueOf(itemticket.getID_Ticket()));
+				add(String.valueOf(itemticket.getPrice()));
+				add(String.valueOf(itemticket.getQuality()));
+			}
+		};
+		SoapPrimitive root = getSoapPrimitive(para, "updateItemTicket");
 		if (root == null)
 			return false;
 		return Boolean.valueOf(root.toString());
@@ -579,7 +598,16 @@ public class WCFNail {
 	 *            saleitem
 	 * @return
 	 */
-	public int insertSaleItem(ArrayList<String> para) {
+	public int insertSaleItem(final SaleItem saleitem) {
+		ArrayList<String> para = new ArrayList<String>(){
+			{
+				add(String.valueOf(saleitem.getID()));
+				add(String.valueOf(saleitem.getId_Category()));
+				add(String.valueOf(saleitem.getId_Type()));
+				add(String.valueOf(saleitem.getName()));
+				add(String.valueOf(saleitem.getPrice()));
+			}
+		};
 		SoapPrimitive root = getSoapPrimitive(para, "insertSaleItem");
 		if (root == null)
 			return -1;
@@ -592,7 +620,16 @@ public class WCFNail {
 	 *            saleitem
 	 * @return
 	 */
-	public Boolean UpdateSaleItem(ArrayList<String> para) {
+	public Boolean UpdateSaleItem(final SaleItem saleitem) {
+		ArrayList<String> para = new ArrayList<String>(){
+			{
+				add(String.valueOf(saleitem.getID()));
+				add(String.valueOf(saleitem.getId_Category()));
+				add(String.valueOf(saleitem.getId_Type()));
+				add(String.valueOf(saleitem.getName()));
+				add(String.valueOf(saleitem.getPrice()));
+			}
+		};
 		SoapPrimitive root = getSoapPrimitive(para, "UpdateSaleItem");
 		if (root == null)
 			return false;
@@ -685,4 +722,6 @@ public class WCFNail {
 		}
 		return result;
 	}
+	
+	
 }
