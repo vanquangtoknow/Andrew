@@ -38,3 +38,5 @@ public List<Category> getList();
 public bool deletItemReport(int id);
 public bool InsertReport(ReportDTO report);
 bus.GetIListtemReportWithEmployee(report.Id_Employee);
+
+abc
