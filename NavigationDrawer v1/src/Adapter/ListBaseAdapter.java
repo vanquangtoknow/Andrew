@@ -71,10 +71,12 @@ public class ListBaseAdapter extends BaseAdapter{
 			case 1:
 				convertView = infalInflater.inflate(R.layout.base_row_item, null);
 				ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
-				//image.setBackgroundResource(R.drawable.tick_employee);
+				image.setBackgroundResource(R.drawable.tick_employee);
 				break;
 			case 2:
-				convertView = infalInflater.inflate(R.layout.row_item, null);
+				convertView = infalInflater.inflate(R.layout.base_row_item, null);
+				ImageView image1 = (ImageView) convertView.findViewById(R.id.imageView1);
+				image1.setBackgroundResource(R.drawable.ticket_sale);
 			default:
 				break;
 			}

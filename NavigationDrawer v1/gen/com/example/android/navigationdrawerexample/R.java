@@ -70,7 +70,7 @@ public final class R {
         public static final int TableRow04=0x7f0a002f;
         public static final int Ticket=0x7f0a0044;
         public static final int YearChoose1=0x7f0a0034;
-        public static final int action_websearch=0x7f0a005c;
+        public static final int action_websearch=0x7f0a0060;
         public static final int btn_ticketedit_add=0x7f0a0053;
         public static final int btn_ticketedit_deleteticket=0x7f0a0054;
         public static final int childItem=0x7f0a000b;
@@ -94,11 +94,11 @@ public final class R {
         public static final int drawer_layout=0x7f0a0000;
         public static final int editText1=0x7f0a0028;
         public static final int editText2=0x7f0a002b;
-        public static final int exId=0x7f0a0057;
-        public static final int exdate=0x7f0a0059;
-        public static final int exname=0x7f0a0058;
-        public static final int exprice=0x7f0a005a;
-        public static final int heading=0x7f0a0056;
+        public static final int exId=0x7f0a005b;
+        public static final int exdate=0x7f0a005d;
+        public static final int exname=0x7f0a005c;
+        public static final int exprice=0x7f0a005e;
+        public static final int heading=0x7f0a005a;
         public static final int idlogin=0x7f0a0022;
         public static final int image=0x7f0a0025;
         public static final int imageView1=0x7f0a0009;
@@ -131,6 +131,10 @@ public final class R {
         public static final int tab_ticketedit=0x7f0a004a;
         public static final int tab_ticketemploy=0x7f0a0047;
         public static final int tabhost=0x7f0a0045;
+        public static final int tabinfo_tvcustommer=0x7f0a0058;
+        public static final int tabinfo_tvemployee=0x7f0a0056;
+        public static final int tabinfo_tvmoneytime=0x7f0a0059;
+        public static final int tabinfo_tvticket=0x7f0a0057;
         public static final int tableRow1=0x7f0a000f;
         public static final int tableRow1A=0x7f0a003a;
         public static final int tableRow2=0x7f0a0012;
@@ -145,7 +149,7 @@ public final class R {
         public static final int tvprice=0x7f0a0008;
         public static final int tvquality=0x7f0a0006;
         public static final int tvtype=0x7f0a0005;
-        public static final int value=0x7f0a005b;
+        public static final int value=0x7f0a005f;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

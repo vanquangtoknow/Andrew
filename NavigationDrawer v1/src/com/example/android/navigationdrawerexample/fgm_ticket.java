@@ -1,5 +1,7 @@
 package com.example.android.navigationdrawerexample;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,8 +25,6 @@ import DTO.Employee;
 import DTO.Item;
 import DTO.ItemTicket;
 import DTO.ItemTicketAdapter;
-import DTO.ItemTicketEdit;
-import DTO.Report;
 import DTO.ReportDTO;
 import DTO.Ticket;
 import WS.WCFNail;
@@ -34,7 +34,7 @@ import android.app.Dialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.EventLogTags.Description;
+import android.util.FloatMath;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +53,6 @@ import android.widget.Switch;
 import android.widget.TabHost;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class fgm_ticket extends Fragment {
@@ -120,6 +119,11 @@ public class fgm_ticket extends Fragment {
 	private TextView tvForOwner;
 	//------Su dung cho 
 	
+	//----- Khai bao va su dung cho tab information
+	private TextView tvInfoEmpoyee;
+	private TextView tvInfoTicket;
+	private TextView tvInfoCustomner;
+	private TextView tvInfoMoneyTime;
 	// endregion
 
 	// region khoi tao cac date time va update cac label
@@ -236,26 +240,41 @@ public class fgm_ticket extends Fragment {
 		progress.setVisibility(View.GONE);
 		progress1.setVisibility(View.GONE);
 		progessbarTicketEdit = (ProgressBar) rootView.findViewById(R.id.progressBar2);
+
+		
 		progessbarTicketEdit.setVisibility(View.GONE);
 		//------------- khai bao va su dung de tinh total, dedudeted
 		tvTotal = (TextView) rootView.findViewById(R.id.report_txt_total);
 		tvDeducted = (TextView) rootView.findViewById(R.id.report_txt_deduted);
+		tvForTech = (TextView) rootView.findViewById(R.id.report_txt_fortech);
+		tvForOwner = (TextView) rootView.findViewById(R.id.report_txt_forowner);
+		
+		//---------------Khai bao va su dung tab infomation
+		tvInfoEmpoyee = (TextView) rootView.findViewById(R.id.tabinfo_tvemployee);
+		tvInfoCustomner = (TextView) rootView.findViewById(R.id.tabinfo_tvcustommer);
+		tvInfoTicket = (TextView) rootView.findViewById(R.id.tabinfo_tvticket);
+		tvInfoMoneyTime = (TextView) rootView.findViewById(R.id.tabinfo_tvmoneytime);
+		
 		//-------------su dung tabhost
 		tabhost = (TabHost) rootView.findViewById(R.id.tabhost);
 		tabhost.setup();
+		
 		TabHost.TabSpec tabspec;
 		tabspec = tabhost.newTabSpec("Tab Report");
 		tabspec.setContent(R.id.tab_ticketemploy);
 		tabspec.setIndicator("Emloyee and ticket");
 		tabhost.addTab(tabspec);
+		
 		tabspec = tabhost.newTabSpec("Tab Report1");
 		tabspec.setContent(R.id.tab_ticketedit);
 		tabspec.setIndicator("View and Edit");
 		tabhost.addTab(tabspec);
+		
 		tabspec = tabhost.newTabSpec("Tab Report2");
 		tabspec.setContent(R.id.tab_tickereport);
 		tabspec.setIndicator("View Info");
 		tabhost.addTab(tabspec);
+		
 		tabhost.setCurrentTab(0);
 		//--su dung listview employee, va listview ticket
 		lvEmployees = (ListView)rootView.findViewById(R.id.listviewemployee);
@@ -397,7 +416,7 @@ public class fgm_ticket extends Fragment {
 		adapterEmployees.initListBaseAdapter(1, 1);
 		lvEmployees.setAdapter(adapterEmployees);
 		adapterTickets = new ListBaseAdapter(getActivity(), listTickets);
-		adapterTickets.initListBaseAdapter(2,1);
+		adapterTickets.initListBaseAdapter(2,2);
 		lvTickets.setAdapter(adapterTickets);
 		/**
 		 * Lay toan bo danh sach nhan vien, neu ds>0 thi lay danh sach ticket cua nhan vien dau tien
@@ -413,6 +432,8 @@ public class fgm_ticket extends Fragment {
 					listEmployee.addAll(nailservice.getAllEmployee());
 					if(listEmployee.size()>0)
 					{
+						EmployeePresent = listEmployee.get(0);
+						tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 						listTickets.clear();
 						listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
 							{
@@ -423,6 +444,7 @@ public class fgm_ticket extends Fragment {
 						{
 							//idTicketPresent = Integer.toString(listTickets.get(0).getID());
 							TicketPresent = listTickets.get(0);
+							tvInfoTicket.setText(TicketPresent.getCode());
 							listEdits.clear();
 							ArrayList<ItemTicket> dsItemTicket = nailservice.getListItemTicketByIDTicket(
 									new ArrayList<String>(){{
@@ -447,6 +469,8 @@ public class fgm_ticket extends Fragment {
 			{
 				adapterEmployees.setSelectedItem(position);
 				adapterEmployees.notifyDataSetChanged();
+				EmployeePresent = listEmployee.get(position);
+				tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 				Thread threadtickets = new Thread()
 				{
 					@Override
@@ -463,6 +487,7 @@ public class fgm_ticket extends Fragment {
 							if(listTickets.size()>0)
 							{
 								TicketPresent = listTickets.get(0);
+								tvInfoTicket.setText(TicketPresent.getCode());
 							}
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
@@ -489,6 +514,7 @@ public class fgm_ticket extends Fragment {
 					long arg3) {
 				//idTicketPresent = Integer.toString(listTickets.get(arg2).getID());
 				TicketPresent = listTickets.get(arg2);
+				
 				adapterTickets.setSelectedItem(arg2);
 				adapterTickets.notifyDataSetChanged();
 				Thread threadupdateReport = new Thread()
@@ -791,12 +817,13 @@ public class fgm_ticket extends Fragment {
 			public void run() {
 				WCFNail nailservice = new WCFNail();
 				ReportDTO reportDTO = new ReportDTO();
+				//reportDTO.setId(1);
 				reportDTO.setDate(TicketPresent.getDate());
 				reportDTO.setId_Employee(TicketPresent.getID_Employee());
 				reportDTO.setId_saleitem(ItemTicketAdapterPresent.getID_ItemTicket());
 				reportDTO.setMoney(ItemTicketAdapterPresent.getPrice());
 				reportDTO.setId_type_money(getTypeMoney(ItemTicketAdapterPresent.getType()));
-				reportDTO.setId_type_money(1);
+				reportDTO.setId_type_method(1);
 				Log.d("saveItemTicket", "IdEmployee: " + TicketPresent.getID_Employee() + "IdSaleItem: " +  ItemTicketAdapterPresent.getID_ItemTicket());
 				if (soluongmoi > ItemTicketAdapterPresent.getQuality())
 		        {
@@ -812,6 +839,10 @@ public class fgm_ticket extends Fragment {
 		                if(nailservice.InsertReport(reportDTO)==true)
 		                {
 		                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them succesfull" + i + reportDTO.getId_saleitem());
+		                }
+		                else
+		                {
+		                	Log.d("saveItemTicket","TH soluongmoi>soluonghientai: them failed" + i + reportDTO.getId_saleitem());
 		                }
 		            }
 		        }
@@ -852,8 +883,11 @@ public class fgm_ticket extends Fragment {
 				Log.d("saveItemTicket ", "update ItemTicket value idItemticket "+item.getID()+" idSale: "+ item.getID_SaleItem()+" idIdTicket: " + item.getID_Ticket());
 				if(nailservice.updateItemTicket(new ArrayList<Object>(){{add(item);}})==true)
 				{
-					
 					Log.d("saveItemTicket ", "update succesfully itemticket");
+				}
+				else
+				{
+					Log.d("saveItemTicket ", "update: failed itemticket");
 				}
 			}
 		};
@@ -875,6 +909,7 @@ public class fgm_ticket extends Fragment {
 			}
 		});
 		listEdits.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
+		Log.d("Ticket_fuction", "Load ListEdit Ticket: " + array.size());
 		Thread a = new Thread()
 		{
 			int i = 0;
@@ -889,6 +924,8 @@ public class fgm_ticket extends Fragment {
 					if(array.get(i).getID_SaleItem()==-1)
 					{
 						Deducted = array.get(i).getPrice();
+						Log.d("Ticket_fuction", "Load ListEdit Ticket: row " + i +" deducted is" + array.get(i).getPrice());
+						Sum += Deducted;
 					}
 					else
 					{
@@ -901,6 +938,7 @@ public class fgm_ticket extends Fragment {
 							type = "Tips";
 							temp.setType("Tips");
 							temp.setDescriptioon("Tips");
+							Log.d("Ticket_fuction", "Load ListEdit Ticket: row " + i +" is Tips" + array.get(i).getPrice());
 						}
 						else
 						{
@@ -926,6 +964,16 @@ public class fgm_ticket extends Fragment {
 							listEdits.add(temp);
 							Sum += Float.parseFloat(price)*quality;
 						}
+						// de tinh toan cho tech anh ownner
+						float tempForTwoPeople = Sum -Deducted;
+						float percent = EmployeePresent.getPercent();
+						DecimalFormat df = new DecimalFormat("##.##");
+						df.setRoundingMode(RoundingMode.DOWN);
+						
+						String forowner = df.format((double)(percent*tempForTwoPeople)/100);
+						String fortech = df.format((double)((100-percent)*tempForTwoPeople)/100);
+						ForOwner = Float.parseFloat(forowner);
+						ForTech = Float.parseFloat(fortech);
 						//temp.setDescriptioon("s" +Integer.toString(array.get(i).getID_SaleItem()));
 						//listEdits.add(temp);
 					}
@@ -946,6 +994,8 @@ public class fgm_ticket extends Fragment {
 						progessbarTicketEdit.setVisibility(View.GONE);
 						tvTotal.setText("Total: " + Sum);
 						tvDeducted.setText("Deducted: " +  Deducted);
+						tvForTech.setText("For Tech: "+ ForTech);
+						tvForOwner.setText("For Owner: "+ ForOwner);
 					}
 				});
 			}

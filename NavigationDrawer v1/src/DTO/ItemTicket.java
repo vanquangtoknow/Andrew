@@ -8,6 +8,11 @@ public class ItemTicket {
 	private int ID_Ticket ;
 	private int Quality ;
 	private float Price ;
+	private SoapObject soap;
+	public SoapObject getSoapObject()
+	{
+		return soap;
+	}
 	public ItemTicket(int id, int idsaleitem,int qualiity, int idticket, float price)
 	{
 		this.ID=id;

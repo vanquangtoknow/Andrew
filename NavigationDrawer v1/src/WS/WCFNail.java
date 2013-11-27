@@ -178,8 +178,7 @@ public class WCFNail {
 			Log.e("WS", "1");
 			envelope.setOutputSoapObject(request);
 			Log.e("WS", "2");
-			HttpTransportSE androidHttpTransport = new HttpTransportSE(URL,
-					10000);
+			HttpTransportSE androidHttpTransport = new HttpTransportSE(URL,10000);
 			// tao ket noi
 			Log.e("WS", "3");
 			Log.e(SOAP_ACTION, URL);
