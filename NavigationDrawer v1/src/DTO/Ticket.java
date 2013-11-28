@@ -48,13 +48,21 @@ public class Ticket
     private int ID_Employee ;
     private String Customer ;
     private String Code ;
-    public void getInfoFromSoap(SoapObject root)
+    private int Id_TypeMethod;
+    public int getId_TypeMethod() {
+		return Id_TypeMethod;
+	}
+	public void setId_TypeMethod(int id_TypeMethod) {
+		Id_TypeMethod = id_TypeMethod;
+	}
+	public void getInfoFromSoap(SoapObject root)
     {
     	this.setCode((root.getProperty(0).toString()));
     	this.setCustomer(root.getProperty(1).toString());
     	this.setDate(root.getProperty(2).toString());
     	this.setID(Integer.parseInt(root.getProperty(3).toString()));
     	this.setID_Employee(Integer.parseInt(root.getProperty(4).toString()));
+    	this.setId_TypeMethod(Integer.parseInt(root.getProperty(5).toString()));
     }
     
     public String view()

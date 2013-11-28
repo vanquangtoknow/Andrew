@@ -12,6 +12,7 @@ public class ReportDTO {
 
 	private String date;
 
+	private int id_saleitem;
 	private int id_type_money;
 
 	private int id_type_method;
@@ -74,7 +75,7 @@ public class ReportDTO {
 		this.id_saleitem = id_saleitem;
 	}
 
-	private int id_saleitem;
+	
 
 	public void getInfoFromSoap(SoapObject root)
     {

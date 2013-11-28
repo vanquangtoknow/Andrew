@@ -376,6 +376,11 @@ public class WCFNail {
 	}
 	
 	//Ticket
+	/**
+	 * 
+	 * @param para int id_emloyee, DateTime dayBegin, DateTime dayEnd
+	 * @return
+	 */
 	public ArrayList<Ticket> getListTicketBetween(ArrayList<String> para) {
 		ArrayList<Ticket> result = new ArrayList<Ticket>();
 		SoapObject root = null;
@@ -606,6 +611,7 @@ public class WCFNail {
 				add(String.valueOf(saleitem.getId_Type()));
 				add(String.valueOf(saleitem.getName()));
 				add(String.valueOf(saleitem.getPrice()));
+				add(String.valueOf(saleitem.getStatus()));
 			}
 		};
 		SoapPrimitive root = getSoapPrimitive(para, "insertSaleItem");
@@ -628,6 +634,7 @@ public class WCFNail {
 				add(String.valueOf(saleitem.getId_Type()));
 				add(String.valueOf(saleitem.getName()));
 				add(String.valueOf(saleitem.getPrice()));
+				add(String.valueOf(saleitem.getStatus()));
 			}
 		};
 		SoapPrimitive root = getSoapPrimitive(para, "UpdateSaleItem");
@@ -683,13 +690,13 @@ public class WCFNail {
 	 *            idItemReport
 	 * @return
 	 */
-	public Boolean deleteItemReport(ArrayList<Object> para) {
-		SoapPrimitive root = getSoapPrimitiveNew(para, "deleteItemReport");
-		if (root == null)
-			return false;
-		return Boolean.parseBoolean(root.toString());
-
-	}
+//	public Boolean deleteItemReport(ArrayList<Object> para) {
+//		SoapPrimitive root = getSoapPrimitiveNew(para, "deleteItemReport");
+//		if (root == null)
+//			return false;
+//		return Boolean.parseBoolean(root.toString());
+//
+//	}
 
 	public Boolean InsertReport(final ReportDTO report) {
 		ArrayList<String> para = new ArrayList<String>(){
@@ -723,4 +730,33 @@ public class WCFNail {
 		return result;
 	}
 
+	//ticket
+	public boolean deleteAllTicket(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para, "deleteAllTicket");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public boolean deleteTicket(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para, "deleteTicket");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public boolean insertTicket(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para, "insertTicket");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
+	public boolean updateTicket(ArrayList<String> para) {
+		SoapPrimitive root = getSoapPrimitive(para, "updateTicket");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	
 }

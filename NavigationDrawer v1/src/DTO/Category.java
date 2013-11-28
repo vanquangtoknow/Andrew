@@ -5,6 +5,15 @@ import org.ksoap2.serialization.SoapObject;
 public class Category {
 	private int ID;
 	private String Name;
+	private boolean Status;
+
+	public boolean isStatus() {
+		return Status;
+	}
+
+	public void setStatus(boolean status) {
+		Status = status;
+	}
 
 	public int getID() {
 		return ID;
@@ -26,6 +35,7 @@ public class Category {
     {
     	this.setID(Integer.parseInt(root.getProperty(0).toString()));
     	this.setName(root.getProperty(1).toString());
+    	this.setStatus(Boolean.parseBoolean(root.getProperty(2).toString()));
     }
     public Category()
     {

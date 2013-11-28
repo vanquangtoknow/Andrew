@@ -39,14 +39,25 @@ public class SaleItem {
     private String Name ;
     private float Price ;
     private int Id_Type ;
+    private boolean Status;
     
-    public void getInfoFromSoap(SoapObject root)
+    public boolean isStatus() {
+		return Status;
+	}
+	public void setStatus(boolean status) {
+		Status = status;
+	}
+	public boolean getStatus() {
+		return Status;
+	}
+	public void getInfoFromSoap(SoapObject root)
     {
     	this.setID(Integer.parseInt(root.getProperty(0).toString()));
     	this.setId_Category(Integer.parseInt(root.getProperty(1).toString()));
     	this.setId_Type(Integer.parseInt(root.getProperty(2).toString()));
     	this.setName((root.getProperty(3).toString()));
     	this.setPrice(Float.parseFloat(root.getProperty(4).toString()));
+    	this.setStatus(Boolean.parseBoolean(root.getProperty(5).toString()));
     }
     
     

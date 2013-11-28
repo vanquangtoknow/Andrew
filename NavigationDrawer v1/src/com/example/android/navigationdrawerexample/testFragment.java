@@ -55,14 +55,20 @@ public  class testFragment extends Fragment {
 							WCFNail ws = new WCFNail();
 							Log.e("get", "1");
 							
-							ItemTicket sale = new ItemTicket();
-							sale.setID(1);
-							sale.setID_SaleItem(4);
-							sale.setID_Ticket(1);
-							sale.setQuality(1);
-							sale.setPrice(35);
-							Boolean tmp = ws
-									.updateItemTicket(sale);
+							SaleItem sale = new SaleItem();
+							sale.setID(93);
+							sale.setId_Category(9);
+							sale.setId_Type(2);
+							sale.setName("test");
+							sale.setPrice(12);
+							sale.setStatus(true);
+							
+							ws.DeleteSaleItem(new ArrayList<String>(){
+								{
+									add("94");
+								}
+							});
+							ws.UpdateSaleItem(sale);
 							Log.e("get", "ok");
 
 						} catch (Exception e) {
