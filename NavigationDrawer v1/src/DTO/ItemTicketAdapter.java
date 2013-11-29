@@ -2,12 +2,19 @@ package DTO;
 
 public class ItemTicketAdapter {
 	private int ID_ItemTicket ;
+	private int ID_SaleItem;
 	private String Type ;
 	private String Descriptioon;
 	private int Quality ;
 	private float Price ;
 	private boolean IsRowEmpty;
 	
+	public int getID_SaleItem() {
+		return ID_SaleItem;
+	}
+	public void setID_SaleItem(int iD_SaleItem) {
+		ID_SaleItem = iD_SaleItem;
+	}
 	public boolean isIsRowEmpty() {
 		return IsRowEmpty;
 	}
