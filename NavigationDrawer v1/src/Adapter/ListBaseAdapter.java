@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import com.example.android.navigationdrawerexample.R;
 
+import DTO.Category;
 import DTO.Employee;
 import DTO.Item;
+import DTO.SaleItem;
 import DTO.Ticket;
 import android.content.Context;
 import android.graphics.Color;
@@ -63,7 +65,7 @@ public class ListBaseAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		Log.e("Adapter-getview1", String.valueOf(position));
+		
 		if( convertView == null)
 		{
 			LayoutInflater infalInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -87,10 +89,22 @@ public class ListBaseAdapter extends BaseAdapter{
 		case 1:
 			Employee employee = (Employee)array.get(position);
 			name.setText(employee.getstrName());
+			
 			break;
 		case 2:
 			Ticket ticket = (Ticket) array.get(position);
 			name.setText(ticket.getCode().trim() + "idTickect: " +ticket.getID());
+			
+			break;
+		case 3:
+			Category cate = (Category) array.get(position);
+			name.setText(cate.getName());
+			
+			break;
+		case 4:
+			SaleItem saleitem = (SaleItem) array.get(position);
+			name.setText(saleitem.getName());
+			
 			break;
 		default:
 			break;
