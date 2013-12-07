@@ -34,8 +34,8 @@ public  class loginFragment extends Fragment {
         id = (TextView) rootView.findViewById(R.id.idlogin);
         code = (TextView) rootView.findViewById(R.id.codelogin);
         login = (Button) rootView.findViewById(R.id.Login);
-        //login.setOnClickListener(l)
         login.setOnClickListener(new OnClickListener() {
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
@@ -44,7 +44,7 @@ public  class loginFragment extends Fragment {
 				Log.e("login", "2");
 				((MainActivity)getActivity()).setCode(code.getText().toString());
 				Log.e("login", "3");
-				((MainActivity)getActivity()).setId(Integer.parseInt(id.getText().toString()));
+				((MainActivity)getActivity()).setId((id.getText().toString()));
 				((MainActivity)getActivity()).changeFragment(new ReportFragment());
 				((MainActivity)getActivity()).loginRow.setBackgroundColor(Color.parseColor("#91BEF7"));
 				((MainActivity)getActivity()).loginId.setText("Login as " + id.getText().toString());

@@ -66,12 +66,12 @@ public class MainActivity extends Activity {
 	public TextView loginId;
 	private boolean isLogin = false;
 	private String code= "0";
-	private int id = 0;
+	private String id = "0";
 	public void setLogin( boolean b)
 	{
 		isLogin = b;
 	}
-	public void setId( int i)
+	public void setId( String i)
 	{
 		id = i;
 	}
@@ -83,7 +83,7 @@ public class MainActivity extends Activity {
 	{
 		return isLogin;
 	}
-	public int getId( )
+	public String getId( )
 	{
 		return id;
 	}
