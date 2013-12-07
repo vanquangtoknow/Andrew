@@ -1,0 +1,71 @@
+public class CheckInfoTableBUS
+    {
+        public CheckInfoTableBUS();
+
+        public CheckInfoTable[] getAllCheckInfoTable();
+        public CheckInfoTable[] getAllCheckInfoWithEmployee(DateTime timeBegin, DateTime timeEnd, int id_Employee);
+        public CheckInfoTable[] getAllCheckInfoWithTime(DateTime time);
+        public bool insertCheckInfoTable(CheckInfoTable checkInfoTable);
+    }
+
+public class EmployEditBUS
+    {
+        public EmployEditBUS();
+
+        public NameAndAdd[] getAllEmployee();
+        public PersionalInformation[] getAllPersionalInformation();
+        public WorkHour[] getAllWorkHour();
+        public NameAndAdd getEmployeeWithId(string Id);
+        public int getIdLastEmployee();
+        public bool InsertNameAndAdd(NameAndAdd naa);
+        public bool InsertPersionalInformation(PersionalInformation pi);
+        public bool InsertWorkHour(WorkHour wh);
+        public NameAndAdd[] searchEmployeeWithNameOrPhong(string search);
+        public void UpdateNameAndAdd(NameAndAdd naa);
+        public void UpdatePersionalInformation(PersionalInformation pi);
+        public void UpdateStatus(NameAndAdd naa);
+        public void UpdateWorkHour(WorkHour wh);
+    }
+public class CheckTableBUS
+    {
+        public CheckTableBUS();
+
+        public CheckTable[] getAllCheckTable();
+        public bool getCheckStatus(int id_Employee);
+        public CheckTable getCheckTable(int id_Employee);
+        public bool insertCheckTable(CheckTable checkTable);
+        public bool updateCheckIn(CheckTable checkTable);
+        public bool updateCheckOut(CheckTable checkTable);
+    }
+
+public class SecurityBUS
+    {
+        public SecurityBUS();
+
+        public bool checkLoginEmployee(string code, int id);
+        public bool checkLoginOwner(string code, int id);
+        public string getInforWithID(int id);
+        public string GetPointOwner(int id);
+        public bool updateOwnerCode(string code, int id);
+    }
+
+////////////////-------------Cac DTO
+public class CheckTable
+    {
+        public CheckTable();
+
+        public bool Check_Status { get; set; }
+        public DateTime CheckIn { get; set; }
+        public DateTime CheckOut { get; set; }
+        public int Id { get; set; }
+        public int Id_Employee { get; set; }
+    }
+public class CheckInfoTable
+    {
+        public CheckInfoTable();
+
+        public DateTime CheckIn { get; set; }
+        public DateTime CheckOut { get; set; }
+        public int Id { get; set; }
+        public int Id_Employee { get; set; }
+    }
