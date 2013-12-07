@@ -1,0 +1,77 @@
+Checkin - Checkout
+if (btnCheck.Text == "CHECK IN")
+            {
+                CheckTable temp = new CheckTable();
+                temp.Check_Status = true;
+                temp.CheckIn = DateTime.Now;
+                temp.Id_Employee = naa.ID_Employee1;
+                MessageBox.Show(naa.strBirthName + " checked in at " + temp.CheckIn);
+                checkTableBUS.updateCheckIn(temp);
+                CheckStatus(true);
+                //insert data into check table/check info table
+            }
+            else
+            {
+                CheckTable temp = new CheckTable();
+                temp.Check_Status = false;
+                temp.CheckOut = DateTime.Now;
+                temp.Id_Employee = naa.ID_Employee1;
+                MessageBox.Show(naa.strBirthName+" checked out at " + temp.CheckOut);
+                checkTableBUS.updateCheckOut(temp);
+                CheckStatus(false);
+                CheckInfoTableBUS checkInfo = new CheckInfoTableBUS();
+                CheckInfoTable tempInfo = new CheckInfoTable();
+                tempInfo.Id_Employee = temp.Id_Employee;
+                tempInfo.CheckOut = temp.CheckOut;
+               
+                //checkTableBUS.get
+                tempInfo.CheckIn = checkTableBUS.getCheckTable(naa.ID_Employee1).CheckIn;
+                checkInfo.insertCheckInfoTable(tempInfo);
+
+                //insert data into check table/ check info table
+            }
+Time manager
+Moi dau load len
+CheckInfoTableBUS bus = new CheckInfoTableBUS();
+            CheckInfoTable[] result = bus.getAllCheckInfoWithTime(DateTime.Now.Date);
+            string resultTable = "";
+            int k = 0;
+            foreach (CheckInfoTable temp in result)
+            {
+                resultTable += createTR(k++, temp);
+            }
+//Neu ten nguoi search ok thi 
+string result1 = txtSearch.Text.Trim();
+                    NameAndAdd []naa;
+                    EmployEditBUS naaBUS = new EmployEditBUS();
+                    naa = naaBUS.searchEmployeeWithNameOrPhong(result1);
+                    if (naa.Length == 0)
+                    {
+                        MessageBox.Show("Don't find");
+                    }
+                    else
+                    {
+                        
+                        string resultTable = "";
+                        int k = 0;
+                        for (int i = 0; i < naa.Length; i++)
+                        {
+                            try
+                            {
+                                CheckInfoTableBUS bus = new CheckInfoTableBUS();
+                                CheckInfoTable[] result = bus.getAllCheckInfoWithEmployee(timeBegin, timeEnd, naa[i].ID_Employee1);
+                                foreach (CheckInfoTable temp in result)
+                                {
+                                    resultTable += createTR(k++, temp);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show("Error!");
+                            }
+                            dayBegin = timeBegin.DayOfWeek + "";
+                            resultForm = resultTable;
+                            updateTimeManager(timeBegin.DayOfWeek.ToString(), resultTable);
+                        }
+                    }
+                }

@@ -54,7 +54,8 @@ public  class testFragment extends Fragment {
 						try {
 							WCFNail ws = new WCFNail();
 							Log.e("get", "1");
-							
+							ws.getAllEmployee();
+							/*
 							SaleItem sale = new SaleItem();
 							sale.setID(93);
 							sale.setId_Category(9);
@@ -68,7 +69,7 @@ public  class testFragment extends Fragment {
 									add("94");
 								}
 							});
-							ws.UpdateSaleItem(sale);
+							ws.UpdateSaleItem(sale);*/
 							Log.e("get", "ok");
 
 						} catch (Exception e) {

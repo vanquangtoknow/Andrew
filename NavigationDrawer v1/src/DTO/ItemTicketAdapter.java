@@ -7,28 +7,39 @@ public class ItemTicketAdapter {
 	private String Descriptioon;
 	private int Quality ;
 	private float Price ;
-	private boolean IsRowEmpty;
+	// dung cho listAdd de phat hien ra item nao moi duoc add
+	private boolean IsAdd;
+	// dung de cap nhat so luong moi
+	private int soluongcu;
 	
+	
+	public int getSoluongcu() {
+		return soluongcu;
+	}
+	public void setSoluongcu(int soluongcu) {
+		this.soluongcu = soluongcu;
+	}
 	public int getID_SaleItem() {
 		return ID_SaleItem;
 	}
 	public void setID_SaleItem(int iD_SaleItem) {
 		ID_SaleItem = iD_SaleItem;
 	}
-	public boolean isIsRowEmpty() {
-		return IsRowEmpty;
+	
+	public boolean isIsAdd() {
+		return IsAdd;
 	}
-	public void setIsRowEmpty(boolean isRowEmpty) {
-		IsRowEmpty = isRowEmpty;
+	public void setIsAdd(boolean isAdd) {
+		IsAdd = isAdd;
 	}
-	public ItemTicketAdapter(int iditemticket, String type, String description, int quality, float price, boolean isempty)
+	public ItemTicketAdapter(int iditemticket, String type, String description, int quality, float price, boolean isadd)
 	{
 		this.ID_ItemTicket = iditemticket;
 		this.Type = type;
 		this.Descriptioon = description;
 		this.Quality = quality;
 		this.Price = price;
-		this.IsRowEmpty = isempty;
+		this.IsAdd = isadd;
 	}
 	public int getID_ItemTicket() {
 		return ID_ItemTicket;

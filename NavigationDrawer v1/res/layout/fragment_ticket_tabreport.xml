@@ -46,7 +46,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_weight="2"
 		        android:textSize="20dp"
-		        android:text="Andrew Nguyen" />
+		        android:text="" />
 
         </TableRow>
         <TableRow
@@ -68,7 +68,7 @@
                 android:layout_weight="1"
 		        android:layout_height="wrap_content"
 		        android:textSize="20dp"
-		        android:text="0151" />
+		        android:text="" />
         </TableRow>
         <TableRow
             android:id="@+id/tableRow2"

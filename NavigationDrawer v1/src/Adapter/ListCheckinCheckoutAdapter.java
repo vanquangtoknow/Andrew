@@ -2,17 +2,13 @@ package Adapter;
 
 import java.util.ArrayList;
 
-import com.example.android.navigationdrawerexample.R;
-
 import DTO.Category;
 import DTO.CheckInOutTemp;
 import DTO.Employee;
-import DTO.Item;
 import DTO.SaleItem;
 import DTO.Ticket;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +16,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ListBaseAdapter extends BaseAdapter{
+import com.example.android.navigationdrawerexample.R;
+
+public class ListCheckinCheckoutAdapter extends BaseAdapter {
 	private Context context; 
-	
 	private ArrayList<Object> array;
 	private int typeList;
 	private int typeView;
@@ -46,7 +43,8 @@ public class ListBaseAdapter extends BaseAdapter{
 	{
 		return array.size();
 	}
-	public ListBaseAdapter(Context context, ArrayList<?> array) {
+	public ListCheckinCheckoutAdapter(Context context, ArrayList<?> array) 
+	{
 		this.array = (ArrayList<Object>)array;
 		this.context = context;
 	}
@@ -76,51 +74,31 @@ public class ListBaseAdapter extends BaseAdapter{
 				ImageView image = (ImageView) convertView.findViewById(R.id.imageView1);
 				image.setBackgroundResource(R.drawable.tick_employee);
 				break;
-			case 2:
-				convertView = infalInflater.inflate(R.layout.base_row_item, null);
-				ImageView image1 = (ImageView) convertView.findViewById(R.id.imageView1);
-				image1.setBackgroundResource(R.drawable.ticket_sale);
 			default:
 				break;
 			}
 		}
 		TextView name = (TextView)convertView.findViewById(R.id.personname);
-		
 		switch (typeList) {
 		case 1:
-			Employee employee = (Employee)array.get(position);
-			name.setText(employee.getstrName());
-			
+			CheckInOutTemp checkinout = (CheckInOutTemp)array.get(position);
+			name.setText(checkinout.getStrName());
+			if(checkinout.isCheck()==true)
+			{
+				name.setTextColor(Color.GREEN);
+			}
+			else
+			{
+				name.setTextColor(Color.BLACK);
+			}
 			break;
-		case 2:
-			Ticket ticket = (Ticket) array.get(position);
-			name.setText(ticket.getCode().trim());
-			
-			break;
-		case 3:
-			Category cate = (Category) array.get(position);
-			name.setText(cate.getName());
-			
-			break;
-		case 4:
-			SaleItem saleitem = (SaleItem) array.get(position);
-			name.setText(saleitem.getName());
 		default:
 			break;
 		}
-        if (position == selectedItem)
-        {
-            name.setTextColor(Color.BLUE);
-        }
-        else
-        {
-        	name.setTextColor(Color.BLACK);
-        }
 		return convertView;
 	}
 	public void Clear()
 	{
 		array.clear();
 	}
-
 }

@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
         //vao man hinh login
         
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new fgm_ticket();
+        Fragment fragment = new fgm_checkin_checkout();
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	
@@ -241,7 +241,6 @@ public class MainActivity extends Activity {
 
 		public boolean onChildClick(ExpandableListView parent, View v,
 				int groupPosition, int childPosition, long id) {
-
 			HeaderInfo headerInfo = deptList.get(groupPosition);
 			DetailInfo detailInfo = headerInfo.getProductList().get(
 					childPosition);
@@ -294,7 +293,8 @@ public class MainActivity extends Activity {
 		addProduct("Report", "Full");
 		addProduct("Report", "Employee");
 		addProduct("Report", "Expense");
-
+		addProduct("Ticket","Ticket");
+		addProduct("Check", "Checkin - Checkout");
 		addProduct("Option", "Login");
 		addProduct("Option", "Logout");
 		addProduct("Option", "Demo");
@@ -340,25 +340,86 @@ public class MainActivity extends Activity {
 		  return groupPosition;
 		 }
     private void selectItem(int groupPosition,int childPosition) {
-        // tao 1 fragment moi
-        //Fragment fragment = new PlanetFragment();
-        //tao goi bundle de luu tham so truyen vao
-        //Bundle args = new Bundle();
-        //dua tham so vao bundle
-        //args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-        //fragment.setArguments(args);
-
-        //FragmentManager fragmentManager = getFragmentManager();
-        //fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-    	
     	FragmentManager fragmentManager = getFragmentManager();
-		if (groupPosition == 0) { // REPORT
-			if (childPosition == 0) { // FULL REPORT
+    	switch (groupPosition) {
+		case 0:
+			if (childPosition == 0) 
+			{ // FULL REPORT
 				Fragment fragment = new ReportFragment();
 				Log.e("trans", "full");
 				fragmentManager.beginTransaction()
 						.replace(R.id.content_frame, fragment).commit();
-			} else if (childPosition == 1) { //EMPLOYEE REPORT
+			}
+			else 
+				if (childPosition == 1) 
+				{ //EMPLOYEE REPORT
+				Fragment fragment = new ReportEmployeeFragment();
+
+				fragmentManager.beginTransaction()
+				.replace(R.id.content_frame, fragment).commit();
+			} else { //EXPENSE
+				Fragment fragment = new ReportExpenseFragment();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			break;
+		case 1:
+			if(childPosition==0)
+			{
+				Fragment fragment = new fgm_ticket();
+				Log.e("trans", "ticket");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			break;
+		case 2:
+			if(childPosition==0)
+			{
+				Fragment fragment = new fgm_checkin_checkout();
+				Log.e("trans", "checkin - checkout");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			break;
+		case 3:
+			if( childPosition == 0) // LOGIN
+			{
+				Fragment fragment = new loginFragment();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			else if( childPosition == 1) // LOGOUT
+			{
+				isLogin = false;
+				loginRow.setBackgroundColor(Color.parseColor("#D42B24"));
+				loginId.setText("NOT LOGIN !!!");
+				Fragment fragment = new loginFragment();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			else if( childPosition == 2) 
+			{
+				isLogin = false;
+				Fragment fragment = new testFragment();
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+		default:
+			break;
+		}
+    	
+    	
+		/*if (groupPosition == 0) { // REPORT
+			if (childPosition == 0) 
+			{ // FULL REPORT
+				Fragment fragment = new ReportFragment();
+				Log.e("trans", "full");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			else 
+				if (childPosition == 1) 
+				{ //EMPLOYEE REPORT
 				Fragment fragment = new ReportEmployeeFragment();
 
 				fragmentManager.beginTransaction()
@@ -370,31 +431,38 @@ public class MainActivity extends Activity {
 			}
 		}
 		else
-			if ( groupPosition == 1 ) //OPTIONS
+			if(groupPosition==1)
 			{
-				if( childPosition == 0) // LOGIN
+				
+			}else
+			{
+				if ( groupPosition == 1 ) //OPTIONS
 				{
-					Fragment fragment = new loginFragment();
-					fragmentManager.beginTransaction()
-							.replace(R.id.content_frame, fragment).commit();
-				}
-				else if( childPosition == 1) // LOGOUT
-				{
-					isLogin = false;
-					loginRow.setBackgroundColor(Color.parseColor("#D42B24"));
-					loginId.setText("NOT LOGIN !!!");
-					Fragment fragment = new loginFragment();
-					fragmentManager.beginTransaction()
-							.replace(R.id.content_frame, fragment).commit();
-				}
-				else if( childPosition == 2) 
-				{
-					isLogin = false;
-					Fragment fragment = new testFragment();
-					fragmentManager.beginTransaction()
-							.replace(R.id.content_frame, fragment).commit();
+					if( childPosition == 0) // LOGIN
+					{
+						Fragment fragment = new loginFragment();
+						fragmentManager.beginTransaction()
+								.replace(R.id.content_frame, fragment).commit();
+					}
+					else if( childPosition == 1) // LOGOUT
+					{
+						isLogin = false;
+						loginRow.setBackgroundColor(Color.parseColor("#D42B24"));
+						loginId.setText("NOT LOGIN !!!");
+						Fragment fragment = new loginFragment();
+						fragmentManager.beginTransaction()
+								.replace(R.id.content_frame, fragment).commit();
+					}
+					else if( childPosition == 2) 
+					{
+						isLogin = false;
+						Fragment fragment = new testFragment();
+						fragmentManager.beginTransaction()
+								.replace(R.id.content_frame, fragment).commit();
+					}
 				}
 			}
+				*/
         // update selected item and title, then close the drawer
         mDrawerList.setItemChecked(childPosition, true);
         mDrawerLayout.closeDrawer(mDrawerList);

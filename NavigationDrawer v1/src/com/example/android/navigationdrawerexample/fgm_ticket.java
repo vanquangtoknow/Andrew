@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 
 
+
 import Adapter.ListAdapter;
 import Adapter.ListBaseAdapter;
 import Adapter.TicketEditAdapter;
@@ -30,13 +31,14 @@ import DTO.ReportDTO;
 import DTO.SaleItem;
 import DTO.Ticket;
 import WS.WCFNail;
+import DAO.*;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.FloatMath;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,7 +64,12 @@ public class fgm_ticket extends Fragment {
 	}
 	
 	// region Khai bao cac control
-	
+	private TicketDAO ticketDAO = new TicketDAO();
+	private EmployeeDAO employeeDAO = new EmployeeDAO();
+	private ItemTicketDAO itemTicketDAO = new ItemTicketDAO();
+	private ReportDAO reportDAO = new ReportDAO();
+	private SaleItemDAO saleItemDAO = new SaleItemDAO();
+	private CategoryDAO categoryDAO = new CategoryDAO();
 	private String fulltext;
 	private ListAdapter adapter;
 	private ArrayList<Item> arrayItem;
@@ -84,6 +91,8 @@ public class fgm_ticket extends Fragment {
 	// Luu id ticket hien tai
 	private Ticket TicketPresent;
 	private ItemTicket ItemTicketPresent;
+	private String valueEmployeePresent;
+	private String valueTicketPresent;
 	private ItemTicketAdapter ItemTicketAdapterPresent = null;
 	private ListView lvEmployees;
 	private ListView lvTickets;
@@ -100,7 +109,7 @@ public class fgm_ticket extends Fragment {
 	private ListView lvCategories;
 	private ListView lvServices;
 	private ListView lvTicketAdd;
-	private final ArrayList<ItemTicketAdapter> listTicketAdd = new ArrayList<ItemTicketAdapter>();
+	private final ArrayList<ItemTicketAdapter> listItemTicketAdd = new ArrayList<ItemTicketAdapter>();
 	private ArrayList<Category> listCategories = new ArrayList<Category>();
 	private ArrayList<SaleItem> listServices = new ArrayList<SaleItem>();
 	private ListBaseAdapter adapterCategories;
@@ -119,8 +128,13 @@ public class fgm_ticket extends Fragment {
 	private TextView tvDeducted;
 	private TextView tvForTech;
 	private TextView tvForOwner;
-	//------Su dung cho 
-	
+	String total="";
+	String deducted="";
+	String fortech ="";
+	String forowner ="";
+	//------Su dung de cho saving du lieu
+	ProgressDialog ringProgressDialog = null;
+	private boolean flag_ringprogress = false;
 	//----- Khai bao va su dung cho tab information
 	private TextView tvInfoEmpoyee;
 	private TextView tvInfoTicket;
@@ -429,7 +443,6 @@ public class fgm_ticket extends Fragment {
 			@Override
 			public void run() {
 				try {
-					WCFNail nailservice = new WCFNail();
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
@@ -437,30 +450,13 @@ public class fgm_ticket extends Fragment {
 						}
 					});
 					listEmployee.clear();
-					listEmployee.addAll(nailservice.getAllEmployee());
+					listEmployee.addAll(employeeDAO.getAllEmployeeDAO());
 					if(listEmployee.size()>0)
 					{
 						EmployeePresent = listEmployee.get(0);
 						tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 						listTickets.clear();
-						listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
-							{
-								add(Integer.toString(listEmployee.get(0).getID_Employee()));
-							}
-						}));
-						/*if(listTickets.size()>0)
-						{
-							//idTicketPresent = Integer.toString(listTickets.get(0).getID());
-							TicketPresent = listTickets.get(0);
-							tvInfoTicket.setText(TicketPresent.getCode());
-							listEdits.clear();
-							ArrayList<ItemTicket> dsItemTicket = nailservice.getListItemTicketByIDTicket(
-									new ArrayList<String>(){{
-										add(Integer.toString(TicketPresent.getID()));
-									}});
-							convertListItemTicketToItemTiketAdapter(dsItemTicket);
-						}*/
-						// cap nhat giao nhan vien sau khi load xong nhan vien
+						listTickets.addAll(ticketDAO.getListTicketByIDEmployee(listEmployee.get(0).getID_Employee()));
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
@@ -468,7 +464,6 @@ public class fgm_ticket extends Fragment {
 								progessbarTicketEdit.setVisibility(View.GONE);
 							}
 						});
-						
 					}
 				} catch (Exception e) {
 				}
@@ -492,34 +487,46 @@ public class fgm_ticket extends Fragment {
 					@Override
 					public void run() {
 						try {
-							WCFNail nailservice = new WCFNail();
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
+									Log.i("Load employee", "start progressbar");
 									progessbarTicketEdit.setVisibility(View.VISIBLE);
 									adapterTickets.notifyDataSetChanged();
 								}
 							});
 							listTickets.clear();
 							adapterTickets.setSelectedItem(0);
-							listTickets.addAll(nailservice.getListTicketByIDEmployee(new ArrayList<String>() {
-								{
-									add(Integer.toString(listEmployee.get(position).getID_Employee()));
-								}
-							}));
-							Log.d("Ticket fuctions", "First ticket of employee load" + listTickets.get(0).getID());
+							listTickets.addAll(ticketDAO.getListTicketByIDEmployee(EmployeePresent.getID_Employee()));
+							Log.i("Ticket fuctions", "First ticket of employee load");
 							if(listTickets.size()>0)
 							{
 								TicketPresent = listTickets.get(0);
-								tvInfoTicket.setText(TicketPresent.getCode());
+								valueTicketPresent = TicketPresent.getCode();
 							}
 							else
 							{
+								listEdits.clear();
+								addvalueEmptyToListEdit();
+								total="Total: ";
+								deducted="Deducted: ";
+								forowner="For Owner: ";
+								fortech ="For Tech: ";
+								valueTicketPresent = "";
 								TicketPresent = null;
 							}
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
+									Log.i("Load employee", "end progressbar");
+									tvInfoTicket.setText(valueTicketPresent);
+									if(listTickets.size()==0)
+									{
+										tvTotal.setText(total);
+										tvDeducted.setText(deducted);
+										tvForTech.setText(fortech);
+										tvForOwner.setText(forowner);
+									}
 									adapterTickets.notifyDataSetChanged();
 									progessbarTicketEdit.setVisibility(View.GONE);
 								}
@@ -545,41 +552,54 @@ public class fgm_ticket extends Fragment {
 				TicketPresent = listTickets.get(arg2);
 				adapterTickets.setSelectedItem(arg2);
 				adapterTickets.notifyDataSetChanged();
+				tvInfoTicket.setText(TicketPresent.getCode());
 				Thread threadupdateReport = new Thread()
 				{
 					@Override
 					public void run() {
-						WCFNail nailservice = new WCFNail();
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								progessbarTicketEdit.setVisibility(View.VISIBLE);
+								disable(tabhost);
 							}
 						});
-						// Dong dau tien cua Item ticket de view Type, Quality, Description, Price
-						ArrayList<ItemTicket> dsItemTickt = nailservice.getListItemTicketByIDTicket(
-								new ArrayList<String>(){{
-									add(Integer.toString(TicketPresent.getID()));
-								}});
-						Log.d("Ticket function", "Danh sach item ticket of id Ticket " +TicketPresent.getID() +" size " + dsItemTickt.size());
-						convertListItemTicketToItemTiketAdapter(dsItemTickt);
+						convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+						getActivity().runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								enable(tabhost);
+								adapterEdits.notifyDataSetChanged();
+								progessbarTicketEdit.setVisibility(View.GONE);
+								tabhost.setCurrentTab(1);
+								total = "Total: " +Sum;
+								deducted = "Deducted: " + Deducted;
+								forowner = "For Owner: "+ForOwner;
+								fortech = "For Tech: " +ForTech;
+								tvTotal.setText(total);
+								tvDeducted.setText(deducted);
+								tvForTech.setText(fortech);
+								tvForOwner.setText(forowner);
+								if(flag_ringprogress==true)
+								{
+									ringProgressDialog.dismiss();
+									flag_ringprogress=false;
+								}
+								
+							}
+						});
 					}
 				};
 				threadupdateReport.start();
 			}
 		});
-
-		
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);
 		lvEdits.setAdapter(adapterEdits);
 	
 		// endregion
 		// region them du lieu maus
-			//-------them du lieu cho categories, va services
+		//-------them du lieu cho categories, va services
 		getListCategories();
-			
-			
-				
 				// endregion
 			btnTicketEdit_DeleteTicket.setOnClickListener(new OnClickListener() {
 				@Override
@@ -628,25 +648,34 @@ public class fgm_ticket extends Fragment {
 					lvServices.setAdapter(adapterServices);
 					
 					
-					adapterTicketAdd = new TicketEditAdapter(getActivity(), listTicketAdd);
+					adapterTicketAdd = new TicketEditAdapter(getActivity(), listItemTicketAdd);
 					lvTicketAdd.setAdapter(adapterTicketAdd);
-					
-					
-					
-					listTicketAdd.clear();
-					listTicketAdd.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
+					getListItemTicketAdd();
 					dlgbtnok_ticketadd = (ImageButton) dialogadd.findViewById(R.id.dlgbtnok_ticketadd);
 					dlgbtncancel_ticketadd = (ImageButton) dialogadd.findViewById(R.id.dlgbtncancel_ticketadd);
 					dlgbtncancel_ticketadd.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							listItemTicketAdd.clear();
+	   						listItemTicketAdd.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
 							dialogadd.dismiss();
 						}
 					});
 					dlgbtnok_ticketadd.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
+							saveListItemTicketAdapterIsAdd();
 							dialogadd.dismiss();
+						}
+					});
+					lvCategories.setOnItemClickListener(new OnItemClickListener() {
+						@Override
+						public void onItemClick(AdapterView<?> arg0,View arg1, int arg2, long arg3) {
+							adapterCategories.setSelectedItem(arg2);
+							adapterCategories.notifyDataSetChanged();
+							Log.i("ticket functions", "Clicked list categories position: " + listCategories.get(arg2).getID());
+							getListServices(listCategories.get(arg2).getID());
+							//adapterCategories.notifyDataSetChanged();
 						}
 					});
 					lvServices.setOnItemLongClickListener(new OnItemLongClickListener() {
@@ -658,7 +687,7 @@ public class fgm_ticket extends Fragment {
 					        builder.setMessage("Add sale this sale item")
 					               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 					                   public void onClick(DialogInterface dialog, int id) {
-					                	   //listTicketAdd.clear();
+					                	   //listItemTicketAdd.clear();
 					                	   //listTicketAdd.add(new ItemTicketAdapter(1,"Product","sale item 1",2, 3, false));
 					                	   ItemTicketAdapter itemadd = new ItemTicketAdapter();
 					                	   itemadd.setID_ItemTicket(TicketPresent.getID());
@@ -667,28 +696,17 @@ public class fgm_ticket extends Fragment {
 					                	   itemadd.setPrice(listServices.get(arg2).getPrice());
 					                	   itemadd.setQuality(1);
 					                	   itemadd.setType(getSalteItemType(listServices.get(arg2).getId_Type()));
-					                	   listTicketAdd.add(itemadd);
+					                	   checkingAddItemTicketAdapter(itemadd);
 					                	   adapterTicketAdd.notifyDataSetChanged();
 					                   }
 					               })
 					               .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
 					                   public void onClick(DialogInterface dialog, int id) {
-					                       
 					                   }
 					               });
 					        // Create the AlertDialog object and return it
 					        builder.create().show();
 							return false;
-						}
-					});
-					lvCategories.setOnItemClickListener(new OnItemClickListener() {
-						@Override
-						public void onItemClick(AdapterView<?> arg0,View arg1, int arg2, long arg3) {
-							adapterCategories.setSelectedItem(arg2);
-							Log.i("ticket functions", "Clicked list categories position: " + listCategories.get(arg2).getID());
-							
-							getListServices(listCategories.get(arg2).getID());
-							adapterCategories.notifyDataSetChanged();
 						}
 					});
 					dialogadd.show();
@@ -847,6 +865,15 @@ public class fgm_ticket extends Fragment {
         return null;
 
     }
+	public void addvalueEmptyToListEdit()
+	{
+		listEdits.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
+		for(int h=0;h<13;h++)
+		{
+			listEdits.add(new ItemTicketAdapter(-2,"-2","-2",-2, -2, false));
+		}
+		
+	}
 	public int getTypeMoney(String text)
     {
         if(text.equals("Product"))
@@ -888,133 +915,139 @@ public class fgm_ticket extends Fragment {
 	int h =0;
 	public void saveItemTicketAdapterIsEdited(final int soluongmoi)
 	{
-		Thread threaeSaveItemAdapter = new Thread()
+		ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Saving...", true);
+		ringProgressDialog.setCancelable(true);
+		flag_ringprogress = true;
+		Thread saveitemticketAdapter = new Thread()
 		{
 			@Override
 			public void run() {
-				WCFNail nailservice = new WCFNail();
+				Log.i("saveItemTicketAdapterIsEdited","start");
+				updateItemTicketAdapter(ItemTicketAdapterPresent.getSoluongcu(),soluongmoi,  ItemTicketAdapterPresent);
+				//ArrayList<ItemTicket> dsupdateticket = itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID());
+				Log.i("saveItemTicketAdapterIsEdited", "end");
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						adapterEdits.notifyDataSetChanged();
+						progessbarTicketEdit.setVisibility(View.GONE);
+						tabhost.setCurrentTab(1);
+						total = "Total: " +Sum;
+						deducted = "Deducted: " + Deducted;
+						forowner = "For Owner: "+ForOwner;
+						fortech = "For Tech: " +ForTech;
+						tvTotal.setText(total);
+						tvDeducted.setText(deducted);
+						tvForTech.setText(fortech);
+						tvForOwner.setText(forowner);
+						if(flag_ringprogress==true)
+						{
+							ringProgressDialog.dismiss();
+							flag_ringprogress=false;
+						}
+						
+					}
+				});
+			};
+		};
+		
+		saveitemticketAdapter.start();
+	}
+	/**
+	 * update cho itemticketadapter
+	 * @param soluongcu
+	 * @param soluongmoi
+	 * @param itemticketadapter
+	 */
+	public void updateItemTicketAdapter(final int soluongcu,final int soluongmoi,final ItemTicketAdapter itemticketadapter)
+	{
+				Log.i("updateItemTicketAdapter", "start");
+				Log.i("updateitemticketadapter", "soluongcu: "+ soluongcu + " soluongmoi: " + soluongmoi);
 				ReportDTO reportDTO = new ReportDTO();
-				//reportDTO.setId(1);
-				Log.i("saveItemTicket", "IDItemticket of adapter present: " + ItemTicketAdapterPresent.getID_ItemTicket());
-				ItemTicket itemticket = nailservice.getItemTicketById(new ArrayList<String>(){{
-					add(Integer.toString(ItemTicketAdapterPresent.getID_ItemTicket()));
-				}});
-				Log.i("saveItemTicket", "id ticket: " + itemticket.getID_Ticket() + " idsaleitem " + itemticket.getID_SaleItem() + " price "+ itemticket.getPrice());
+				ItemTicket itemticket = itemTicketDAO.getItemTicketById(itemticketadapter.getID_ItemTicket());
 				reportDTO.setDate(TicketPresent.getDate());
 				reportDTO.setId_Employee(TicketPresent.getID_Employee());
 				reportDTO.setId_saleitem(itemticket.getID_SaleItem());
 				reportDTO.setMoney(itemticket.getPrice());
-				reportDTO.setId_type_money(getTypeMoney(ItemTicketAdapterPresent.getType()));
+				reportDTO.setId_type_money(getTypeMoney(itemticketadapter.getType()));
 				reportDTO.setId_type_method(1);
-				Log.i("saveItemTicket", "IdEmployee: " + TicketPresent.getID_Employee() + "IdSaleItem: " +  ItemTicketAdapterPresent.getID_ItemTicket());
-				if (soluongmoi > ItemTicketAdapterPresent.getQuality())
-		        {
-					Log.i("saveItemTicket","TH soluongmoi>soluonghientai: soluong moi " +soluongmoi + "so luong hien tai: " +ItemTicketAdapterPresent.getQuality());
-		            for (int i = ItemTicketAdapterPresent.getQuality(); i < soluongmoi; i++)
-		            {
-		                //nailservice.InsertReport(reportDTO);
-		                ArrayList<Object> listpara = new ArrayList<Object>();
-		                Object a = (Object)reportDTO;
-		                listpara.add(a);
-		                Log.i("saveItemTicket","TH soluongmoi>soluonghientai: them" +" dang them " + i+"idsaleitem" + reportDTO.getId_saleitem());
-	                	Log.i("saveItemTicket","TH soluongmoi>soluonghientai: value Report idEmployee" + reportDTO.getId_Employee() + "idSaleItem: " + reportDTO.getId_saleitem());
-		                if(nailservice.InsertReport(reportDTO)==true)
-		                {
-		                	Log.i("saveItemTicket","TH soluongmoi>soluonghientai: them succesfull" + i + reportDTO.getId_saleitem());
-		                }
-		                else
-		                {
-		                	Log.i("saveItemTicket","TH soluongmoi>soluonghientai: them failed" + i + reportDTO.getId_saleitem());
-		                }
-		            }
-		        }
-		        else
-		        {
-		        	Log.i("saveItemTicket","soluong moi: " +soluongmoi + "< so luong hien tai: " +ItemTicketAdapterPresent.getQuality());
-		            final ArrayList<ReportDTO> listReport = nailservice.GetIListtemReportWithEmployee(new ArrayList<String>(){
-		            	{
-		            		add(Integer.toString(TicketPresent.getID_Employee()));
-		            	}
-		            });
-		            int k = 0;
-		            h=0;
-		            int ah = itemticket.getQuality();
-		            int b= soluongmoi;
-		            for (h = 0; h < listReport.size(); h++)
-		            {
-		                if (k == itemticket.getQuality() -soluongmoi)
-		                {
-		                    break;
-		                }
-		                else
-		                {
-		                    // Neu be hon thi xoa trong Report thoa dieu kien, tang k len va bang so vua nhap vao thi xoa bot trong report
-		                    //listReport.get(h).getDate() == reportDTO.getDate() && 
-		                	if (listReport.get(h).getId_saleitem() == reportDTO.getId_saleitem())
-		                    {
-		                		Log.i("ticket functions", "xoa item report");
-		                     	nailservice.deleteItemReport(new ArrayList<String>(){{
-		                    		add(Integer.toString(listReport.get(h).getId()));
-		                    	}});
-		                        k++;
-		                    }
-		                }
-		            }
-		        }
-				ArrayList<Object> dsParam = new ArrayList<Object>();
-				//ItemTicketAdapterPresent.setQuality(soluongmoi);
-				final ItemTicket item = nailservice.getItemTicketById(new ArrayList<String>(){{
-					add(Integer.toString(ItemTicketAdapterPresent.getID_ItemTicket()));
-				}});
-				item.setQuality(soluongmoi);
-				Log.i("saveItemTicket ", "update ItemTicket value idItemticket "+item.getID()+" idSale: "+ item.getID_SaleItem()+" idIdTicket: " + item.getID_Ticket());
-				if(nailservice.updateItemTicket(item)==true)
+				 if(soluongmoi>0&&soluongmoi!=soluongcu)
 				{
-					Log.i("saveItemTicket ", "update succesfully itemticket");
+					if (soluongmoi > soluongcu)
+			        {
+			            for (int i = soluongcu; i < soluongmoi; i++)
+			            {
+			                Log.i("updateItemTicket","TH soluongmoi>soluonghientai: them" +" dang them " + i+"idsaleitem" + reportDTO.getId_saleitem());
+		                	Log.i("updateItemTicket","TH soluongmoi>soluonghientai: value Report idEmployee" + reportDTO.getId_Employee() + "idSaleItem: " + reportDTO.getId_saleitem());
+			                if(reportDAO.InsertReport(reportDTO)==true)
+			                {
+			                	Log.i("updateItemTicket","TH soluongmoi>soluonghientai: them succesfull" + i + reportDTO.getId_saleitem());
+			                }
+			                else
+			                {
+			                	Log.i("updateItemTicket","TH soluongmoi>soluonghientai: them failed" + i + reportDTO.getId_saleitem());
+			                }
+			            }
+			        }
+			        else
+			        {
+			        	Log.i("updateItemTicket","soluong moi: " +soluongmoi + "< so luong hien tai: " +ItemTicketAdapterPresent.getQuality());
+			            final ArrayList<ReportDTO> listReport = reportDAO.GetIListtemReportWithEmployee(TicketPresent.getID_Employee());
+			            int k = 0;
+			            h=0;
+			            for (h = 0; h < listReport.size(); h++)
+			            {
+			                if (k == itemticket.getQuality() -soluongmoi)
+			                {
+			                    break;
+			                }
+			                else
+			                {
+			                	if (listReport.get(h).getId_saleitem() == reportDTO.getId_saleitem())
+			                    {
+			                		Log.i("ticket functions", "xoa item report");
+			                     	reportDAO.deleteItemReport(listReport.get(h).getId());
+			                        k++;
+			                    }
+			                }
+			            }
+			        }
+					final ItemTicket item = itemTicketDAO.getItemTicketById(itemticketadapter.getID_ItemTicket());
+					item.setQuality(soluongmoi);
+					Log.i("saveItemTicket ", "update ItemTicket value idItemticket "+item.getID()+" idSale: "+ item.getID_SaleItem()+" idIdTicket: " + item.getID_Ticket());
+					if(itemTicketDAO.updateItemTicket(item)==true)
+					{
+						Log.i("saveItemTicket ", "update succesfully itemticket");
+					}
+					else
+					{
+						Log.i("saveItemTicket ", "update: failed itemticket");
+					}
+					convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+					//itemticketadapter = null;
 				}
-				else
-				{
-					Log.i("saveItemTicket ", "update: failed itemticket");
-				}
-				ArrayList<ItemTicket> dsupdateticket = nailservice.getListItemTicketByIDTicket(new ArrayList<String>(){{
-					add(Integer.toString(TicketPresent.getID()));
-				}});
-				convertListItemTicketToItemTiketAdapter(dsupdateticket);
-				ItemTicketAdapterPresent = null;
-			}
-		};
-		threaeSaveItemAdapter.start();
+				 Log.i("updateItemTicketAdapter", "start");
 	}
 	public void deleteItemTicketAdapterIsEdited()
 	{
 		if(ItemTicketAdapterPresent!=null)
 		{
-			
+			ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Saving...", true);
+			ringProgressDialog.setCancelable(true);
+			flag_ringprogress = true;
 			Thread threaddeleteItemTicket = new Thread()
 			{
 				int p;
 				@Override
 				public void run() {
-					WCFNail nailservice = new WCFNail();
-					
-					//ReportDTO[] listReport = reportBLL.GetIListtemReportWithCondition(Curr_ControlTicket.Ticket.ID_Employee, item.ID_SaleItem);
-					final ArrayList<ReportDTO> dsreport = nailservice.GetIListtemReportWithEmployee(new ArrayList<String>(){{
-						add(Integer.toString(EmployeePresent.getID_Employee()));
-					}});
+					final ArrayList<ReportDTO> dsreport = reportDAO.GetIListtemReportWithEmployee(EmployeePresent.getID_Employee());
 					String dateticket = TicketPresent.getDate();
-					
                     for (p = 0; p < dsreport.size(); p++)
                     {
-                    	/*Log.i("ticket functions","date list" + dsreport.get(i).getDate());
-                    	Log.i("ticket functions","date1" + dateticket);
-                    	Log.i("ticket functions","saleid list" + dsreport.get(i).getDate());
-                    	Log.i("ticket functions","date1" + ItemTicketAdapterPresent.getID_SaleItem());*/
                         if (dsreport.get(p).getDate().compareTo(dateticket)==0&&dsreport.get(p).getId_saleitem()==ItemTicketAdapterPresent.getID_SaleItem())
                         {
                         	Log.i("ticket functions", "Delete success report id employee"+ dsreport.get(p).getId_Employee() + "id saleitem" +dsreport.get(p).getId_saleitem());
-                            if(nailservice.deleteItemReport(new ArrayList<String>(){{
-                            	add(Integer.toString(dsreport.get(p).getId()));
-                            }})==true)
+                            if(reportDAO.deleteItemReport(dsreport.get(p).getId())==true)
                             {
                             	Log.i("ticket function", "xoa successfull");
                             }
@@ -1025,9 +1058,7 @@ public class fgm_ticket extends Fragment {
                             break;
                         }
                     }
-					if(nailservice.deleteItemTicket(new ArrayList<String>(){{
-						add(Integer.toString(ItemTicketAdapterPresent.getID_ItemTicket()));
-					}})==true)
+					if(itemTicketDAO.deleteItemTicket(ItemTicketAdapterPresent.getID_ItemTicket())==true)
 					{
 						Log.i("ticket functions", "Delete successfull item ticket id: " + ItemTicketAdapterPresent.getID_ItemTicket());
 					}
@@ -1035,10 +1066,26 @@ public class fgm_ticket extends Fragment {
 					{
 						Log.i("ticket functions", "Delete fail item ticket id: " + ItemTicketAdapterPresent.getID_ItemTicket());
 					}
-					ArrayList<ItemTicket> dsupdateticket = nailservice.getListItemTicketByIDTicket(new ArrayList<String>(){{
-						add(Integer.toString(TicketPresent.getID()));
-					}});
+					ArrayList<ItemTicket> dsupdateticket = itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID());
 					convertListItemTicketToItemTiketAdapter(dsupdateticket);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							adapterEdits.notifyDataSetChanged();
+							progessbarTicketEdit.setVisibility(View.GONE);
+							tabhost.setCurrentTab(1);
+							tvTotal.setText("Total: " + Sum);
+							tvDeducted.setText("Deducted: " +  Deducted);
+							tvForTech.setText("For Tech: "+ ForTech);
+							tvForOwner.setText("For Owner: "+ ForOwner);
+							if(flag_ringprogress==true)
+							{
+								ringProgressDialog.dismiss();
+								flag_ringprogress=false;
+							}
+							
+						}
+					});
 					ItemTicketAdapterPresent = null;
 				};
 			};
@@ -1049,13 +1096,9 @@ public class fgm_ticket extends Fragment {
 	{
 		listEdits.clear();
 		listEdits.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
-		Log.d("Ticket_fuction", "Load ListEdit Ticket: " + array.size());
-		Thread a = new Thread()
-		{
+		Log.i("Loadeditticket", "size array: " + array.size());
 			int i = 0;
-			@Override
-			public void run() {
-				WCFNail wcf = new WCFNail();
+				//WCFNail wcf = new WCFNail();
 				Sum = 0;
 				for(i=0;i<array.size();i++)
 				{
@@ -1064,7 +1107,7 @@ public class fgm_ticket extends Fragment {
 					if(array.get(i).getID_SaleItem()==-1)
 					{
 						Deducted = array.get(i).getPrice();
-						Log.d("Ticket_fuction", "Load ListEdit Ticket: row " + i +" deducted is" + array.get(i).getPrice());
+						Log.i("Loadeditticket", "row " + i +" deducted is" + array.get(i).getPrice());
 					}
 					else
 					{
@@ -1077,16 +1120,12 @@ public class fgm_ticket extends Fragment {
 							type = "Tips";
 							temp.setType("Tips");
 							temp.setDescriptioon("Tips");
-							Log.d("Ticket_fuction", "Load ListEdit Ticket: row " + i +" is Tips" + array.get(i).getPrice());
+							Log.i("Loadeditticket", "Load ListEdit Ticket: row " + i +" is Tips" + array.get(i).getPrice());
 						}
 						else
 						{
-							description = wcf.getNameSaleItem(new ArrayList<String>(){{
-								add(Integer.toString(array.get(i).getID_SaleItem()));
-							}});
-							type = wcf.getTypeSaleItem(new ArrayList<String>(){{
-								add(Integer.toString(array.get(i).getID_SaleItem()));
-							}});
+							description = saleItemDAO.getNameSaleItem(array.get(i).getID_SaleItem());
+							type = saleItemDAO.getTypeSaleItem(array.get(i).getID_SaleItem());
 						}
 						// Chu y truong hop Bang SaleItem da bi xoa ma khong xoa khoa ngoai toi no nen Banh ItemTicket khong the tim ra ID_SaleItem
 						if((description.equals("-2")==false||description.equals("Tips")==true)&&(type.equals("-2")==false||type.equals("Tips")==true))
@@ -1094,16 +1133,14 @@ public class fgm_ticket extends Fragment {
 							temp.setDescriptioon(description);
 							temp.setType(type);
 						}
-						/*String price = wcf.getPriceSaleItem(new ArrayList<String>(){{
-							add(Integer.toString(array.get(i).getID_SaleItem()));
-						}});*/
-						// dang ly la lay trong bang SaleItem nhung do csdl sai nen lay trong bang ItemTicket
 						String price = Float.toString(array.get(i).getPrice());
 						temp.setPrice(Float.parseFloat(price)*quality);
 						temp.setQuality(array.get(i).getQuality());
+						Log.i("Loadeditticket", "info: quality"+array.get(i).getQuality());
 						int aa = array.get(i).getID();
 						temp.setID_ItemTicket(array.get(i).getID());
-						temp.setIsRowEmpty(false);
+						temp.setIsAdd(false);
+						temp.setSoluongcu(array.get(i).getQuality());
 						temp.setID_SaleItem(array.get(i).getID_SaleItem());
 						listEdits.add(temp);
 						Sum += Float.parseFloat(price)*quality;
@@ -1116,33 +1153,16 @@ public class fgm_ticket extends Fragment {
 						String fortech = df.format((double)((100-percent)*tempForTwoPeople)/100);
 						ForOwner = Float.parseFloat(forowner);
 						ForTech = Float.parseFloat(fortech);
-						//temp.setDescriptioon("s" +Integer.toString(array.get(i).getID_SaleItem()));
-						//listEdits.add(temp);
 					}
 				}
 				if(listEdits.size()+1<13)
 				{
 					int count = 13-listEdits.size();
-					for(int i=0;i<count;i++)
+					for(int h=0;h<count;h++)
 					{
 						listEdits.add(new ItemTicketAdapter(-2,"-2","-2",-2, -2, false));
 					}
 				}
-				getActivity().runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						adapterEdits.notifyDataSetChanged();
-						progessbarTicketEdit.setVisibility(View.GONE);
-						tabhost.setCurrentTab(1);
-						tvTotal.setText("Total: " + Sum);
-						tvDeducted.setText("Deducted: " +  Deducted);
-						tvForTech.setText("For Tech: "+ ForTech);
-						tvForOwner.setText("For Owner: "+ ForOwner);
-					}
-				});
-			}
-		};
-		a.start();
 	}
 	
 	public void getListCategories()
@@ -1150,18 +1170,19 @@ public class fgm_ticket extends Fragment {
 		Thread threadCategories = new Thread(){
 			@Override
 			public void run() {
-				WCFNail nailservice = new WCFNail();
-				listCategories = nailservice.getListCategory(null);
+				listCategories = categoryDAO.getListCategory();
 				if(listCategories.size()>0)
 				{
-					listServices = nailservice.getListSaleItemByIDCategory(new ArrayList<String>(){{
-						add(Integer.toString(listCategories.get(0).getID()));
-					}});
+					listServices = saleItemDAO.getListSaleItemByIDCategory(listCategories.get(0).getID());
 				}
 			}
 		};
 		threadCategories.start();
 	}
+	/**
+	 * Lay danh sach cac saleitem trong csdl tu mot categories
+	 * @param idCategory
+	 */
 	public void getListServices(final int idCategory)
 	{
 		listServices.clear();
@@ -1169,20 +1190,12 @@ public class fgm_ticket extends Fragment {
 			@Override
 			public void run() {
 				WCFNail nailservice = new WCFNail();
-				listServices = nailservice.getListSaleItemByIDCategory(new ArrayList<String>(){{
-					add(Integer.toString(idCategory));
-				}});
+				listServices.addAll(saleItemDAO.getListSaleItemByIDCategory(idCategory));
 				if(listServices.size()>0)
 				{
-					Log.i("ticket funtion", "Lay danh sach sale item");
-					for(int i=0;i<listServices.size();i++)
-					{
-						Log.i("ticket funtion", "sale item name: " + listServices.get(i).getName());
-					}
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							Log.i("ticket funtion", "run on ui");
 							adapterServices.setSelectedItem(0);
 							adapterServices.notifyDataSetChanged();
 						}
@@ -1191,6 +1204,163 @@ public class fgm_ticket extends Fragment {
 			}
 		};
 		threadService.start();
+		
+	}
+	/**
+	 * Kiem tra danh sach nguoi dung chon them vao do co chứa item mà người dung chon k
+	 * neu co tang so luong len 1
+	 * @param itemticketAdd
+	 */
+	public void checkingAddItemTicketAdapter(ItemTicketAdapter itemticketAdd)
+	{
+		// chua co trong danh sach
+		boolean flag = false;
+		for(int i=0;i<listItemTicketAdd.size();i++)
+		{
+			if(itemticketAdd.getID_SaleItem()==listItemTicketAdd.get(i).getID_SaleItem())
+			{
+				int soluong = listItemTicketAdd.get(i).getQuality();
+				float price = listItemTicketAdd.get(i).getPrice();
+				float pricegoc = price/soluong;
+				listItemTicketAdd.get(i).setQuality(soluong+1);
+				listItemTicketAdd.get(i).setPrice((soluong+1)*pricegoc);
+				//listItemTicketAdd.get(i).setIsAdd(false);
+				flag =true;
+				break;
+			}
+		}
+		// neu chua co trong danh sach thi them vao 
+		if(flag==false)
+		{
+			itemticketAdd.setIsAdd(true);
+			listItemTicketAdd.add(itemticketAdd);
+		}
+	}
+	public void saveListItemTicketAdapterIsAdd()
+	{
+		if(listItemTicketAdd.size()>1)
+		{
+			ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...","Saving...", true);
+			ringProgressDialog.setCancelable(true);
+			flag_ringprogress = true;
+			Thread saveitemticketisadd = new Thread()
+			{
+				@Override
+				public void run() {
+					for(int i=1;i<listItemTicketAdd.size();i++)
+					{
+						ItemTicketAdapter itemticketadapter = listItemTicketAdd.get(i);
+						// bang false thi cap nhat la so luong
+						if(itemticketadapter.isIsAdd()==false)
+						{
+							updateItemTicketAdapter(itemticketadapter.getSoluongcu(), itemticketadapter.getQuality(), itemticketadapter);
+						}
+						else
+						{
+							ItemTicket item = new ItemTicket();
+							item.setID_SaleItem(listItemTicketAdd.get(i).getID_SaleItem());
+							item.setID_Ticket(TicketPresent.getID());
+							int pricegoc = (int) (listItemTicketAdd.get(i).getPrice()/listItemTicketAdd.get(i).getQuality());
+							item.setPrice(pricegoc);
+							item.setQuality(listItemTicketAdd.get(i).getQuality());
+							itemTicketDAO.insertItemTicket(item);
+							for(int h=0;h<listItemTicketAdd.get(i).getQuality();h++)
+							{
+								ReportDTO report = new ReportDTO();
+								report.setDate(TicketPresent.getDate());
+								report.setId_Employee(EmployeePresent.getID_Employee());
+								report.setId_saleitem(listItemTicketAdd.get(i).getID_SaleItem());
+								report.setId_type_money(getTypeMoney(itemticketadapter.getType()));
+								report.setId_type_method(1);
+								reportDAO.InsertReport(report);
+							}
+						}
+					}
+					ArrayList<ItemTicket> dsupdateticket = itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID());
+					convertListItemTicketToItemTiketAdapter(dsupdateticket);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							adapterEdits.notifyDataSetChanged();
+							progessbarTicketEdit.setVisibility(View.GONE);
+							tabhost.setCurrentTab(1);
+							total = "Total: " +Sum;
+							deducted = "Deducted: " + Deducted;
+							forowner = "For Owner: "+ForOwner;
+							fortech = "For Tech: " +ForTech;
+							tvTotal.setText(total);
+							tvDeducted.setText(deducted);
+							tvForTech.setText(fortech);
+							tvForOwner.setText(forowner);
+							if(flag_ringprogress==true)
+							{
+								ringProgressDialog.dismiss();
+								flag_ringprogress=false;
+							}
+							
+						}
+					});
+				}
+			};
+			saveitemticketisadd.start();
+			
+		}
+	}
+	public void deleteTicket()
+	{
+		Thread threaddeleteticket = new Thread()
+		{
+			@Override
+			public void run() {
+				
+				itemTicketDAO.deleteItemTicket(TicketPresent.getID());
+				ticketDAO.deleteTicket(TicketPresent.getID());
+				ArrayList<ReportDTO> dsreport = reportDAO.GetIListtemReportWithEmployee(EmployeePresent.getID_Employee());
+				for(int i=0;i<dsreport.size();i++)
+				{
+					if(dsreport.get(i).getDate().compareTo(TicketPresent.getDate())==0 && dsreport.get(i).getId_saleitem()!=-1)
+					{
+						reportDAO.deleteItemReport(dsreport.get(i).getId());
+					}
+				}
+			};
+		};
+		threaddeleteticket.start();
+	}
+	public void getListItemTicketAdd()
+	{
+		Thread getListItemticketAdd = new Thread()
+		{
+			@Override
+			public void run() {
+				listItemTicketAdd.clear();
+				for(int i=0;i<listEdits.size();i++)
+				{
+					ItemTicketAdapter itemticket = new ItemTicketAdapter();
+					if(listEdits.get(i).getID_ItemTicket()==-2&&listEdits.get(i).getQuality()==-2&&listEdits.get(i).getPrice()==-2&&listEdits.get(i).getDescriptioon().equals("-2"))
+					{
+						break;
+					}
+					itemticket.setDescriptioon(listEdits.get(i).getDescriptioon());
+					itemticket.setID_ItemTicket(listEdits.get(i).getID_ItemTicket());
+					itemticket.setID_SaleItem(listEdits.get(i).getID_SaleItem());
+					itemticket.setPrice(listEdits.get(i).getPrice());
+					itemticket.setQuality(listEdits.get(i).getQuality());
+					itemticket.setSoluongcu(listEdits.get(i).getSoluongcu());
+					itemticket.setType(listEdits.get(i).getType());
+					itemticket.setIsAdd(false);
+					listItemTicketAdd.add(itemticket);
+				}
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						adapterTicketAdd.notifyDataSetChanged();
+					}
+				});
+			};
+		};
+		getListItemticketAdd.start();
+		
 	}
 	public void disable(View v) {
 		if (v instanceof ViewGroup) {
@@ -1201,7 +1371,15 @@ public class fgm_ticket extends Fragment {
 			v.setEnabled(false);
 		}
 	}
-
+	public void enable(View v) {
+		if (v instanceof ViewGroup) {
+			for (int i = 0; i < ((ViewGroup) v).getChildCount(); i++) {
+				enable(((ViewGroup) v).getChildAt(i));
+			}
+		} else {
+			v.setEnabled(true);
+		}
+	}
 	@Override
 	public void onPause() {
 
