@@ -1,0 +1,27 @@
+EmployEditBUS
+
+public NameAndAdd getEmployeeWithId(string Id);
+TicketBUS
+public List<Ticket> getListBetween(int id_emloyee, DateTime dayBegin, DateTime dayEnd);
+Kiem tra xem cac ham nay da lam het chua nha, vi rat hay sai
+public bool deleteAllTicket();
+public bool deleteTicket(int id);
+public bool deleteTicketEmployeeWithDate(int Id_Employee, DateTime Date_From, DateTime Date_End);
+public bool deleteTicketEmployeeWithDateAndMethod(int Id_Employee, DateTime Date_From, DateTime Date_End, int method);
+public int getIDMax();
+public List<Ticket> getListBetween(int id_emloyee, DateTime dayBegin, DateTime dayEnd);
+public List<Ticket> getListByIDEmployee(int id);
+public int insertTicket(Ticket ticket);
+public bool updateTicket(Ticket ticket);
+//-----end kiem tra
+ItemTicketBUS
+public List<ItemTicket> getListByIDTicket(int id_ticket);
+Kiem tra xem cac ham nay da lam het chua nha, vi rat hay sai
+public bool deleteAllItemTicket();
+public bool deleteItemTicket(int id);
+public bool deleteItemTicketByIDTicket(int id);
+public int getIDMax();
+public ItemTicket getItemByID(int id);
+public List<ItemTicket> getListByIDTicket(int id_ticket);
+public int insertItemTicket(ItemTicket item);
+public bool updateItemTicket(ItemTicket item);
