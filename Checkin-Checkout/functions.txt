@@ -51,6 +51,8 @@ public class SecurityBUS
     }
 
 ////////////////-------------Cac DTO
+PersionalInformation
+WorkHour
 public class CheckTable
     {
         public CheckTable();
