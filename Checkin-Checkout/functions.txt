@@ -69,3 +69,8 @@ public class CheckInfoTable
         public int Id { get; set; }
         public int Id_Employee { get; set; }
     }
+
+
+
+
+//////-------------fluidui prototype
