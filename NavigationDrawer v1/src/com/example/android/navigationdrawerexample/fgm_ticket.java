@@ -62,8 +62,7 @@ import android.widget.AdapterView.OnItemClickListener;
 public class fgm_ticket extends Fragment {
 	public fgm_ticket() {
 	}
-	
-	// region Khai bao cac control
+	//start
 	private TicketDAO ticketDAO = new TicketDAO();
 	private EmployeeDAO employeeDAO = new EmployeeDAO();
 	private ItemTicketDAO itemTicketDAO = new ItemTicketDAO();
@@ -132,6 +131,14 @@ public class fgm_ticket extends Fragment {
 	String deducted="";
 	String fortech ="";
 	String forowner ="";
+	//-------Su dung thoi gian & cac format
+	String myFormatDate = "dd/MM/yyyy"; // In which you need put here
+	String XMLFormatDate = "yyyy-MM-dd'T'HH:mm:ss";
+	SimpleDateFormat sdfDate = new SimpleDateFormat(myFormatDate, Locale.US);
+	SimpleDateFormat xmlSdfDate = new SimpleDateFormat(XMLFormatDate, Locale.US);
+	
+	private Date datestart = new Date();
+	private Date dateend = new Date();
 	//------Su dung de cho saving du lieu
 	ProgressDialog ringProgressDialog = null;
 	private boolean flag_ringprogress = false;
@@ -140,7 +147,8 @@ public class fgm_ticket extends Fragment {
 	private TextView tvInfoTicket;
 	private TextView tvInfoCustomner;
 	private TextView tvInfoMoneyTime;
-	// endregion
+	//end
+	
 
 	// region khoi tao cac date time va update cac label
 	/**
@@ -246,6 +254,7 @@ public class fgm_ticket extends Fragment {
 		start = (EditText) rootView.findViewById(R.id.editText1);
 		end = (EditText) rootView.findViewById(R.id.editText2);
 		single = (EditText) rootView.findViewById(R.id.Single1);
+		
 		okButton = (Button) rootView.findViewById(R.id.OK);
 		buttonContainer = (TableRow) rootView.findViewById(R.id.TableRow03);
 		progress = (ProgressBar) rootView.findViewById(R.id.progressBar1);
@@ -311,60 +320,40 @@ public class fgm_ticket extends Fragment {
 				single.setText("D " + fulltext);
 				Log.e("Xem Ngay", single.getTag().toString());
 				//getData(single.getTag().toString(), single.getTag().toString(),buttonContainer, progress1);
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				String newS = single.getTag().toString().substring(0, 10) + "T00:00:00";
+				String newE = single.getTag().toString().substring(0, 10) + "T23:59:59";
+				Log.i("Get ticket by day", newS + "--" + newE);
+				LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), newS, newE);
 			}
 		});
+		
 		month.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				Log.e("Xem ngay", fulltext.substring(3));
-				// gia tri la thang/nam
 				single.setText("M " + fulltext.substring(3));
-				Log.e("monClick", "1");
-				Date dt1 = new Date();
-				Date dt2 = new Date();
-				try {
-					dt1 = xmlSdf.parse(single.getTag().toString());
-					dt2 = xmlSdf.parse(single.getTag().toString());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Log.e("monClick", "2");
-				dt1.setDate(1);
-				Log.e("monClick", "3");
-				dt2.setDate(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-				Log.e("monClick", "4");
-				Log.e("Xem thang","date1  " + single.getTag().toString());
-				Log.e("Xem thang","date2  " + single.getTag().toString());
-				// hai date nay giong nhau nhung chi lay thang thoi
-				//getData(xmlSdf.format(dt1), xmlSdf.format(dt2),buttonContainer, progress1);
+				
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				getDayStartAndDayEndBySingleText(2);
+				Log.i("Get ticket by month","IdEmployee" +EmployeePresent.getID_Employee()+" -- "+ xmlSdfDate.format(datestart) + "--" + xmlSdfDate.format(dateend));
+				LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), xmlSdfDate.format(datestart), xmlSdfDate.format(dateend));
 			}
 		});
 		year.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				single.setText("Y " + fulltext.substring(6));
-				Log.e("yearClick", "1");
-				Date dt1 = new Date();
-				Date dt2 = new Date();
-				try {
-					dt1 = xmlSdf.parse(single.getTag().toString());
-					dt2 = xmlSdf.parse(single.getTag().toString());
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				Log.e("yearClick", "2");
-				dt1.setMonth(0);
-				dt1.setDate(1);
-				Log.e("yearClick", "3");
-				dt2.setMonth(11);
-				dt2.setDate(31);
-				Log.e("yearClick", "4");
-				//getData(xmlSdf.format(dt1), xmlSdf.format(dt2),buttonContainer, progress1);
+				
+				getDayStartAndDayEndBySingleText(3);
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				Log.i("Get ticket by year","IdEmployee" +EmployeePresent.getID_Employee()+" -- "+ xmlSdfDate.format(datestart) + "--" + xmlSdfDate.format(dateend));
+				LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), xmlSdfDate.format(datestart), xmlSdfDate.format(dateend));
 			}
 		});
 		togg.setOnClickListener(new OnClickListener() {
@@ -389,6 +378,10 @@ public class fgm_ticket extends Fragment {
 			@Override
 			public void onClick(View v) {
 				//getData(start.getTag().toString(), end.getTag().toString(),okButton, progress);
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading ticket...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), start.getTag().toString(), end.getTag().toString());
 			}
 		});
 		start.setOnClickListener(new OnClickListener() {
@@ -428,6 +421,11 @@ public class fgm_ticket extends Fragment {
 		updateLabel1();
 		updateLabel2();
 		updateLabel3();
+		
+		fulltext = sdfDate.format(myCalendar.getTime());
+		single.setTag(xmlSdfDate.format(myCalendar.getTime()));
+		single.setText("Y " + fulltext.substring(6));
+		Log.i("Set for single text",fulltext.substring(6));
 		adapterEmployees = new ListBaseAdapter(getActivity(),listEmployee);
 		adapterEmployees.initListBaseAdapter(1, 1);
 		lvEmployees.setAdapter(adapterEmployees);
@@ -439,6 +437,7 @@ public class fgm_ticket extends Fragment {
 		 * Va lay ra danh sach cho Tab report edit
 		 * Luu lai idTicketPresent cua ticket dau tien nay nho trim()
 		 */
+		//btnTicketEdit_Add.setEnabled(false);
 		Thread threadGetEmployee =  new Thread(){
 			@Override
 			public void run() {
@@ -456,12 +455,42 @@ public class fgm_ticket extends Fragment {
 						EmployeePresent = listEmployee.get(0);
 						tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 						listTickets.clear();
-						listTickets.addAll(ticketDAO.getListTicketByIDEmployee(listEmployee.get(0).getID_Employee()));
+						
+						getDayStartAndDayEndBySingleText(3);
+						listTickets.addAll(ticketDAO.getListTicketBetween(listEmployee.get(0).getID_Employee(),xmlSdf.format(datestart), xmlSdf.format(dateend)));
+						if(listTickets.size()>0)
+						{
+							TicketPresent = listTickets.get(0);
+							adapterTickets.setSelectedItem(0);
+							Log.i("thread getemployee","id ticket: "+listTickets.get(0).getID() );
+							LoadItemTicketByIdTicket(TicketPresent.getID());
+						}
+						else
+						{
+							listEdits.clear();
+							addvalueEmptyToListEdit();
+							total="Total: ";
+							deducted="Deducted: ";
+							forowner="For Owner: ";
+							fortech ="For Tech: ";
+							valueTicketPresent = "";
+							TicketPresent = null;
+							
+						}
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								adapterEmployees.notifyDataSetChanged();
 								progessbarTicketEdit.setVisibility(View.GONE);
+								if(TicketPresent==null)
+								{
+									btnTicketEdit_Add.setEnabled(false);
+									btnTicketEdit_DeleteTicket.setEnabled(false);
+								}else
+								{
+									btnTicketEdit_Add.setEnabled(true);
+									btnTicketEdit_DeleteTicket.setEnabled(true);
+								}
 							}
 						});
 					}
@@ -482,115 +511,42 @@ public class fgm_ticket extends Fragment {
 				adapterEmployees.notifyDataSetChanged();
 				EmployeePresent = listEmployee.get(position);
 				tvInfoEmpoyee.setText(EmployeePresent.getstrName());
-				Thread threadtickets = new Thread()
+				
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading ticket...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				//row1.setVisibility(View.VISIBLE);
+				
+				if(row1.getVisibility() == View.VISIBLE)
 				{
-					@Override
-					public void run() {
-						try {
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									Log.i("Load employee", "start progressbar");
-									progessbarTicketEdit.setVisibility(View.VISIBLE);
-									adapterTickets.notifyDataSetChanged();
-								}
-							});
-							listTickets.clear();
-							adapterTickets.setSelectedItem(0);
-							listTickets.addAll(ticketDAO.getListTicketByIDEmployee(EmployeePresent.getID_Employee()));
-							Log.i("Ticket fuctions", "First ticket of employee load");
-							if(listTickets.size()>0)
-							{
-								TicketPresent = listTickets.get(0);
-								valueTicketPresent = TicketPresent.getCode();
-							}
-							else
-							{
-								listEdits.clear();
-								addvalueEmptyToListEdit();
-								total="Total: ";
-								deducted="Deducted: ";
-								forowner="For Owner: ";
-								fortech ="For Tech: ";
-								valueTicketPresent = "";
-								TicketPresent = null;
-							}
-							getActivity().runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									Log.i("Load employee", "end progressbar");
-									tvInfoTicket.setText(valueTicketPresent);
-									if(listTickets.size()==0)
-									{
-										tvTotal.setText(total);
-										tvDeducted.setText(deducted);
-										tvForTech.setText(fortech);
-										tvForOwner.setText(forowner);
-									}
-									adapterTickets.notifyDataSetChanged();
-									progessbarTicketEdit.setVisibility(View.GONE);
-								}
-							});
-							
-						} catch (Exception e) {
-						}
-					}
-				};
-				threadtickets.start();
+					getDayStartAndDayEndByTwoText();
+				}else
+				{
+					getDayStartAndDayEndBySingleText(3);
+					
+				}
+				Log.i("employee click","IdEmployee" +EmployeePresent.getID_Employee()+" -- "+ xmlSdfDate.format(datestart) + "--" + xmlSdfDate.format(dateend));
+				LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), xmlSdfDate.format(datestart), xmlSdfDate.format(dateend));
 			}
 		});
 		/**
 		 * Khi click vao 1 item trong danh sach ticket. Update du lieu cho tab report
 		 * Lay id ticletpresent va thuc hien lay cac item ticket
 		 */
-		
 		lvTickets.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-				//idTicketPresent = Integer.toString(listTickets.get(arg2).getID());
 				TicketPresent = listTickets.get(arg2);
 				adapterTickets.setSelectedItem(arg2);
 				adapterTickets.notifyDataSetChanged();
 				tvInfoTicket.setText(TicketPresent.getCode());
-				Thread threadupdateReport = new Thread()
-				{
-					@Override
-					public void run() {
-						getActivity().runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								progessbarTicketEdit.setVisibility(View.VISIBLE);
-								disable(tabhost);
-							}
-						});
-						convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
-						getActivity().runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								enable(tabhost);
-								adapterEdits.notifyDataSetChanged();
-								progessbarTicketEdit.setVisibility(View.GONE);
-								tabhost.setCurrentTab(1);
-								total = "Total: " +Sum;
-								deducted = "Deducted: " + Deducted;
-								forowner = "For Owner: "+ForOwner;
-								fortech = "For Tech: " +ForTech;
-								tvTotal.setText(total);
-								tvDeducted.setText(deducted);
-								tvForTech.setText(fortech);
-								tvForOwner.setText(forowner);
-								if(flag_ringprogress==true)
-								{
-									ringProgressDialog.dismiss();
-									flag_ringprogress=false;
-								}
-								
-							}
-						});
-					}
-				};
-				threadupdateReport.start();
+				
+				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
+				ringProgressDialog.setCancelable(true);
+				flag_ringprogress = true;
+				LoadItemTicketByIdTicket(TicketPresent.getID());
+				tabhost.setCurrentTab(1);
 			}
 		});
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);
@@ -912,6 +868,145 @@ public class fgm_ticket extends Fragment {
 
     }
 	// endregion
+	/**
+	 * Neu idtype = 1 get by day
+	 * Neu idtype = 2 get by month
+	 * Neu idtype = 3 get by year
+	 * @param idtype
+	 */
+	public void getDayStartAndDayEndBySingleText(int idtype)
+	{
+		try {
+			datestart = xmlSdf.parse(single.getTag().toString());
+			dateend = xmlSdf.parse(single.getTag().toString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		switch (idtype) {
+		case 1:
+			break;
+		case 2:
+			datestart.setDate(1);
+			dateend.setDate(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+			break;
+		case 3:
+			datestart.setMonth(0);
+			datestart.setDate(1);
+			dateend.setMonth(11);
+			dateend.setDate(31);
+			break;
+		default:
+			break;
+		}
+	}
+	public void getDayStartAndDayEndByTwoText()
+	{
+		try {
+			datestart = xmlSdf.parse(start.getTag().toString());
+			dateend = xmlSdf.parse(end.getTag().toString());
+			Log.i("Get day", start.getTag().toString() + "--" + start.getTag().toString());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+	}
+	private void LoadItemTicketByIdTicket(final int idTicket)
+	{
+		Thread threadloadItemTicket = new Thread()
+		{
+			@Override
+			public void run() {
+				convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						enable(tabhost);
+						adapterEdits.notifyDataSetChanged();
+						//tabhost.setCurrentTab(1);
+						total = "Total: " +Sum;
+						deducted = "Deducted: " + Deducted;
+						forowner = "For Owner: "+ForOwner;
+						fortech = "For Tech: " +ForTech;
+						tvTotal.setText(total);
+						tvDeducted.setText(deducted);
+						tvForTech.setText(fortech);
+						tvForOwner.setText(forowner);
+						if(flag_ringprogress==true)
+						{
+							ringProgressDialog.dismiss();
+							flag_ringprogress=false;
+						}
+						
+					}
+				});
+			}
+		};
+		threadloadItemTicket.start();
+	}
+	private void LoadTicketByIdEmployee(final int id, final String datebegin,final String dateend)
+	{
+		Thread threadLoadTickets = new Thread(){
+			@Override
+			public void run() {
+				listTickets.clear();
+				listTickets.addAll(ticketDAO.getListTicketBetween(id, datebegin, dateend));
+				Log.i("Get tiket by id has size", "idEmployee "+ id + listTickets.size());
+				if(listTickets.size()>0)
+				{
+					adapterTickets.setSelectedItem(0);
+					TicketPresent = listTickets.get(0);
+					valueTicketPresent = TicketPresent.getCode();
+					Log.i("employee click","first ticket id: " + TicketPresent.getID());
+					convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+				}
+				else
+				{
+					listEdits.clear();
+					addvalueEmptyToListEdit();
+					Sum = 0;
+					ForOwner = 0;
+					ForTech = 0;
+					Deducted = 0;
+					valueTicketPresent = "";
+					TicketPresent = null;
+				}
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Log.i("Load employee", "end progressbar");
+						tvInfoTicket.setText(valueTicketPresent);
+						total="Total: " + Sum;
+						deducted="Deducted: " + Deducted;
+						forowner="For Owner: " +  ForOwner;
+						fortech ="For Tech: "  +ForTech;
+						tvTotal.setText(total);
+						tvDeducted.setText(deducted);
+						tvForTech.setText(fortech);
+						tvForOwner.setText(forowner);
+						adapterTickets.notifyDataSetChanged();
+						if(TicketPresent==null)
+						{
+							btnTicketEdit_Add.setEnabled(false);
+							btnTicketEdit_DeleteTicket.setEnabled(false);
+						}else
+						{
+							btnTicketEdit_Add.setEnabled(true);
+							btnTicketEdit_DeleteTicket.setEnabled(true);
+						}
+						if(flag_ringprogress==true)
+						{
+							ringProgressDialog.dismiss();
+							flag_ringprogress=false;
+						}
+						tabhost.setCurrentTab(0);
+					}
+				});
+				
+				
+				
+			}
+		};
+		threadLoadTickets.start();
+	}
 	int h =0;
 	public void saveItemTicketAdapterIsEdited(final int soluongmoi)
 	{
@@ -1094,6 +1189,9 @@ public class fgm_ticket extends Fragment {
 	}
 	public void convertListItemTicketToItemTiketAdapter(final ArrayList<ItemTicket> array)
 	{
+		Sum = 0;
+		ForTech = 0;
+		ForOwner= 0;
 		listEdits.clear();
 		listEdits.add(new ItemTicketAdapter(-1,"-1","-1",-1, -1, false));
 		Log.i("Loadeditticket", "size array: " + array.size());

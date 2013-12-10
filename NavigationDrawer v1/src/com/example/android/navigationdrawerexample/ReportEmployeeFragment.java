@@ -99,7 +99,6 @@ public class ReportEmployeeFragment extends Fragment {
 	};
 
 	private void updateLabel1() {
-
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
 		String XMLFormat = "yyyy-MM-dd'T'HH:mm:ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
@@ -107,7 +106,6 @@ public class ReportEmployeeFragment extends Fragment {
 		start.setText(sdf.format(myCalendar.getTime()));
 		start.setTag(xmlSdf.format(myCalendar.getTime()));
 	}
-
 	private void updateLabel2() {
 
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
@@ -118,7 +116,6 @@ public class ReportEmployeeFragment extends Fragment {
 		end.setText(sdf.format(myCalendar.getTime()));
 		end.setTag(xmlSdf.format(myCalendar.getTime()));
 	}
-
 	private void updateLabel3() {
 
 		String myFormat = "dd/MM/yyyy"; // In which you need put here
@@ -156,7 +153,6 @@ public class ReportEmployeeFragment extends Fragment {
 			public void run() {
 				final String newS = S.substring(0, 10) + "T00:00:00";
 				final String newE = E.substring(0, 10) + "T23:59:59";
-				
 				try {
 					getActivity().runOnUiThread(new Runnable() {
 						@Override
@@ -275,7 +271,6 @@ public class ReportEmployeeFragment extends Fragment {
 					for (int i = 0; i < 7; i++) {
 						Log.e("get", "1" + String.valueOf(i));
 						// set Value
-						
 						if (IsStop)
 							return;
 						arrayValue.set(i + 13, result.get(i + 10).toString());
@@ -308,7 +303,6 @@ public class ReportEmployeeFragment extends Fragment {
 							plistview.setEnabled(true);
 						}
 					});
-
 				} catch (Exception e) {
 					getActivity().runOnUiThread(new Runnable() {
 						@Override

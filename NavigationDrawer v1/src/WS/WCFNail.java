@@ -155,6 +155,13 @@ public class WCFNail {
                 // xu ly du lieu vua nhan duoc
         }
 
+        /**
+         * return SoapPrimitive or SoapObject
+         * @param METHOD_NAME
+         * @param para
+         * @param isPrimitive
+         * @return return SoapPrimitive or SoapObject
+         */
         public ArrayList<Object> getData(String METHOD_NAME,
                         ArrayList<String> para, boolean isPrimitive) {
                 ArrayList<Object> result = new ArrayList<Object>();

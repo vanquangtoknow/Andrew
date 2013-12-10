@@ -364,6 +364,8 @@ public class ReportFragment extends Fragment {
 				Log.e("monClick", "3");
 				dt2.setDate(myCalendar.getActualMaximum(Calendar.DAY_OF_MONTH));
 				Log.e("monClick", "4");
+				Log.i("Get Date", xmlSdf.format(dt1));
+				Log.i("Get Date", xmlSdf.format(dt2));
 				getData(xmlSdf.format(dt1), xmlSdf.format(dt2),
 						buttonContainer, progress1);
 			}
@@ -391,6 +393,8 @@ public class ReportFragment extends Fragment {
 				dt2.setMonth(11);
 				dt2.setDate(31);
 				Log.e("yearClick", "4");
+				Log.i("Get Date1", xmlSdf.format(dt1));
+				Log.i("Get Date1", xmlSdf.format(dt2));
 				getData(xmlSdf.format(dt1), xmlSdf.format(dt2),
 						buttonContainer, progress1);
 			}
