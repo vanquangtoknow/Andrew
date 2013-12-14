@@ -560,13 +560,18 @@ public class fgm_ticket extends Fragment {
 			btnTicketEdit_DeleteTicket.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					//btnTicketEdit_DeleteTicket.setImageResource(R.drawable.ticket_btndelete_ticket);
 					AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 			        builder.setMessage("Delete this ticket")
 			        		.setTitle("Arlert!!!")
 			               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 			                   public void onClick(DialogInterface dialog, int id) {
-			                	   
+			                	   	ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Please wait to delete this ticket...", true);
+				       				ringProgressDialog.setCancelable(true);
+				       				flag_ringprogress = true;
+				       				deleteTicket();
+				       				
+				       				//getDayStartAndDayEndBySingleText(3);
+				       				//LoadTicketByIdEmployee(EmployeePresent.getID_Employee(), datestart.toString(), dateend.toString());
 			                   }
 			               })
 			               .setNegativeButton("Cancell", new DialogInterface.OnClickListener() {
@@ -947,28 +952,7 @@ public class fgm_ticket extends Fragment {
 		Thread threadLoadTickets = new Thread(){
 			@Override
 			public void run() {
-				listTickets.clear();
-				listTickets.addAll(ticketDAO.getListTicketBetween(id, datebegin, dateend));
-				Log.i("Get tiket by id has size", "idEmployee "+ id + listTickets.size());
-				if(listTickets.size()>0)
-				{
-					adapterTickets.setSelectedItem(0);
-					TicketPresent = listTickets.get(0);
-					valueTicketPresent = TicketPresent.getCode();
-					Log.i("employee click","first ticket id: " + TicketPresent.getID());
-					convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
-				}
-				else
-				{
-					listEdits.clear();
-					addvalueEmptyToListEdit();
-					Sum = 0;
-					ForOwner = 0;
-					ForTech = 0;
-					Deducted = 0;
-					valueTicketPresent = "";
-					TicketPresent = null;
-				}
+				LoadingTicket(id, datebegin, dateend);
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -1000,12 +984,37 @@ public class fgm_ticket extends Fragment {
 						tabhost.setCurrentTab(0);
 					}
 				});
-				
-				
-				
 			}
 		};
 		threadLoadTickets.start();
+	}
+	public void LoadingTicket(final int id, final String datebegin,final String dateend)
+	{
+		listTickets.clear();
+		Log.i("loading ticket", "idemployee: "+id + "time: "+datebegin +"--"+dateend);
+		listTickets.addAll(ticketDAO.getListTicketBetween(id, datebegin, dateend));
+		Log.i("loading ticket", "idEmployee "+ id + listTickets.size());
+		if(listTickets.size()>0)
+		{
+			adapterTickets.setSelectedItem(0);
+			TicketPresent = listTickets.get(0);
+			valueTicketPresent = TicketPresent.getCode();
+			Log.i("loading ticket","first ticket id: " + TicketPresent.getID());
+			convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+		}
+		else
+		{
+			Log.i("loading ticket","no ticket for idemployee");
+			listEdits.clear();
+			addvalueEmptyToListEdit();
+			Sum = 0;
+			ForOwner = 0;
+			ForTech = 0;
+			Deducted = 0;
+			valueTicketPresent = "";
+			TicketPresent = null;
+		}
+		Log.i("loading ticket","finish loading ticket");
 	}
 	int h =0;
 	public void saveItemTicketAdapterIsEdited(final int soluongmoi)
@@ -1410,17 +1419,71 @@ public class fgm_ticket extends Fragment {
 		{
 			@Override
 			public void run() {
-				
-				itemTicketDAO.deleteItemTicket(TicketPresent.getID());
-				ticketDAO.deleteTicket(TicketPresent.getID());
+				Log.i("delete ticket","id "+ TicketPresent.getID() );
+				Log.i("delete ticket", "delete items ticket");
+				if(itemTicketDAO.deleteItemTicketByIDTicket(TicketPresent.getID())==true)
+				{
+					Log.i("delete ticket", "delete items ticket susscessfully");
+				}else
+				{
+					Log.i("delete ticket", "delete items ticket fail");
+				}
+				Log.i("delete ticket", "delete ticket");
+				if(ticketDAO.deleteTicket(TicketPresent.getID())==true)
+				{
+					Log.i("delete ticket", "delete ticket susscessfully");
+				}else
+				{
+					Log.i("delete ticket", "delete ticket fail");
+				}
+				Log.i("delete ticket", "delete list dto");
 				ArrayList<ReportDTO> dsreport = reportDAO.GetIListtemReportWithEmployee(EmployeePresent.getID_Employee());
 				for(int i=0;i<dsreport.size();i++)
 				{
+					Log.i("delete ticket", "ticket date: "+ TicketPresent.getDate()+" -- "+dsreport.get(i).getId_saleitem());
 					if(dsreport.get(i).getDate().compareTo(TicketPresent.getDate())==0 && dsreport.get(i).getId_saleitem()!=-1)
 					{
+						Log.i("delete ticket", "delete list dto i" + dsreport.get(i).getId_saleitem() + "---" + dsreport.get(i).getId_saleitem());
 						reportDAO.deleteItemReport(dsreport.get(i).getId());
 					}
 				}
+				Log.i("delete ticket", "delete finish");
+				TicketPresent = null;
+				ItemTicketAdapterPresent = null;
+				getDayStartAndDayEndBySingleText(3);
+				
+				LoadingTicket(EmployeePresent.getID_Employee(), xmlSdfDate.format(datestart), xmlSdfDate.format(dateend));
+				getActivity().runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Log.i("Load employee", "end progressbar");
+						tvInfoTicket.setText(valueTicketPresent);
+						total="Total: " + Sum;
+						deducted="Deducted: " + Deducted;
+						forowner="For Owner: " +  ForOwner;
+						fortech ="For Tech: "  +ForTech;
+						tvTotal.setText(total);
+						tvDeducted.setText(deducted);
+						tvForTech.setText(fortech);
+						tvForOwner.setText(forowner);
+						adapterTickets.notifyDataSetChanged();
+						if(TicketPresent==null)
+						{
+							btnTicketEdit_Add.setEnabled(false);
+							btnTicketEdit_DeleteTicket.setEnabled(false);
+						}else
+						{
+							btnTicketEdit_Add.setEnabled(true);
+							btnTicketEdit_DeleteTicket.setEnabled(true);
+						}
+						if(flag_ringprogress==true)
+						{
+							ringProgressDialog.dismiss();
+							flag_ringprogress=false;
+						}
+						tabhost.setCurrentTab(0);
+					}
+				});
 			};
 		};
 		threaddeleteticket.start();

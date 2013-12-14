@@ -332,7 +332,7 @@ public class fgm_checkin_checkout extends Fragment
 
 		// set layout cho tung view
 		Log.e("frag", "1");
-		lvCheckInOuts = (ListView) rootView.findViewById(R.id.lvEmployee);
+		lvCheckInOuts = (ListView) rootView.findViewById(R.id.lvCheckTable);
 		adapterCheckInOuts = new ListBaseAdapter(getActivity(),listCheckInOuts);
 		adapterCheckInOuts.initListBaseAdapter(1, 1);
 		lvCheckInOuts.setAdapter(adapterCheckInOuts);

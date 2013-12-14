@@ -46,7 +46,6 @@ public class personListAdapter extends BaseAdapter {
 	
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return array.get(position).getID_Employee();
 	}
 

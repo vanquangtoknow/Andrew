@@ -2,7 +2,11 @@ package DTO;
 
 import org.ksoap2.serialization.SoapObject;
 
+import DAO.EmployeeDAO;
+import WS.WCFNail;
+
 public class CheckTable {
+	EmployeeDAO employeeDao = new EmployeeDAO();
 	public int getId() {
 		return Id;
 	}
@@ -56,4 +60,16 @@ public class CheckTable {
 		this.setId_Employee(Integer.parseInt(root.getProperty(4).toString()));
 		
     }
+	public CheckTableTemp convertToCheckTableTemp(WCFNail nailservice)
+	{
+		CheckTableTemp temp = new CheckTableTemp();
+		Employee employee = new Employee();
+		employee = employeeDao.getEmployeeWithId(this.getId_Employee());
+		temp.setId_Employee(employee.getID_Employee());
+		temp.setCheckIn(this.getCheckIn());
+		temp.setCheckOut(this.getCheckOut());
+		temp.setEmployeeName(employee.getstrName());
+		temp.setIdChecktable(this.getId());
+		return temp;
+	}
 }

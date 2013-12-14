@@ -127,7 +127,7 @@ public class MainActivity extends Activity {
         //vao man hinh login
         
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new fgm_ticket();
+        Fragment fragment = new fgm_manager_checkincheckout();
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	
@@ -293,8 +293,11 @@ public class MainActivity extends Activity {
 		addProduct("Report", "Full");
 		addProduct("Report", "Employee");
 		addProduct("Report", "Expense");
-		addProduct("Ticket","Ticket");
-		addProduct("Check", "Checkin - Checkout");
+		/*addProduct("Ticket","Ticket");
+		addProduct("Check", "Checkin - Checkout");*/
+		addProduct("Manager", "Ticket");
+		addProduct("Manager", "Checkin-checkout");
+		addProduct("Manager", "Tracking");
 		addProduct("Option", "Login");
 		addProduct("Option", "Logout");
 		addProduct("Option", "Demo");
@@ -363,7 +366,7 @@ public class MainActivity extends Activity {
 						.replace(R.id.content_frame, fragment).commit();
 			}
 			break;
-		case 1:
+/*		case 1:
 			if(childPosition==0)
 			{
 				Fragment fragment = new fgm_ticket();
@@ -375,13 +378,36 @@ public class MainActivity extends Activity {
 		case 2:
 			if(childPosition==0)
 			{
-				Fragment fragment = new fgm_checkin_checkout();
+				Fragment fragment = new fgm_manager_checkincheckout();
 				Log.e("trans", "checkin - checkout");
 				fragmentManager.beginTransaction()
 						.replace(R.id.content_frame, fragment).commit();
 			}
+			break;*/
+		case 1:
+			if(childPosition==0)
+			{
+				Fragment fragment = new fgm_ticket();
+				Log.e("trans", "ticket");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			if(childPosition==1)
+			{
+				Fragment fragment = new fgm_manager_checkincheckout();
+				Log.e("trans", "ticket");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			if(childPosition==2)
+			{
+				Fragment fragment = new fgm_tracking();
+				Log.e("trans", "ticket");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
 			break;
-		case 3:
+		case 2:
 			if( childPosition == 0) // LOGIN
 			{
 				Fragment fragment = new loginFragment();

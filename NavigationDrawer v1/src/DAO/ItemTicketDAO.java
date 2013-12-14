@@ -42,9 +42,9 @@ public class ItemTicketDAO {
 	{
 		return nailservice.insertItemTicket(itemticket);
 	}
-	public void deleteItemTicketByIDTicket(final int id)
+	public boolean deleteItemTicketByIDTicket(final int id)
 	{
-		nailservice.deleteItemTicketByIDTicket(new ArrayList<String>(){{
+		return nailservice.deleteItemTicketByIDTicket(new ArrayList<String>(){{
 			add(Integer.toString(id));
 		}});
 	}

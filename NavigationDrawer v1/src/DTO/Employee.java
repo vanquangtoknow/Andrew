@@ -1,5 +1,7 @@
 package DTO;
 
+import org.ksoap2.serialization.SoapObject;
+
 public class Employee {
 
 	public Employee()
@@ -149,5 +151,33 @@ public class Employee {
      public void setStatus(boolean value)
      {
     	 Status = value;
+     }
+     private SoapObject soap;
+ 	
+	 	public SoapObject getSoap() {
+	 		return soap;
+	 	}
+	 	public void setSoap(SoapObject soap) {
+	 		this.soap = soap;
+	 	}
+     public void getInfoFromSoap(SoapObject root)
+     {
+ 		this.soap = root;
+ 		this.setID_Employee(Integer.parseInt(root.getProperty(0).toString()));
+ 		//this.setimage(value);
+ 		this.setMoney(Float.parseFloat(root.getProperty(1).toString()));
+ 		//this.setpathImage(value);
+ 		this.setPercent(Float.parseFloat(root.getProperty(2).toString()));
+ 		this.setstrName(root.getProperty(10).toString());
+ 		this.setSoap(root);
+ 		//this.setStatus(value);
+ 		//this.setstrAddr(value);
+ 		//this.setstrCity(value);
+ 		//this.setstrPhone(value);
+ 		//this.setstrState(value)
+ 		//this.setstrZip(value);
+ 		//this.setSupport(value);
+ 		//this.setTime(value);
+ 		
      }
 }

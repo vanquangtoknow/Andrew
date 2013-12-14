@@ -11,14 +11,12 @@
         android:layout_height="fill_parent"
         android:weightSum="2"
         >
-		
         <ListView
             android:id="@+id/listviewemployee"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
              >
-
         </ListView>
 		<View
             android:id="@+id/pseparator2"
@@ -31,7 +29,6 @@
 		    android:layout_height="wrap_content"
 		    android:layout_weight="1"
 		     >
-
         </ListView>
     </LinearLayout>
     

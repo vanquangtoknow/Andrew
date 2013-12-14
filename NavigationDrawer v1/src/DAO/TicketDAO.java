@@ -2,11 +2,15 @@ package DAO;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 import WS.WCFNail;
+import DTO.ItemTicket;
 import DTO.Ticket;
 
 public class TicketDAO {
 	private  WCFNail nailservice = new WCFNail();
+	private ItemTicketDAO itemTicketDAO = new ItemTicketDAO();
 	public TicketDAO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -44,5 +48,23 @@ public class TicketDAO {
 			}
 		}));
 		return dsTicket;
+	}
+	public float getTotalMomneyOfEmployeeId(final int id, final String startday, final String endday)
+	{
+		ArrayList<Ticket> dsTicket = getListTicketBetween(id, startday, endday);
+		float tongT = 0;
+		Log.i("getTotalMomneyOfEmployeeId","Size"+ dsTicket.size() +"IdTicket: " + id + " datestart: "+startday+" endday:  "+endday);
+		for (int j = 0; j < dsTicket.size(); j++)
+        {
+			Log.i("getTotalMomneyOfEmployeeId","IdTicket: " + dsTicket.get(j).getID());
+            ArrayList<ItemTicket> dsItemTicket = itemTicketDAO.getListItemTicketByIDTicket(dsTicket.get(j).getID());
+            for (int k = 0; k < dsItemTicket.size(); k++)
+            {
+            	Log.i("getTotalMomneyOfEmployeeId", "IdTicket has itemticket id:  "+dsItemTicket.get(k).getID());
+                tongT = tongT + dsItemTicket.get(k).getPrice() * dsItemTicket.get(k).getQuality();
+            }
+            Log.i("getTotalMomneyOfEmployeeId", "IdTicket has total:  "+tongT);
+        }
+		return tongT;
 	}
 }
