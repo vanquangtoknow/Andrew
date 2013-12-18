@@ -321,7 +321,8 @@ public class fgm_ticket extends Fragment {
 				Log.e("Xem Ngay", single.getTag().toString());
 				//getData(single.getTag().toString(), single.getTag().toString(),buttonContainer, progress1);
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
-				ringProgressDialog.setCancelable(true);
+				//ringProgressDialog.setCancelable(true);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
 				flag_ringprogress = true;
 				String newS = single.getTag().toString().substring(0, 10) + "T00:00:00";
 				String newE = single.getTag().toString().substring(0, 10) + "T23:59:59";
@@ -338,6 +339,7 @@ public class fgm_ticket extends Fragment {
 				
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
 				ringProgressDialog.setCancelable(true);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
 				flag_ringprogress = true;
 				getDayStartAndDayEndBySingleText(2);
 				Log.i("Get ticket by month","IdEmployee" +EmployeePresent.getID_Employee()+" -- "+ xmlSdfDate.format(datestart) + "--" + xmlSdfDate.format(dateend));
@@ -347,6 +349,7 @@ public class fgm_ticket extends Fragment {
 		year.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				single.setText("Y " + fulltext.substring(6));
 				
 				getDayStartAndDayEndBySingleText(3);
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
@@ -424,8 +427,9 @@ public class fgm_ticket extends Fragment {
 		
 		fulltext = sdfDate.format(myCalendar.getTime());
 		single.setTag(xmlSdfDate.format(myCalendar.getTime()));
-		single.setText("Y " + fulltext.substring(6));
-		Log.i("Set for single text",fulltext.substring(6));
+		single.setText("D " + fulltext);
+		
+		
 		adapterEmployees = new ListBaseAdapter(getActivity(),listEmployee);
 		adapterEmployees.initListBaseAdapter(1, 1);
 		lvEmployees.setAdapter(adapterEmployees);
@@ -438,16 +442,14 @@ public class fgm_ticket extends Fragment {
 		 * Luu lai idTicketPresent cua ticket dau tien nay nho trim()
 		 */
 		//btnTicketEdit_Add.setEnabled(false);
+		ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
+		ringProgressDialog.setCancelable(true);
+		ringProgressDialog.setCanceledOnTouchOutside(false);
+		flag_ringprogress = true;
 		Thread threadGetEmployee =  new Thread(){
 			@Override
 			public void run() {
 				try {
-					getActivity().runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							progessbarTicketEdit.setVisibility(View.VISIBLE);
-						}
-					});
 					listEmployee.clear();
 					listEmployee.addAll(employeeDAO.getAllEmployeeDAO());
 					if(listEmployee.size()>0)
@@ -456,14 +458,48 @@ public class fgm_ticket extends Fragment {
 						tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 						listTickets.clear();
 						
-						getDayStartAndDayEndBySingleText(3);
+						
+						//Hien thi thong tin nhan vien sau khi da load xong nhan vien
+						if(flag_ringprogress==true)
+						{
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									adapterTickets.notifyDataSetChanged();
+									adapterEmployees.notifyDataSetChanged();
+									//ringProgressDialog.setMessage("Loading ticket...");
+								}
+							});
+						}
+						getDayStartAndDayEndBySingleText(1);
 						listTickets.addAll(ticketDAO.getListTicketBetween(listEmployee.get(0).getID_Employee(),xmlSdf.format(datestart), xmlSdf.format(dateend)));
 						if(listTickets.size()>0)
 						{
 							TicketPresent = listTickets.get(0);
 							adapterTickets.setSelectedItem(0);
 							Log.i("thread getemployee","id ticket: "+listTickets.get(0).getID() );
-							LoadItemTicketByIdTicket(TicketPresent.getID());
+							convertListItemTicketToItemTiketAdapter(itemTicketDAO.getListItemTicketByIDTicket(TicketPresent.getID()));
+							getActivity().runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									adapterTickets.notifyDataSetChanged();		//Load xong ticket
+									adapterEdits.notifyDataSetChanged();
+									total = "Total: " +Sum;
+									deducted = "Deducted: " + Deducted;
+									forowner = "For Owner: "+ForOwner;
+									fortech = "For Tech: " +ForTech;
+									tvTotal.setText(total);
+									tvDeducted.setText(deducted);
+									tvForTech.setText(fortech);
+									tvForOwner.setText(forowner);
+									/*if(flag_ringprogress==true)
+									{
+										ringProgressDialog.dismiss();
+										flag_ringprogress=false;
+									}*/
+									
+								}
+							});
 						}
 						else
 						{
@@ -481,7 +517,12 @@ public class fgm_ticket extends Fragment {
 							@Override
 							public void run() {
 								adapterEmployees.notifyDataSetChanged();
-								progessbarTicketEdit.setVisibility(View.GONE);
+								//progessbarTicketEdit.setVisibility(View.GONE);
+								if(flag_ringprogress==true)
+								{
+									ringProgressDialog.dismiss();
+									flag_ringprogress=false;
+								}
 								if(TicketPresent==null)
 								{
 									btnTicketEdit_Add.setEnabled(false);
@@ -512,17 +553,20 @@ public class fgm_ticket extends Fragment {
 				EmployeePresent = listEmployee.get(position);
 				tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 				
+				single.setText("D " + fulltext.substring(6));
+				
+				
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading ticket...", true);
 				ringProgressDialog.setCancelable(true);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
 				flag_ringprogress = true;
 				//row1.setVisibility(View.VISIBLE);
-				
 				if(row1.getVisibility() == View.VISIBLE)
 				{
 					getDayStartAndDayEndByTwoText();
 				}else
 				{
-					getDayStartAndDayEndBySingleText(3);
+					getDayStartAndDayEndBySingleText(1);
 					
 				}
 				Log.i("employee click","IdEmployee" +EmployeePresent.getID_Employee()+" -- "+ xmlSdfDate.format(datestart) + "--" + xmlSdfDate.format(dateend));
@@ -537,6 +581,7 @@ public class fgm_ticket extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
+				
 				TicketPresent = listTickets.get(arg2);
 				adapterTickets.setSelectedItem(arg2);
 				adapterTickets.notifyDataSetChanged();
@@ -544,9 +589,10 @@ public class fgm_ticket extends Fragment {
 				
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading...", true);
 				ringProgressDialog.setCancelable(true);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
 				flag_ringprogress = true;
 				LoadItemTicketByIdTicket(TicketPresent.getID());
-				tabhost.setCurrentTab(1);
+				//tabhost.setCurrentTab(1);
 			}
 		});
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);
@@ -924,9 +970,9 @@ public class fgm_ticket extends Fragment {
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						enable(tabhost);
+						//enable(tabhost);
 						adapterEdits.notifyDataSetChanged();
-						//tabhost.setCurrentTab(1);
+						tabhost.setCurrentTab(1);
 						total = "Total: " +Sum;
 						deducted = "Deducted: " + Deducted;
 						forowner = "For Owner: "+ForOwner;

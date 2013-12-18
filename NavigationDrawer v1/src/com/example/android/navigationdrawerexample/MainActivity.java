@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 	private boolean isLogin = false;
 	private String code= "0";
 	private String id = "0";
+	public static  boolean IsNavigation = false;
 	public void setLogin( boolean b)
 	{
 		isLogin = b;
@@ -124,10 +125,8 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //vao man hinh login
-        
         FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = new fgm_manager_checkincheckout();
+        Fragment fragment = new loginFragment();
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	
@@ -343,6 +342,7 @@ public class MainActivity extends Activity {
 		  return groupPosition;
 		 }
     private void selectItem(int groupPosition,int childPosition) {
+    	IsNavigation = true;
     	FragmentManager fragmentManager = getFragmentManager();
     	switch (groupPosition) {
 		case 0:
