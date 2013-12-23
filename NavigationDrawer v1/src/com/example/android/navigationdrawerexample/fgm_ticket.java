@@ -60,6 +60,8 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class fgm_ticket extends Fragment {
+	
+	private boolean IsStop = false;
 	public fgm_ticket() {
 	}
 	//start
@@ -554,7 +556,6 @@ public class fgm_ticket extends Fragment {
 				tvInfoEmpoyee.setText(EmployeePresent.getstrName());
 				
 				single.setText("D " + fulltext.substring(6));
-				
 				
 				ringProgressDialog = ProgressDialog.show(getActivity(), "Please wait ...",	"Loading ticket...", true);
 				ringProgressDialog.setCancelable(true);
@@ -1591,7 +1592,7 @@ public class fgm_ticket extends Fragment {
 	public void onPause() {
 
 		Log.e("shutdown", "start");
-
+		IsStop = true;
 		Runnable[] runnableArray = new Runnable[mWorkQueue.size()];
 		// Populates the array with the Runnables in the queue
 		mWorkQueue.toArray(runnableArray);
@@ -1617,6 +1618,15 @@ public class fgm_ticket extends Fragment {
 		super.onPause();
 
 	}
-
+	@Override
+	public void onDestroyView() {
+		IsStop = true;
+		super.onDestroyView();
+	}
+	@Override
+	public void onDestroy() {
+		IsStop = true;
+		super.onDestroy();
+	}
 
 }

@@ -57,6 +57,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 public class fgm_tracking extends Fragment{
+	
+	
+	//Khai bao bien de dung 
+	private boolean IsStop = false;
+	
+	
 	private Calendar myCalendar = Calendar.getInstance();
 	private EditText edtDateSelect;
 	private ListView lvTracking;
@@ -158,6 +164,11 @@ public class fgm_tracking extends Fragment{
 		timerTask = new TimerTask() {
 			 @Override
 			 public void run() {
+				 if(IsStop==true)
+				 {
+					 this.cancel();
+					 return;
+				 }
 				 getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -364,6 +375,22 @@ public class fgm_tracking extends Fragment{
 		
 		adapterListTracking.notifyDataSetChanged();
 	}
+	@Override
+    public void onPause()
+    {
+    	IsStop = true;
+    	super.onPause();
+    }
+	@Override
+	public void onDestroyView() {
+		IsStop = true;
+		super.onDestroyView();
+	}
+	@Override
+	public void onDestroy() {
+		IsStop = true;
+		super.onDestroy();
+	}
 	public void getListTracking(final String startday,final String endday)
 	{
 		listTracking.clear();
@@ -393,6 +420,11 @@ public class fgm_tracking extends Fragment{
 							{
 								flag = false;
 								listTrackingSaving = (ArrayList<TrackingTemp>) listTracking.clone();
+								if(IsStop==true)
+								{
+									//this.interrupt();
+									return;
+								}
 								getActivity().runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
@@ -412,6 +444,11 @@ public class fgm_tracking extends Fragment{
 							trackingtemp.setTotal(totalOfEmployee);
 							listTracking.add(trackingtemp);
 							final int k = i;
+							if(IsStop==true)
+							{
+								this.interrupt();
+								return;
+							}
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
@@ -431,10 +468,14 @@ public class fgm_tracking extends Fragment{
 						}
 						setViewForListTracking();
 						listTrackingSaving = (ArrayList<TrackingTemp>) listTracking.clone();
+						if(IsStop==true)
+						{
+							//this.interrupt();
+							return;
+						}
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								//adapterListTracking.setSelectedIndex(0);
 								adapterListTracking.notifyDataSetChanged();
 								if(flag_ringprogress==true)
 								{

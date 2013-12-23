@@ -44,6 +44,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class fgm_manager_checkincheckout extends Fragment {
+	// Khai bao bien de thoat khoi thread
+	private boolean IsStop = false;
 	
 	private Calendar myCalendar = Calendar.getInstance();
 	private EditText edtDateSelect;
@@ -159,6 +161,11 @@ public class fgm_manager_checkincheckout extends Fragment {
 		timerTask = new TimerTask() {
 			 @Override
 			 public void run() {
+				 if(IsStop==true)
+				 {
+					 this.cancel();
+					 return;
+				 }
 				 getActivity().runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -376,6 +383,11 @@ public class fgm_manager_checkincheckout extends Fragment {
 							listCheckInfoTableTempSaving = (ArrayList<CheckInfoTableTemp>) listCheckInfoTableTemp.clone();
 							flag = false;
 							this.interrupt();
+							if(IsStop==true)
+							{
+								this.interrupt();
+								return;
+							}
 							getActivity().runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
@@ -396,6 +408,16 @@ public class fgm_manager_checkincheckout extends Fragment {
 				}else
 				{
 					listCheckInfoTableTempSaving = new ArrayList<CheckInfoTableTemp>();
+				}
+				if(IsStop==true)
+				{
+					//this.interrupt();
+					return;
+				}
+				if(IsStop==true)
+				{
+					this.interrupt();
+					return;
 				}
 				getActivity().runOnUiThread(new Runnable() {
 					@Override
@@ -443,8 +465,23 @@ public class fgm_manager_checkincheckout extends Fragment {
 				listCheckInfoTableTemp.add(temp);
 			}
 		}
+		
+		
 		return listCheckInfoTableTemp;
 	}
-
-	
+	@Override
+	public void onPause() {
+		IsStop = true;
+		super.onPause();
+	}
+	@Override
+	public void onDestroyView() {
+		IsStop = true;
+		super.onDestroyView();
+	}
+	@Override
+	public void onDestroy() {
+		IsStop = true;
+		super.onDestroy();
+	}
 }
