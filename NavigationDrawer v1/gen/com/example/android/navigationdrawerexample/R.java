@@ -40,20 +40,21 @@ public final class R {
         public static final int mars=0x7f02000b;
         public static final int mercury=0x7f02000c;
         public static final int neptune=0x7f02000d;
-        public static final int saturn=0x7f02000e;
-        public static final int selector=0x7f02000f;
-        public static final int tab1=0x7f020010;
-        public static final int tab1_over=0x7f020011;
-        public static final int tab2=0x7f020012;
-        public static final int tab2_over=0x7f020013;
-        public static final int tab3=0x7f020014;
-        public static final int tab3_over=0x7f020015;
-        public static final int tick_employee=0x7f020016;
-        public static final int ticket_btnadd=0x7f020017;
-        public static final int ticket_btndelete_ticket=0x7f020018;
-        public static final int ticket_sale=0x7f020019;
-        public static final int uranus=0x7f02001a;
-        public static final int venus=0x7f02001b;
+        public static final int notification_message=0x7f02000e;
+        public static final int saturn=0x7f02000f;
+        public static final int selector=0x7f020010;
+        public static final int tab1=0x7f020011;
+        public static final int tab1_over=0x7f020012;
+        public static final int tab2=0x7f020013;
+        public static final int tab2_over=0x7f020014;
+        public static final int tab3=0x7f020015;
+        public static final int tab3_over=0x7f020016;
+        public static final int tick_employee=0x7f020017;
+        public static final int ticket_btnadd=0x7f020018;
+        public static final int ticket_btndelete_ticket=0x7f020019;
+        public static final int ticket_sale=0x7f02001a;
+        public static final int uranus=0x7f02001b;
+        public static final int venus=0x7f02001c;
     }
     public static final class id {
         public static final int DayChoose1=0x7f0a0036;

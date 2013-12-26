@@ -18,9 +18,6 @@ package com.example.android.navigationdrawerexample;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 import Adapter.MyListAdapter;
 import DTO.DetailInfo;
@@ -29,38 +26,38 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.database.DataSetObserver;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.microsoft.windowsazure.messaging.NotificationHub;
+@SuppressLint("NewApi")
 public class MainActivity extends Activity {
+	
+	
+	private String SENDER_ID = "1050984167132";
+	private GoogleCloudMessaging gcm;
+	private NotificationHub hub;
 	
 	public TableRow loginRow;
 	public TextView loginId;
@@ -130,6 +127,9 @@ public class MainActivity extends Activity {
         Log.e("trans", "login");
 		fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
     	
+		
+		
+		
     	// gan control
     	loginRow = (TableRow) findViewById(R.id.LoginRow);
     	loginId = (TextView) findViewById(R.id.LoginID);
@@ -179,11 +179,32 @@ public class MainActivity extends Activity {
         if (savedInstanceState == null) {
         }
     }
-
+    @SuppressWarnings("unchecked")
+	private void registerWithNotificationHubs() {
+		new AsyncTask() {
+			@Override
+			protected Object doInBackground(Object... params) {
+				try {
+					String regid = gcm.register(SENDER_ID);
+					hub.register(regid);
+				} catch (Exception e) {
+					return e;
+				}
+				return null;
+			}
+		}.execute(null, null, null);
+	}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
+        
+        gcm = GoogleCloudMessaging.getInstance(this);
+
+		String connectionString = "Endpoint=sb://helloworld2013.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=ddXw3TuEgMkdMdJN1CSjy1lHLjOFSFgf1RAjoZ4zFHI=";
+		hub = new NotificationHub("demohelloworld", connectionString, this);
+
+		registerWithNotificationHubs();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -203,6 +224,7 @@ public class MainActivity extends Activity {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        
         // Handle action buttons
         switch(item.getItemId()) {
         case R.id.action_websearch:
