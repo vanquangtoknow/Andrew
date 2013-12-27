@@ -83,33 +83,35 @@ public class fgm_manager_checkincheckout extends Fragment {
 			myCalendar.set(Calendar.MONTH, arg2);
 			myCalendar.set(Calendar.DAY_OF_MONTH, arg3);
 			updateLabel1();
-			/*Log.i("DatePickerDialog", "get tag: "+ autoEmployeeSearch.getTag().toString());
-
-			String newS = edtDateSelect.getTag().toString().substring(0, 10) + "T00:00:00";
-			String newE = edtDateSelect.getTag().toString().substring(0, 10) + "T23:59:59";
-			Log.i("Date select", newS + "---" + newE);
-			autoEmployeeSearch.setTag(-1);
-			autoEmployeeSearch.setText("");
-			
-			ringProgressDialog = new ProgressDialog(getActivity());
-			ringProgressDialog.setTitle("Please wait");
-			ringProgressDialog.setMessage("Loading...");
-			ringProgressDialog.setCancelable(false);
-			ringProgressDialog.setCanceledOnTouchOutside(false);
-			ringProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-			    	if(flagCancel==true)
-			    	{
-			    		flag = true;
-			    		flagCancel = false;
-			    		dialog.dismiss();
-			    	}
-			    }
-			});
-			ringProgressDialog.show();
-			flag_ringprogress = true;
-			getListCheckTableInfoWithTime(edtDateSelect.getTag().toString());*/
+			//Log.i("DatePickerDialog", "get tag: "+ autoEmployeeSearch.getTag().toString());
+			if (arg0.isShown())
+			{
+				String newS = edtDateSelect.getTag().toString().substring(0, 10) + "T00:00:00";
+				String newE = edtDateSelect.getTag().toString().substring(0, 10) + "T23:59:59";
+				Log.i("Date select", newS + "---" + newE);
+				autoEmployeeSearch.setTag(-1);
+				autoEmployeeSearch.setText("");
+				
+				ringProgressDialog = new ProgressDialog(getActivity());
+				ringProgressDialog.setTitle("Please wait");
+				ringProgressDialog.setMessage("Loading...");
+				ringProgressDialog.setCancelable(false);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
+				ringProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+				    @Override
+				    public void onClick(DialogInterface dialog, int which) {
+				    	if(flagCancel==true)
+				    	{
+				    		flag = true;
+				    		flagCancel = false;
+				    		dialog.dismiss();
+				    	}
+				    }
+				});
+				ringProgressDialog.show();
+				flag_ringprogress = true;
+				getListCheckTableInfoWithTime(edtDateSelect.getTag().toString());
+			}
 		}
 	};
 	
@@ -182,12 +184,14 @@ public class fgm_manager_checkincheckout extends Fragment {
 		autoEmployeeSearch.setThreshold(1);
 		autoEmployeeSearch.setAdapter(adapterAutoEmployeeSearch);
 		
-		edtDateSelect.setOnClickListener(new OnClickListener() {
+		edtDateSelect.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
-			public void onClick(View v) {
-				new DatePickerDialog(getActivity(), TimeSelect, myCalendar
+			public boolean onLongClick(View v) {
+				DatePickerDialog a = new DatePickerDialog(getActivity(), TimeSelect, myCalendar
 						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+						myCalendar.get(Calendar.DAY_OF_MONTH));
+				a.show();
+				return true;
 			}
 		});
 		btnRefresh.setOnClickListener(new OnClickListener() {

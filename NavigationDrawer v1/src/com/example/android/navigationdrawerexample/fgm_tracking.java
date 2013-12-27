@@ -30,6 +30,7 @@ import DTO.TrackingTemp;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Fragment;
+import android.app.PendingIntent.OnFinished;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -81,6 +82,7 @@ public class fgm_tracking extends Fragment{
 	
 	private boolean flag = false;
 	
+	
 	private ArrayList<CheckInfoTableTemp> listCheckInfoTableTemp = new ArrayList<CheckInfoTableTemp>();
 	ProgressDialog ringProgressDialog = null;
 	boolean flag_ringprogress = false;
@@ -98,6 +100,7 @@ public class fgm_tracking extends Fragment{
 	public fgm_tracking() {
 		
 	}
+	private int timesCalled = 1;
 	DatePickerDialog.OnDateSetListener TimeSelect = new DatePickerDialog.OnDateSetListener() {
 		
 		@Override
@@ -106,39 +109,54 @@ public class fgm_tracking extends Fragment{
 			myCalendar.set(Calendar.MONTH, arg2);
 			myCalendar.set(Calendar.DAY_OF_MONTH, arg3);
 			updateLabel1();
+			if (arg0.isShown()) {
+				autoEmployeeSearch.setTag(-1);
+				autoEmployeeSearch.setText("");
+				ringProgressDialog = new ProgressDialog(getActivity());
+				ringProgressDialog.setTitle("Please wait");
+				ringProgressDialog.setMessage("Loading...");
+				ringProgressDialog.setCancelable(false);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
+				
+				ringProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+				    @Override
+				    public void onClick(DialogInterface dialog, int which) {
+				    	flag = true;
+				        dialog.dismiss();
+				    }
+				});
+				
+				ringProgressDialog.show();
+				flag_ringprogress = true;
+				Log.i("Datepicker click", "date: " + edtDateSelect.getTag().toString() + "----" + arg3);
+				getListTracking(edtDateSelect.getTag().toString(), edtDateSelect.getTag().toString());
+		    }
 			
-			/*AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-	        builder.setMessage("Do you want load tracking")
-	               .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-	                   public void onClick(DialogInterface dialog, int id) {
-	                       // FIRE ZE MISSILES!
-	                   }
-	               })
-	               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-	                   public void onClick(DialogInterface dialog, int id) {
-	                       dialog.dismiss();
-	                   }
-	               });
-	        // Create the AlertDialog object and return it
-	        builder.create().show();*/
 			
-			/*autoEmployeeSearch.setTag(-1);
-			autoEmployeeSearch.setText("");
-			ringProgressDialog = new ProgressDialog(getActivity());
-			ringProgressDialog.setTitle("Please wait");
-			ringProgressDialog.setMessage("Loading...");
-			ringProgressDialog.setCancelable(false);
-			ringProgressDialog.setCanceledOnTouchOutside(false);
-			ringProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-			    @Override
-			    public void onClick(DialogInterface dialog, int which) {
-			    	flag = true;
-			        dialog.dismiss();
-			    }
-			});
-			ringProgressDialog.show();
-			flag_ringprogress = true;
-			getListTracking(edtDateSelect.getTag().toString(), edtDateSelect.getTag().toString());*/
+			/*timesCalled += 1;
+			if(timesCalled%2==0)
+			{
+				autoEmployeeSearch.setTag(-1);
+				autoEmployeeSearch.setText("");
+				ringProgressDialog = new ProgressDialog(getActivity());
+				ringProgressDialog.setTitle("Please wait");
+				ringProgressDialog.setMessage("Loading...");
+				ringProgressDialog.setCancelable(false);
+				ringProgressDialog.setCanceledOnTouchOutside(false);
+				
+				ringProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
+				    @Override
+				    public void onClick(DialogInterface dialog, int which) {
+				    	flag = true;
+				        dialog.dismiss();
+				    }
+				});
+				
+				ringProgressDialog.show();
+				flag_ringprogress = true;
+				Log.i("Datepicker click", "date: " + edtDateSelect.getTag().toString() + "----" + arg3);
+				getListTracking(edtDateSelect.getTag().toString(), edtDateSelect.getTag().toString());
+			}*/
 		}
 	};
 	private void updateLabel1() {
@@ -279,13 +297,32 @@ public class fgm_tracking extends Fragment{
 				
 			}
 		});
-		edtDateSelect.setOnClickListener(new OnClickListener() {
+		/*edtDateSelect.setOnLongClickListener(new OnLongClickListener() {
 			@Override
-			public void onClick(View v) {
-				new DatePickerDialog(getActivity(), TimeSelect, myCalendar
+			public boolean onLongClick(View v) {
+				DatePickerDialog a = new DatePickerDialog(getActivity(), TimeSelect, myCalendar
 						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
-						myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-				
+						myCalendar.get(Calendar.DAY_OF_MONTH));
+				a.show();
+				return false;
+			}
+		});*/
+		edtDateSelect.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				DatePickerDialog a = new DatePickerDialog(getActivity(), TimeSelect, myCalendar
+						.get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+						myCalendar.get(Calendar.DAY_OF_MONTH));
+				/*a.setButton3("Load", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						Toast.makeText(getActivity(), "Loading...",Toast.LENGTH_SHORT).show();
+					}
+				});*/
+				a.show();
+				return true;
 			}
 		});
 		adapterListTracking = new ListTrackingTempAdapter(getActivity(), listTracking);
@@ -422,7 +459,7 @@ public class fgm_tracking extends Fragment{
 								listTrackingSaving = (ArrayList<TrackingTemp>) listTracking.clone();
 								if(IsStop==true)
 								{
-									//this.interrupt();
+									this.interrupt();
 									return;
 								}
 								getActivity().runOnUiThread(new Runnable() {
