@@ -38,8 +38,8 @@ public  class testFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_login, container, false);
         getActivity().setTitle("LOGIN");
         //su dung tham so
-        id = (TextView) rootView.findViewById(R.id.idlogin);
-        code = (TextView) rootView.findViewById(R.id.codelogin);
+        /*id = (TextView) rootView.findViewById(R.id.idlogin);
+        code = (TextView) rootView.findViewById(R.id.codelogin);*/
         login = (Button) rootView.findViewById(R.id.Login);
         //login.setOnClickListener(l)
         login.setOnClickListener(new OnClickListener() {
