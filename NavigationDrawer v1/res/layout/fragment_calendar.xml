@@ -21,7 +21,7 @@
         android:background="#25A7D3"
         android:textColor="#FDFDFD"
         android:gravity="center"
-        android:text="TRACKING"
+        android:text="CALENDAR"
         android:textSize="18sp"
         android:textStyle="bold" />
     <TableRow
@@ -64,28 +64,12 @@
 		        </AutoCompleteTextView>
         
     </TableRow>
-    <TableRow
-        android:id="@+id/TableRow02"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tableRow1"
-        android:background="#FFFFFF"
-        android:paddingBottom="6dp"
-         >
-        <TextView
-            android:id="@+id/tvDatePresent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Date present: "
-             />
-
-    </TableRow>
     
 	<View
 	    android:id="@+id/separator1"
 	    android:layout_width="fill_parent"
 	    android:layout_height="1dp"
-	    android:layout_below="@+id/TableRow02"
+	    android:layout_below="@+id/tableRow1"
 	    android:background="#00B6F8" /> 
 	 <LinearLayout
         android:layout_width="match_parent"

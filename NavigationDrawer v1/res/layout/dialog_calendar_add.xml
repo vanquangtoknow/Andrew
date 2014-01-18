@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    >
+    <LinearLayout  android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:weightSum="2">
+		    <TextView
+		        android:id="@+id/dlgtvMessage"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:text="Message"
+		        android:textAlignment="center" />
+		    <EditText
+		        android:id="@+id/dlg_edtMessage"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:ems="10" >
+		    </EditText>
+	</LinearLayout>
+	<LinearLayout  android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:weightSum="2">
+		    <TextView
+		        android:id="@+id/dlgtvtype"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:text="Time start"
+		        android:textAlignment="center" />
+		    <EditText
+		        android:id="@+id/dlg_edttimestart"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:ems="10" >
+		    </EditText>
+	</LinearLayout>
+	<LinearLayout  android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:weightSum="2">
+		    <TextView
+		        android:id="@+id/dlgtvtype"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:text="Time end"
+		        android:textAlignment="center" />
+		    <EditText
+		        android:id="@+id/dlg_edttimeend"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1"
+		        android:ems="10" >
+		    </EditText>
+	</LinearLayout>
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            >
+		<ImageButton
+	        android:id="@+id/dlgbtnok_calendaradd"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/btn_ok"
+	        android:background="@drawable/selector"
+	        />
+
+    	<ImageButton
+	        android:id="@+id/dlgbtncancel_calendaradd"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/btn_cancel"
+	        android:background="@drawable/selector"/>
+        
+	</LinearLayout>
+
+
+    
+</LinearLayout>

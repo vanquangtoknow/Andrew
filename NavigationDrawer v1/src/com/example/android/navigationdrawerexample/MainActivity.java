@@ -319,6 +319,7 @@ public class MainActivity extends Activity {
 		addProduct("Manager", "Ticket");
 		addProduct("Manager", "Checkin-checkout");
 		addProduct("Manager", "Tracking");
+		addProduct("Manager", "Calendar");
 		addProduct("Option", "Login");
 		addProduct("Option", "Logout");
 		addProduct("Option", "Demo");
@@ -425,6 +426,12 @@ public class MainActivity extends Activity {
 			{
 				Fragment fragment = new fgm_tracking();
 				Log.e("trans", "ticket");
+				fragmentManager.beginTransaction()
+						.replace(R.id.content_frame, fragment).commit();
+			}
+			if(childPosition==3)
+			{
+				Fragment fragment = new fgm_calendar();
 				fragmentManager.beginTransaction()
 						.replace(R.id.content_frame, fragment).commit();
 			}

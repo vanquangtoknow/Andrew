@@ -119,6 +119,7 @@ public class fgm_ticket extends Fragment {
 	private int action_Ticketfunction = 0;
 	private ImageButton btnTicketEdit_Add;
 	private ImageButton btnTicketEdit_DeleteTicket;
+	//------
 	
 	//------Su dung cho tinh total, va deducted
 	private float Deducted;
@@ -593,7 +594,6 @@ public class fgm_ticket extends Fragment {
 				ringProgressDialog.setCanceledOnTouchOutside(false);
 				flag_ringprogress = true;
 				LoadItemTicketByIdTicket(TicketPresent.getID());
-				//tabhost.setCurrentTab(1);
 			}
 		});
 		adapterEdits = new TicketEditAdapter(getActivity(), listEdits);

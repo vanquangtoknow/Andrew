@@ -8,6 +8,7 @@ import java.util.Locale;
 import WS.WCFNail;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -55,6 +56,8 @@ public  class loginFragment extends Fragment {
     private static final String SPF_NAME = "vidslogin"; //  <--- Add this
     private static final String USERNAME = "username";  //  <--- To save username
     private static final String PASSWORD = "password"; 
+    ProgressDialog ringProgressDialog = null;
+	private boolean flag_ringprogress = false;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,7 +138,6 @@ public  class loginFragment extends Fragment {
     			{
     				Log.i("Login fail", "false");
     				getActivity().runOnUiThread(new Runnable() {
-						
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub

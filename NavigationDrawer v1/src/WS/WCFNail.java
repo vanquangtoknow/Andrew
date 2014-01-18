@@ -16,6 +16,7 @@ import DTO.Category;
 import DTO.CheckInfoTable;
 import DTO.CheckTable;
 import DTO.Employee;
+import DTO.ItemInfo;
 import DTO.ItemTicket;
 import DTO.OrderExpense;
 import DTO.ReportDTO;
@@ -24,8 +25,11 @@ import DTO.Ticket;
 import android.util.Log;
 
 public class WCFNail {
+	//private static String NAMESPACE = "http://tempuri.org/";
 	private static String NAMESPACE = "http://tempuri.org/";
-	private static final String URL = "http://posifyrt.cloudapp.net/NailService.svc";
+    private static final String URL = "http://posifyrt.cloudapp.net/NailService.svc";
+	//private static String NAMESPACE = "http://localhost:1623/";
+	//private static final String URL = "http://localhost:1623/NailService.svc";
 
 	private String ISERVICE = "INailService/";
 
@@ -1023,5 +1027,98 @@ public class WCFNail {
 		SoapObject root = getSoap(para, "getEmployeeWithId");
 		result.getInfoFromSoap(root);
 		return result;
+	}
+	public ArrayList<ItemInfo> getAllListItemInfo(ArrayList<String> para)
+	{
+		ArrayList<ItemInfo> result = new ArrayList<ItemInfo>();
+		Log.e("getAllListItemInfo", "1");
+		SoapObject root = getSoap(para, "getAllListItemInfo");
+		if(root!=null)
+		{
+			for (int i = 0; i < root.getPropertyCount(); i++) {
+				ItemInfo tmp = new ItemInfo();
+				tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+				result.add(tmp);
+			}
+			return result;
+		}
+		return null;
+	}
+	public ArrayList<ItemInfo> getListItemInfoByDay(ArrayList<String> para)
+	{
+		ArrayList<ItemInfo> result = new ArrayList<ItemInfo>();
+		Log.e("getListItemInfoByDay", "1");
+		SoapObject root = getSoap(para, "getListItemInfoByDay");
+		if(root!=null)
+		{
+			for (int i = 0; i < root.getPropertyCount(); i++) {
+				ItemInfo tmp = new ItemInfo();
+				tmp.getInfoFromSoap((SoapObject) (root.getProperty(i)));
+				result.add(tmp);
+			}
+			return result;
+		}
+		return null;
+	}
+	public boolean addItemInfoToCalendar(final ItemInfo iteminfo)
+	{
+		ArrayList<String> para = new ArrayList<String>() {
+			{
+				add(iteminfo.getStartday());
+				add(iteminfo.getEndday());
+				add(iteminfo.getText());
+				add(Integer.toString(iteminfo.getA()));
+				add(Integer.toString(iteminfo.getR()));
+				add(Integer.toString(iteminfo.getG()));
+				add(Integer.toString(iteminfo.getB()));
+			}
+		};
+		SoapPrimitive root = getSoapPrimitive(para, "addItemInfoToCalendar");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	public boolean removeItemInfoFromCalendar(final ItemInfo iteminfo)
+	{
+		ArrayList<String> para = new ArrayList<String>() {
+			{
+				add(iteminfo.getStartday());
+				add(iteminfo.getEndday());
+				add(iteminfo.getText());
+				add(Integer.toString(iteminfo.getA()));
+				add(Integer.toString(iteminfo.getR()));
+				add(Integer.toString(iteminfo.getG()));
+				add(Integer.toString(iteminfo.getB()));
+			}
+		};
+		SoapPrimitive root = getSoapPrimitive(para, "removeItemInfoFromCalendar");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
+	}
+	public boolean updateItemInfoOfCalendar(final ItemInfo arg0,final ItemInfo arg1)
+	{
+		ArrayList<String> para = new ArrayList<String>() {
+			{
+				add(arg0.getStartday());
+				add(arg0.getEndday());
+				add(arg0.getText());
+				add(Integer.toString(arg0.getA()));
+				add(Integer.toString(arg0.getR()));
+				add(Integer.toString(arg0.getG()));
+				add(Integer.toString(arg0.getB()));
+				add(arg1.getStartday());
+				add(arg1.getEndday());
+				add(arg1.getText());
+				add(Integer.toString(arg1.getA()));
+				add(Integer.toString(arg1.getR()));
+				add(Integer.toString(arg1.getG()));
+				add(Integer.toString(arg1.getB()));
+			}
+		};
+		SoapPrimitive root = getSoapPrimitive(para, "updateItemInfoOfCalendar");
+		if (root == null)
+			return false;
+		return Boolean.valueOf(root.toString());
 	}
 }
