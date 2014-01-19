@@ -160,7 +160,7 @@ public class fgm_calendar extends Fragment {
 			adapterAutoEmployeeSearch = new AutoCompleteEmployee(getActivity(), R.layout.autocomplete_item,listEmployee);
 			autoEmployeeSearch.setThreshold(1);
 			autoEmployeeSearch.setAdapter(adapterAutoEmployeeSearch);
-			
+			getAllEmployee();
 			//-----hien thi ngay hien tai va luu trong tag
 			edtDateSelect.setTag(xmlSdfDate.format(myCalendar.getTime()));
 			edtDateSelect.setText(sdfDate.format(myCalendar.getTime()));
@@ -208,8 +208,6 @@ public class fgm_calendar extends Fragment {
 					}
 				}
 			});
-			
-			
 			autoEmployeeSearch.addTextChangedListener(new TextWatcher() {
 				
 				@Override
@@ -265,6 +263,10 @@ public class fgm_calendar extends Fragment {
 									Log.i("update iteminfo save",messageSelected + "---"+ timestartSelected + "--" + timeendSelected);
 									showFormAddNewItemInfo(listCalendar.get(arg2).getText(), time1, time2, 1);
 									break;
+								case 2:
+									String t1 = listCalendar.get(arg2).getStartday();
+									String t2 = listCalendar.get(arg2).getEndday();
+									showFromDeleteItemInfo(listCalendar.get(arg2).getText(), t1, t2);
 								default:
 									break;
 								}
@@ -294,27 +296,33 @@ public class fgm_calendar extends Fragment {
 			
 			return rootView;
 		}
-		private void showFormCommanAction(int actionSelected, String timestart, String timeend, String text) {
-			switch (actionSelected) {
-			case 0:
-				showFormAddNewItemInfo(text, "08:08", "10:10", 0);
-				break;
-			case 1:
-				showFormAddNewItemInfo(text, timestart, timeend, 1);
-				break;
-			case 2:
-				showFromDeleteItemInfo();
-				break;
-			default:
-				break;
-			}
-		}
-		
 		private EditText dlg_edtMessage_Add;
 		private EditText dlg_edtTimestart_Add;
 		private EditText dlg_edtTimeend_Add;
-		private void showFromDeleteItemInfo() {
-			
+		private void showFromDeleteItemInfo(final String message,final String timestart, final String timeend) {
+			Log.i("delete iteminfo", timestart + "--" + timeend);
+			Thread threadAdd = new Thread()
+			{
+				@Override
+				public void run() {
+					ItemInfo iteminfo = new ItemInfo(timestart, timeend, message, 0, 0, 0, 0);
+					calendarDAO.removeItemInfoFromCalendar(iteminfo);
+					getActivity().runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							ringProgressDialog = new ProgressDialog(getActivity());
+							ringProgressDialog.setTitle("Please wait");
+							ringProgressDialog.setMessage("Deleting...");
+							ringProgressDialog.setCancelable(false);
+							ringProgressDialog.setCanceledOnTouchOutside(false);
+							ringProgressDialog.show();
+							flag_ringprogress = true;
+						}
+					});
+					getAllListItemInfoOfCalendarByDay(edtDateSelect.getTag().toString());
+				}
+			};
+			threadAdd.start();
 		}
 		private void showFormAddNewItemInfo(String message, String timestart, String timeend,final int action)
 		{
@@ -322,7 +330,7 @@ public class fgm_calendar extends Fragment {
 		  	ImageButton dlgbtncancel_iteminfo_add;
 		  	final Dialog dialogadd = new Dialog(getActivity());
 		  	dialogadd.setContentView(R.layout.dialog_calendar_add);
-		  	dialogadd.setTitle("Nhap du lieu");
+		  	dialogadd.setTitle("Please input these field");
 		  	dlgbtnok_iteminfo_add = (ImageButton) dialogadd.findViewById(R.id.dlgbtnok_calendaradd);
 		  	dlgbtncancel_iteminfo_add = (ImageButton) dialogadd.findViewById(R.id.dlgbtncancel_calendaradd);
 			dlg_edtMessage_Add = (EditText) dialogadd.findViewById(R.id.dlg_edtMessage);
@@ -431,14 +439,14 @@ public class fgm_calendar extends Fragment {
 		}
 		public void updateItemInfo(final String message1, final String t1, final String t2, final String message,final String timestart,final String timeend)
 		{
-			Log.i("update iteminfo",message1 + "---"+ t1 + "--" + t2);
-			Log.i("update iteminfo",message + "---"+ timestart + "--" + timeend);
+			Log.i("update iteminfo1",message1 + "---"+ t1 + "--" + t2);
+			Log.i("update iteminfo2",message + "---"+ timestart + "--" + timeend);
 			Thread threadUpdate = new Thread()
 			{
 				@Override
 				public void run() {
-					ItemInfo iteminfo1 = new ItemInfo(message1, t1, t1, 0, 0, 0, 0);
-					ItemInfo iteminfo2 = new ItemInfo(timestart, timeend, message, 0, 0, 0, 0);
+					ItemInfo iteminfo1 = new ItemInfo(t1, t2,message1, 0, 0, 0, 0);
+					ItemInfo iteminfo2 = new ItemInfo(timestart, timeend,message, 0, 0, 0, 0);
 					
 					calendarDAO.updateItemInfoOfCalendar(iteminfo1, iteminfo2);
 					getActivity().runOnUiThread(new Runnable() {
@@ -506,7 +514,6 @@ public class fgm_calendar extends Fragment {
 			};
 			threadGet.start();
 		}
-		
 		public void showDialogMessage(String message)
 		{
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -527,7 +534,6 @@ public class fgm_calendar extends Fragment {
 		    }
 		    return false;
 		}
-
 		@Override
 	    public void onPause()
 	    {

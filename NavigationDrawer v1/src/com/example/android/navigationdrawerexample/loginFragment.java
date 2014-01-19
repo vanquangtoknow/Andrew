@@ -129,6 +129,9 @@ public  class loginFragment extends Fragment {
 							((MainActivity)getActivity()).changeFragment(new ReportFragment());
 		    				((MainActivity)getActivity()).loginRow.setBackgroundColor(Color.parseColor("#91BEF7"));
 		    				((MainActivity)getActivity()).loginId.setText("Login as " + "vanquag");
+		    		        
+		    				((MainActivity)getActivity()).getActionBar().setDisplayHomeAsUpEnabled(true);
+		    				((MainActivity)getActivity()).getActionBar().setHomeButtonEnabled(true);
 						}
 					});
     				this.interrupt();

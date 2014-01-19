@@ -1114,11 +1114,16 @@ public class WCFNail {
 				add(Integer.toString(arg1.getR()));
 				add(Integer.toString(arg1.getG()));
 				add(Integer.toString(arg1.getB()));
+				for(int i=0;i<this.size();i++)
+				{
+					Log.i("update i" +i,this.get(i));
+				}
 			}
 		};
 		SoapPrimitive root = getSoapPrimitive(para, "updateItemInfoOfCalendar");
 		if (root == null)
 			return false;
+		Log.i("update iteminfo", "true");
 		return Boolean.valueOf(root.toString());
 	}
 }

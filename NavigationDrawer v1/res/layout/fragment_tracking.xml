@@ -67,9 +67,10 @@
     <TableRow
         android:id="@+id/TableRow02"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/tableRow1"
         android:background="#FFFFFF"
+        android:layout_centerHorizontal="true"
         android:paddingBottom="6dp"
          >
         <TextView
@@ -78,7 +79,6 @@
             android:layout_height="wrap_content"
             android:text="Date present: "
              />
-
     </TableRow>
     
 	<View
@@ -94,11 +94,12 @@
         android:layout_above="@+id/separator2"
         android:orientation="horizontal" >
 	         <ListView
-	             android:id="@+id/lvCalendar"
+	             android:id="@+id/lvCheckTable"
 	             android:layout_width="match_parent"
 	             android:layout_height="match_parent"
 	             android:background="#FEF0CD"
 	              >
+
 	         </ListView>
     </LinearLayout>
     <View
@@ -108,5 +109,14 @@
 	    android:layout_above="@+id/LoginRow"
 	    android:background="#00B6F8" 
 	    android:layout_alignParentBottom="true"/>
+    <ImageButton
+        android:id="@+id/imgbtnRefresh"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tableRow1"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/selector"
+        android:focusable="true"
+        android:src="@android:drawable/stat_notify_sync" />
 
 </RelativeLayout>

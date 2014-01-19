@@ -40,7 +40,6 @@ public class ListCalendarAdapter extends BaseAdapter{
 	}
 	@Override
 	public long getItemId(int position) {
-		//return array.get(position).getIdEmployee();
 		return position;
 	}
 
@@ -68,8 +67,9 @@ public class ListCalendarAdapter extends BaseAdapter{
 			{
 				number.setText(Integer.toString(position));
 				technician.setText(array.get(position).getText());
-				timestart.setText(array.get(position).getStartday().toString());
-				timeend.setText(array.get(position).getEndday().toString());
+				String s = array.get(position).getStartday().toString();
+				timestart.setText(array.get(position).getStartday().toString().substring(11, 19));
+				timeend.setText(array.get(position).getEndday().toString().substring(11, 19));
 			}
 		return convertView;
 	}
